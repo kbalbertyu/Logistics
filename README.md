@@ -2,7 +2,7 @@
 
 ## Introduction
 
-This is a logistics management website.
+This is a logistics management website, built on top of Zend Framework 3.
 
 ## Installation using Composer
 Update the composer and install the dependencies
