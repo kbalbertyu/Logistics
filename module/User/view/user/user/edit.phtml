@@ -1,0 +1,26 @@
+<form method="post">
+  <div class="form-group">
+    <label for="exampleInputEmail1">Username</label>
+    <input type="text" class="form-control" disabled value="<?php echo $this->loginUser ?>" placeholder="Enter username">
+  </div>
+  <div class="form-group">
+    <label for="exampleInputPassword1">Password</label>
+    <input type="password" class="form-control" name="password" placeholder="Password">
+  </div>
+  <div class="form-group">
+    <label for="exampleInputPassword1">Confirm Password</label>
+    <input type="password" class="form-control" name="confirm_password" placeholder="Confirm Password">
+  </div>
+  <button type="submit" class="btn btn-primary">Submit</button>
+</form>
+<?php if (isset($this->isValid)) {?>
+<?php if ($this->isValid) {?>
+<div class="alert alert-success" role="alert">Password reset!</div>
+<?php } else {?>
+<div class="alert alert-danger" role="alert">
+  <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+  <span class="sr-only">Error:</span>
+  <?php echo $this->message?>
+</div>
+<?php }?>
+<?php }?>

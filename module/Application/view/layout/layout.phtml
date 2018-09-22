@@ -1,0 +1,85 @@
+<?php echo $this->doctype() ?>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <?php echo $this->headTitle('IBPort Data Manager')->setSeparator(' - ')->setAutoEscape(false) ?>
+
+        <?php echo $this->headMeta()
+            ->appendName('viewport', 'width=device-width, initial-scale=1.0')
+            ->appendHttpEquiv('X-UA-Compatible', 'IE=edge')
+        ?>
+
+        <!-- Le styles -->
+        <?php echo $this->headLink(['rel' => 'shortcut icon', 'type' => 'image/vnd.microsoft.icon', 'href' => $this->basePath() . '/img/favicon.ico'])
+            ->prependStylesheet($this->basePath('css/style.css'))
+            ->prependStylesheet('https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/css/bootstrap.min.css')
+            ->prependStylesheet($this->basePath('css/datatables.min.css'))
+        ?>
+
+        <!-- Scripts -->
+        <?php echo $this->headScript()
+            ->prependFile($this->basePath('js/web.js'))
+            ->prependFile('https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/js/bootstrap.min.js')
+            ->prependFile('https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.0/umd/popper.min.js')
+            ->prependFile($this->basePath('js/datatables.min.js'))
+            ->prependFile('https://code.jquery.com/jquery-3.3.1.min.js')
+        ?>
+    </head>
+    <body>
+        <div class="container">
+        	<header>
+            	<div class="logo"><img src="<?php echo $this->basePath('img/logo.png') ?>" /></div>
+    			<?php if ($this->user) {?>
+    			<div class="user">Welcome <a href="<?php echo $this->url('user', ['action' => 'edit']) ?>"><?php echo $this->user ?></a>, <a href="<?php echo $this->url('user', ['action' => 'logout']) ?>">Logout</a></div>
+    			<?php }?>
+				<div class="clear"></div>
+			</header>
+            <hr/>
+			<ul class="nav">
+			  <li class="nav-item dropdown">
+                <a href="#" class="nav-link dropdown-toggle<?php echo $this->nav == 'finance' ? ' active' : ''; ?>" data-toggle="dropdown">
+                    Finance <b class="caret"></b>
+                </a>
+                <ul class="dropdown-menu">
+                    <li><a class="<?php echo $this->nav == 'index' ? 'active' : ''; ?>" href="<?php echo $this->url('summary', ['action' => 'index']) ?>">Report Listing</a></li>
+                    <li><a class="<?php echo $this->nav == 'statistic' ? 'active' : ''; ?>" href="<?php echo $this->url('summary', ['action' => 'statistic']) ?>">Report Statistics</a></li>
+                    <li><a class="<?php echo $this->nav == 'charts' ? 'active' : ''; ?>" href="<?php echo $this->url('summary', ['action' => 'charts']) ?>">Report Charts</a></li>
+                </ul>
+              </li>
+              <li class="nav-item dropdown">
+                <a href="#" class="nav-link dropdown-toggle<?php echo $this->nav == 'health' ? ' active' : ''; ?>" data-toggle="dropdown">
+                    Health Record <b class="caret"></b>
+                </a>
+                <ul class="dropdown-menu">
+                    <li><a href="<?php echo $this->url('health', ['action' => 'index']) ?>">Record Listing</a></li>
+                    <li><a href="<?php echo $this->url('health', ['action' => 'status']) ?>">Status Changes</a></li>
+                    <li><a href="<?php echo $this->url('health', ['action' => 'charts']) ?>">Record Charts</a></li>
+                </ul>
+              </li>
+                <li class="nav-item dropdown">
+                    <a href="#" class="nav-link dropdown-toggle<?php echo $this->nav == 'order' ? ' active' : ''; ?>"
+                       data-toggle="dropdown">
+                        Order Management <b class="caret"></b>
+                    </a>
+                    <ul class="dropdown-menu">
+                        <li><a href="<?php echo $this->url('order', ['action' => 'import']) ?>">Order Import</a></li>
+                    </ul>
+                </li>
+              <li class="nav-item">
+              	<a class="nav-link <?php echo $this->nav == 'account' ? 'active' : ''; ?>" href="<?php echo $this->url('account') ?>">Accounts</a>
+              </li>
+            </ul>
+			<hr />
+			<?php if (!empty($this->title)) {?>
+			<h1 class="title"><?php echo $this->escapeHtml($this->title) ?></h1>
+			<hr />
+			<?php }?>
+            <?php echo $this->content ?>
+            <hr>
+            <footer>
+                <p>&copy; 2017 - <?php echo date('Y') ?> by IBPort. All rights reserved.</p>
+            </footer>
+        </div>
+        <?php echo $this->inlineScript() ?>
+    </body>
+</html>

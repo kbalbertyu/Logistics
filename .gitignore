@@ -1,0 +1,14 @@
+.vagrant/
+vendor/
+config/development.config.php
+phpunit.xml
+.settings/
+.buildpath
+.project
+composer.lock
+composer.phar
+phpunit.xml.dist
+config/autoload/local.php
+/data/
+.idea/
+config/autoload/local.php
