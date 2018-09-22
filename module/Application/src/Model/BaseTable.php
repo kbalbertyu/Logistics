@@ -15,6 +15,7 @@ use Zend\Log\Logger;
  */
 class BaseTable {
     public const SETTING_TABLE = 'settings';
+    public const USER_TABLE = 'user';
 
     /**
      *
@@ -35,24 +36,6 @@ class BaseTable {
     public function __construct(AbstractTableGateway $tableGateway) {
         $this->tableGateway = $tableGateway;
         $this->logger = BaseModel::getLogger();
-    }
-
-    protected function useCustomTableGateway(String $table) {
-        self::$tableGateways[$this->tableGateway->getTable()] = $this->tableGateway;
-        if (!empty(self::$tableGateways[$table])) {
-            $this->tableGateway = self::$tableGateways[$table];
-            return;
-        }
-        $this->tableGateway = $this->initCustomTableGateway($table);
-    }
-
-    /**
-     * @param string $table
-     * @return TableGateway
-     */
-    private function initCustomTableGateway($table) {
-        $dbAdapter = $this->tableGateway->getAdapter();
-        return new TableGateway($table, $dbAdapter, null, $this->tableGateway->getResultSetPrototype());
     }
 
     public function getTable() {
