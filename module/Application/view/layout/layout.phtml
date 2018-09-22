@@ -40,33 +40,14 @@
                 <a href="#" class="nav-link dropdown-toggle<?php echo $this->nav == 'finance' ? ' active' : ''; ?>" data-toggle="dropdown">
                     Finance <b class="caret"></b>
                 </a>
-                <ul class="dropdown-menu">
-                    <li><a class="<?php echo $this->nav == 'index' ? 'active' : ''; ?>" href="<?php echo $this->url('summary', ['action' => 'index']) ?>">Report Listing</a></li>
-                    <li><a class="<?php echo $this->nav == 'statistic' ? 'active' : ''; ?>" href="<?php echo $this->url('summary', ['action' => 'statistic']) ?>">Report Statistics</a></li>
-                    <li><a class="<?php echo $this->nav == 'charts' ? 'active' : ''; ?>" href="<?php echo $this->url('summary', ['action' => 'charts']) ?>">Report Charts</a></li>
-                </ul>
               </li>
               <li class="nav-item dropdown">
                 <a href="#" class="nav-link dropdown-toggle<?php echo $this->nav == 'health' ? ' active' : ''; ?>" data-toggle="dropdown">
                     Health Record <b class="caret"></b>
                 </a>
                 <ul class="dropdown-menu">
-                    <li><a href="<?php echo $this->url('health', ['action' => 'index']) ?>">Record Listing</a></li>
-                    <li><a href="<?php echo $this->url('health', ['action' => 'status']) ?>">Status Changes</a></li>
-                    <li><a href="<?php echo $this->url('health', ['action' => 'charts']) ?>">Record Charts</a></li>
+                    <li><a href="<?php echo $this->url('user', ['action' => 'login']) ?>">Record Listing</a></li>
                 </ul>
-              </li>
-                <li class="nav-item dropdown">
-                    <a href="#" class="nav-link dropdown-toggle<?php echo $this->nav == 'order' ? ' active' : ''; ?>"
-                       data-toggle="dropdown">
-                        Order Management <b class="caret"></b>
-                    </a>
-                    <ul class="dropdown-menu">
-                        <li><a href="<?php echo $this->url('order', ['action' => 'import']) ?>">Order Import</a></li>
-                    </ul>
-                </li>
-              <li class="nav-item">
-              	<a class="nav-link <?php echo $this->nav == 'account' ? 'active' : ''; ?>" href="<?php echo $this->url('account') ?>">Accounts</a>
               </li>
             </ul>
 			<hr />

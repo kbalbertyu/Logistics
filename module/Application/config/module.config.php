@@ -7,11 +7,10 @@
 
 namespace Application;
 
+use User\Controller\UserController;
 use Zend\Router\Http\Literal;
 use Zend\Router\Http\Segment;
 use Zend\ServiceManager\Factory\InvokableFactory;
-use Summary\Model\Summary;
-use Summary\Controller\SummaryController;
 
 return [
     'router' => [
@@ -21,8 +20,8 @@ return [
                 'options' => [
                     'route'    => '/',
                     'defaults' => [
-                        'controller' => SummaryController::class,
-                        'action'     => 'index',
+                        'controller' => UserController::class,
+                        'action'     => 'login',
                     ],
                 ],
             ],
@@ -57,39 +56,6 @@ return [
         ],
         'template_path_stack' => [
             __DIR__ . '/../view',
-        ],
-    ],
-    'navigation' => [
-        'default' => [
-            [
-                'label' => 'Home',
-                'route' => 'home',
-            ],
-            [
-                'label' => 'Album',
-                'route' => 'album',
-                'pages' => [
-                    [
-                        'label'  => 'Add',
-                        'route'  => 'album',
-                        'action' => 'add',
-                    ],
-                    [
-                        'label'  => 'Edit',
-                        'route'  => 'album',
-                        'action' => 'edit',
-                    ],
-                    [
-                        'label'  => 'Delete',
-                        'route'  => 'album',
-                        'action' => 'delete',
-                    ],
-                ],
-            ],
-            [
-                'label' => 'Summary',
-                'route' => 'summary',
-            ],
         ],
     ],
 ];
