@@ -9,6 +9,9 @@
 namespace Logistics;
 
 
+use Application\Model\BaseTable;
+use Zend\Db\ResultSet\ResultSet;
+use Zend\Db\TableGateway\TableGateway;
 use Zend\ModuleManager\Feature\ConfigProviderInterface;
 
 class Module implements ConfigProviderInterface {
@@ -20,16 +23,36 @@ class Module implements ConfigProviderInterface {
     public function getServiceConfig() {
         return [
             'factories' => [
-                /*Model\FBGroupTable::class => function ($container) {
-                    $tableGateway = $container->get(Model\FBGroupTableGateway::class);
-                    return new Model\FBGroupTable($tableGateway);
+                Model\TeamTable::class => function ($container) {
+                    $tableGateway = $container->get(Model\TeamTableGateway::class);
+                    return new Model\TeamTable($tableGateway);
                 },
-                Model\FBGroupTableGateway::class => function ($container) {
+                Model\TeamTableGateway::class => function ($container) {
                     $dbAdapter = $container->get('Db\Adapter');
                     $resultSetPrototype = new ResultSet();
-                    $resultSetPrototype->setArrayObjectPrototype(new Model\FBGroup());
-                    return new TableGateway(BaseTable::FB_GROUP_TABLE, $dbAdapter, null, $resultSetPrototype);
-                },*/
+                    $resultSetPrototype->setArrayObjectPrototype(new Model\Team());
+                    return new TableGateway(BaseTable::TEAM_TABLE, $dbAdapter, null, $resultSetPrototype);
+                },
+                Model\InventoryTable::class => function ($container) {
+                    $tableGateway = $container->get(Model\InventoryTableGateway::class);
+                    return new Model\InventoryTable($tableGateway);
+                },
+                Model\InventoryTableGateway::class => function ($container) {
+                    $dbAdapter = $container->get('Db\Adapter');
+                    $resultSetPrototype = new ResultSet();
+                    $resultSetPrototype->setArrayObjectPrototype(new Model\Inventory());
+                    return new TableGateway(BaseTable::INVENTORY_TABLE, $dbAdapter, null, $resultSetPrototype);
+                },
+                Model\InventoryIncrementTable::class => function ($container) {
+                    $tableGateway = $container->get(Model\InventoryIncrementableGateway::class);
+                    return new Model\InventoryIncrementTable($tableGateway);
+                },
+                Model\InventoryIncrementTableGateway::class => function ($container) {
+                    $dbAdapter = $container->get('Db\Adapter');
+                    $resultSetPrototype = new ResultSet();
+                    $resultSetPrototype->setArrayObjectPrototype(new Model\InventoryIncrement());
+                    return new TableGateway(BaseTable::INVENTORY_INCREMENT_TABLE, $dbAdapter, null, $resultSetPrototype);
+                },
             ]
         ];
     }
@@ -37,8 +60,11 @@ class Module implements ConfigProviderInterface {
     public function getControllerConfig() {
         return [
             'factories' => [
-                Controller\IndexController::class => function ($container) {
-                    return new Controller\IndexController($container);
+                Controller\TeamController::class => function ($container) {
+                    return new Controller\TeamController($container);
+                },
+                Controller\InventoryController::class => function ($container) {
+                    return new Controller\InventoryController($container);
                 }
             ]
         ];

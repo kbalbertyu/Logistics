@@ -55,6 +55,20 @@ return [
                     ]
                 ]
             ],
+            'team' => [
+                'type' => Segment::class,
+                'options' => [
+                    'route' => '/team[/:action[/:id]]',
+                    'constraints' => [
+                        'action' => '[a-zA-Z][a-zA-Z0-9_-]*',
+                        'id' => '.*'
+                    ],
+                    'defaults' => [
+                        'controller' => Controller\TeamController::class,
+                        'action' => 'index'
+                    ]
+                ]
+            ],
         ]
     ],
     'view_manager' => [

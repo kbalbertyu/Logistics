@@ -2,7 +2,7 @@
 <html lang="en">
     <head>
         <meta charset="utf-8">
-        <?php echo $this->headTitle('IBPort Data Manager')->setSeparator(' - ')->setAutoEscape(false) ?>
+        <?php echo $this->headTitle('IBPort Logistics Management')->setSeparator(' - ')->setAutoEscape(false) ?>
 
         <?php echo $this->headMeta()
             ->appendName('viewport', 'width=device-width, initial-scale=1.0')
@@ -36,19 +36,18 @@
 			</header>
             <hr/>
 			<ul class="nav">
-			  <li class="nav-item dropdown">
-                <a href="#" class="nav-link dropdown-toggle<?php echo $this->nav == 'finance' ? ' active' : ''; ?>" data-toggle="dropdown">
-                    Finance <b class="caret"></b>
-                </a>
+              <li class="nav-item">
+                <a class="nav-link <?php echo $this->nav == 'inventory' ? 'active' : ''; ?>" href="<?php echo $this->url('inventory') ?>">Inventory</a>
               </li>
-              <li class="nav-item dropdown">
-                <a href="#" class="nav-link dropdown-toggle<?php echo $this->nav == 'health' ? ' active' : ''; ?>" data-toggle="dropdown">
-                    Health Record <b class="caret"></b>
-                </a>
-                <ul class="dropdown-menu">
-                    <li><a href="<?php echo $this->url('user', ['action' => 'login']) ?>">Record Listing</a></li>
-                </ul>
+              <li class="nav-item">
+                <a class="nav-link <?php echo $this->nav == 'task' ? 'active' : ''; ?>" href="<?php echo $this->url('task') ?>">Task</a>
               </li>
+              <li class="nav-item">
+              	<a class="nav-link <?php echo $this->nav == 'user' ? 'active' : ''; ?>" href="<?php echo $this->url('user') ?>">User</a>
+              </li>
+                <li class="nav-item">
+                    <a class="nav-link <?php echo $this->nav == 'team' ? 'active' : ''; ?>" href="<?php echo $this->url('team') ?>">Teams</a>
+                </li>
             </ul>
 			<hr />
 			<?php if (!empty($this->title)) {?>

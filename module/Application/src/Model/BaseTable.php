@@ -5,7 +5,6 @@ use Zend\Db\Sql\Expression;
 use Zend\Db\Sql\Where;
 use Zend\Db\TableGateway\AbstractTableGateway;
 use Zend\Db\Sql\Select;
-use Zend\Db\TableGateway\TableGateway;
 use Zend\Log\Logger;
 
 /**
@@ -16,6 +15,9 @@ use Zend\Log\Logger;
 class BaseTable {
     public const SETTING_TABLE = 'settings';
     public const USER_TABLE = 'user';
+    public const TEAM_TABLE = 'team';
+    public const INVENTORY_TABLE = 'inventory';
+    public const INVENTORY_INCREMENT_TABLE = 'inventory_increment';
 
     /**
      *
@@ -72,8 +74,10 @@ class BaseTable {
     }
 
     public function getRows($where = null, array $columns = [], $offset = null, $limit = null) {
-        $select = $this->selectTable()
-            ->columns($columns);
+        $select = $this->selectTable();
+        if (!empty($columns)) {
+            $select->columns($columns);
+        }
         if ($where) {
             $select->where($where);
         }
