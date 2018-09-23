@@ -4,7 +4,7 @@ namespace Application\Model\Auth;
 use Zend\Permissions\Acl\Acl;
 use Zend\Permissions\Acl\Role\GenericRole as Role;
 use Zend\Permissions\Acl\Resource\GenericResource as Resource;
-use Summary\Model\User;
+use User\Model\User;
 use Application\Model\Auth;
 
 class Permission {
@@ -48,23 +48,7 @@ class Permission {
     }
     
     private const RESOURCES = [
-        'Health\Controller\AccountController' => [
-            'index' => 'manager', 
-            'update-field' => 'manager'
-        ],
-        'Health\Controller\HealthController' => [
-            'index' => 'health',
-            'charts' => 'health',
-            'status' => 'member'
-        ],
-        'Summary\Controller\SummaryController' => [
-            'index' => 'finance', 
-            'view' => 'finance', 
-            'account-trending' => 'member',
-            'statistic' => 'finance', 
-            'charts' => 'finance'
-        ],
-        'Summary\Controller\UserController' => [
+        'User\Controller\UserController' => [
             'edit' => 'member'
         ]
     ];

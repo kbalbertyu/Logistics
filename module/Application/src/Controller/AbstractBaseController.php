@@ -8,7 +8,7 @@ use Zend\ServiceManager\ServiceLocatorInterface;
 use Zend\Authentication\AuthenticationService;
 use Zend\Mvc\MvcEvent;
 use Zend\Authentication\Storage\Session as SessionStorage;
-use Summary\Model\UserTable;
+use User\Model\UserTable;
 use Zend\Log\Logger;
 use Application\Model\BaseModel;
 use Application\Model\BaseTable;
@@ -72,7 +72,7 @@ abstract class AbstractBaseController extends AbstractActionController {
     public function onDispatch(MvcEvent $e) {
         parent::onDispatch($e);
         $controller = $this->params()->fromRoute('controller');
-        if (!$this->user && $controller == 'Summary\Controller\SummaryController') {
+        if (!$this->user && $controller == 'User\Controller\UserController') {
             $this->redirect()->toRoute('user');
         }
     }
