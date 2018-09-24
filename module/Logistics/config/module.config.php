@@ -41,16 +41,16 @@ return [
                     ]
                 ]
             ],
-            'task' => [
+            'brand' => [
                 'type' => Segment::class,
                 'options' => [
-                    'route' => '/task[/:action[/:id]]',
+                    'route' => '/brand[/:action[/:id]]',
                     'constraints' => [
                         'action' => '[a-zA-Z][a-zA-Z0-9_-]*',
                         'id' => '.*'
                     ],
                     'defaults' => [
-                        'controller' => Controller\TaskController::class,
+                        'controller' => Controller\BrandController::class,
                         'action' => 'index'
                     ]
                 ]
