@@ -16,8 +16,9 @@ class BaseTable {
     public const SETTING_TABLE = 'settings';
     public const USER_TABLE = 'user';
     public const TEAM_TABLE = 'team';
-    public const INVENTORY_TABLE = 'inventory';
-    public const INVENTORY_INCREMENT_TABLE = 'inventory_increment';
+    public const INVENTORY_TABLE = 'inventory_history';
+    public const PRODUCT_TABLE = 'products';
+    public const BRAND_TABLE = 'brand';
 
     /**
      *
