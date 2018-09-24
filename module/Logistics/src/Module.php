@@ -33,25 +33,35 @@ class Module implements ConfigProviderInterface {
                     $resultSetPrototype->setArrayObjectPrototype(new Model\Team());
                     return new TableGateway(BaseTable::TEAM_TABLE, $dbAdapter, null, $resultSetPrototype);
                 },
-                Model\InventoryTable::class => function ($container) {
-                    $tableGateway = $container->get(Model\InventoryTableGateway::class);
-                    return new Model\InventoryTable($tableGateway);
+                Model\HistoryTable::class => function ($container) {
+                    $tableGateway = $container->get(Model\HistoryTableGateway::class);
+                    return new Model\HistoryTable($tableGateway);
                 },
-                Model\InventoryTableGateway::class => function ($container) {
+                Model\HistoryTableGateway::class => function ($container) {
                     $dbAdapter = $container->get('Db\Adapter');
                     $resultSetPrototype = new ResultSet();
-                    $resultSetPrototype->setArrayObjectPrototype(new Model\Inventory());
+                    $resultSetPrototype->setArrayObjectPrototype(new Model\History());
                     return new TableGateway(BaseTable::INVENTORY_TABLE, $dbAdapter, null, $resultSetPrototype);
                 },
-                Model\InventoryIncrementTable::class => function ($container) {
-                    $tableGateway = $container->get(Model\InventoryIncrementableGateway::class);
-                    return new Model\InventoryIncrementTable($tableGateway);
+                Model\ProductTable::class => function ($container) {
+                    $tableGateway = $container->get(Model\ProductTableGateway::class);
+                    return new Model\ProductTable($tableGateway);
                 },
-                Model\InventoryIncrementTableGateway::class => function ($container) {
+                Model\ProductTableGateway::class => function ($container) {
                     $dbAdapter = $container->get('Db\Adapter');
                     $resultSetPrototype = new ResultSet();
-                    $resultSetPrototype->setArrayObjectPrototype(new Model\InventoryIncrement());
-                    return new TableGateway(BaseTable::INVENTORY_INCREMENT_TABLE, $dbAdapter, null, $resultSetPrototype);
+                    $resultSetPrototype->setArrayObjectPrototype(new Model\Product());
+                    return new TableGateway(BaseTable::PRODUCT_TABLE, $dbAdapter, null, $resultSetPrototype);
+                },
+                Model\BrandTable::class => function ($container) {
+                    $tableGateway = $container->get(Model\BrandTableGateway::class);
+                    return new Model\BrandTable($tableGateway);
+                },
+                Model\BrandTableGateway::class => function ($container) {
+                    $dbAdapter = $container->get('Db\Adapter');
+                    $resultSetPrototype = new ResultSet();
+                    $resultSetPrototype->setArrayObjectPrototype(new Model\Brand());
+                    return new TableGateway(BaseTable::BRAND_TABLE, $dbAdapter, null, $resultSetPrototype);
                 },
             ]
         ];
@@ -65,6 +75,9 @@ class Module implements ConfigProviderInterface {
                 },
                 Controller\InventoryController::class => function ($container) {
                     return new Controller\InventoryController($container);
+                },
+                Controller\BrandController::class => function ($container) {
+                    return new Controller\BrandController($container);
                 }
             ]
         ];

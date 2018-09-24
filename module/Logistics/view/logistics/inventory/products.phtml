@@ -1,0 +1,47 @@
+<table id="team-table" class="table display" cellspacing="0" width="100%">
+  <thead>
+  <tr>
+    <th>ID</th>
+    <th>Team</th>
+    <th>Item Name</th>
+    <th>Brand</th>
+    <th>Qty</th>
+    <th>Size</th>
+    <th>Weight</th>
+    <th>Actions</th>
+  </tr>
+  </thead>
+  <tbody>
+  <?php if ($this->products->count()) { ?>
+      <?php foreach ($this->products as $product) { ?>
+      <tr>
+        <td><?php echo $product->id ?></td>
+        <td><?php echo $product->team ?></td>
+        <td><?php echo $product->itemName ?></td>
+        <td><?php echo $product->brand ?></td>
+        <td><?php echo $product->qty ?></td>
+        <td><?php echo $product->renderSize() ?></td>
+        <td><?php echo $product->weight ?></td>
+        <td>
+          <a href="<?php echo $this->url('inventory', ['action' => 'add'], ['query' => ['productId' => $product->id, 'type' => 'in', 'teamId' => $product->teamId]]) ?>" class="btn btn-success">Receive(收货)</a>
+          <a href="<?php echo $this->url('inventory', ['action' => 'add'], ['query' => ['productId' => $product->id, 'type' => 'out', 'teamId' => $product->teamId]]) ?>" class="btn btn-secondary">Send Out(发货)</a>
+          <button type="button" class="btn btn-primary">Edit</button>
+          <button type="button" class="btn btn-danger">Delete</button>
+        </td>
+      </tr>
+      <?php } ?>
+  <?php } ?>
+  </tbody>
+  <tfoot>
+  <tr>
+    <th>ID</th>
+    <th>Team</th>
+    <th>Item Name</th>
+    <th>Brand</th>
+    <th>Qty</th>
+    <th>Size</th>
+    <th>Weight</th>
+    <th>Actions</th>
+  </tr>
+  </tfoot>
+</table>

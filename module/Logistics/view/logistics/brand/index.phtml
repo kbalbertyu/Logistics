@@ -1,0 +1,30 @@
+<?php echo $this->flashMessenger()->render('success', ['alert', 'alert-dismissible', 'alert-success']); ?>
+<table id="team-table" class="table display" cellspacing="0" width="100%">
+  <thead>
+  <tr>
+    <th>ID</th>
+    <th>Name</th>
+    <th>Edit</th>
+  </tr>
+  </thead>
+  <tbody>
+  <?php if ($this->brands->count()) { ?>
+      <?php foreach ($this->brands as $brand) { ?>
+      <tr>
+        <td><?php echo $brand->id ?></td>
+        <td><?php echo $brand->name ?></td>
+        <td>
+          <button type="button" class="btn btn-primary">Edit</button>
+        </td>
+      </tr>
+      <?php } ?>
+  <?php } ?>
+  </tbody>
+  <tfoot>
+  <tr>
+    <th>ID</th>
+    <th>Name</th>
+    <th>Edit</th>
+  </tr>
+  </tfoot>
+</table>

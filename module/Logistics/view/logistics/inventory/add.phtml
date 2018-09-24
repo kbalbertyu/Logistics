@@ -1,0 +1,91 @@
+<?php if (!$this->team) {?>
+<form method="get">
+  <div class="form-group">
+    <label for="team">Business Team</label>
+    <select onselect="this.form.submit();" id="select-team" style="width: 500px;" class="form-control" name="teamId">
+      <option value=""> - Select Team - </option>
+        <?php foreach ($this->teams as $team) {?>
+          <option value="<?php echo $team->id ?>"><?php echo $team->name ?></option>
+        <?php }?>
+    </select>
+    <?php if ($this->product) {?>
+    <input type="hidden" name="productId" value="<?php echo $this->product->id ?>">
+    <?php }?>
+    <input type="hidden" name="type" value="<?php echo $this->type ?>">
+    <br />
+    <button type="submit" class="btn btn-primary">Next</button>
+  </div>
+</form>
+<?php } else {?>
+<form method="post">
+  <div class="form-group">
+    <label for="itemName">Item Name</label>
+    <input <?php echo $this->product ? 'disabled' : '' ?> id="itemName" data-url="inventory/get-item-names" placeholder="Enter item name" name="itemName" value="<?php echo $this->product ? $this->product->itemName : '' ?>" type="text" class="form-control ui-autocomplete-input">
+    <?php if ($this->product) {?>
+    <input id="productId" type="hidden" name="itemName" value="<?php echo $this->product ? $this->product->id : '' ?>" />
+    <?php }?>
+  </div>
+  <fieldset>
+    <legend>Product Info</legend>
+    <div class="form-group">
+      <label for="brand">Brand</label>
+      <input <?php echo $this->brand ? 'disabled' : '' ?> id="brand" data-url="inventory/get-brand-names" placeholder="Enter brand name" name="brand" value="<?php echo $this->brand ? $this->brand->name : '' ?>" type="text" class="form-control ui-autocomplete-input">
+      <?php if ($this->brand) {?>
+      <input type="hidden" name="brand" value="<?php echo $this->brand->id ?>" />
+      <?php }?>
+    </div>
+    <div class="form-group">
+      <label for="qty">Qty</label>
+      <input id="qty" name="qty" value="" type="text" class="form-control">
+    </div>
+    <div class="form-group">
+      <label for="note">Note</label>
+      <input id="note" name="note" value="" type="text" class="form-control">
+    </div>
+  </fieldset>
+  <fieldset>
+    <legend>Size (inch)</legend>
+    <div class="form-group">
+      <label for="width">Width</label>
+      <input <?php echo $this->product ? 'disabled' : '' ?> id="width" name="width" value="<?php echo $this->product ? $this->product->width : '' ?>" type="text" class="form-control">
+    </div>
+    <div class="form-group">
+      <label for="height">Length</label>
+      <input <?php echo $this->product ? 'disabled' : '' ?> id="length" name="length" value="<?php echo $this->product ? $this->product->length : '' ?>" type="text" class="form-control">
+    </div>
+    <div class="form-group">
+      <label for="height">Height</label>
+      <input <?php echo $this->product ? 'disabled' : '' ?> id="height" name="height" value="<?php echo $this->product ? $this->product->height : '' ?>" type="text" class="form-control">
+    </div>
+    <div class="form-group">
+      <label for="weight">Weight</label>
+      <input <?php echo $this->product ? 'disabled' : '' ?> id="weight" name="weight" value="<?php echo $this->product ? $this->product->weight : '' ?>" type="text" class="form-control">
+    </div>
+  </fieldset>
+  <fieldset>
+    <legend>Fees ($)</legend>
+    <div class="form-group">
+      <label for="shippingCost">Shipping Cost</label> (<em>Internal use, 内部使用</em>)
+      <input id="shippingCost" name="shippingCost" value="" type="text" class="form-control">
+    </div>
+    <div class="form-group">
+      <label for="shippingFee">Shipping Fee</label> (<em>External use, 向外收费</em>)
+      <input id="shippingFee" name="shippingFee" value="" type="text" class="form-control">
+    </div>
+    <div class="form-group">
+      <label for="serviceFee">Service Fee</label>
+      <input id="serviceFee" name="serviceFee" value="" type="text" class="form-control">
+    </div>
+  </fieldset>
+  <button type="submit" class="btn btn-primary">Submit</button>
+</form>
+<?php if (!empty($this->message)) { ?>
+<div class="alert alert-danger" role="alert">
+  <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+  <span class="sr-only">Error:</span>
+  <?php echo $this->message ?>
+</div>
+<?php } ?>
+<link href="<?php echo $this->basePath('js/jquery-ui-1.12.1.custom/jquery-ui.theme.min.css') ?>" media="screen" rel="stylesheet" type="text/css">
+<script type="text/javascript" src="<?php echo $this->basePath('/js/jquery-ui-1.12.1.custom/jquery-ui.min.js') ?>"></script>
+<?php }?>

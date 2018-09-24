@@ -1,0 +1,81 @@
+<form method="post">
+  <div class="form-group">
+    <label for="itemName">Item Name</label>
+    <input id="itemName" placeholder="Enter item name" name="itemName" value="" type="text" class="form-control">
+  </div>
+  <fieldset>
+    <legend></legend>
+    <div class="form-group">
+      <label for="brand">Brand</label>
+      <input id="brand" placeholder="Enter brand name" name="brand" value="" type="text" class="form-control">
+    </div>
+    <div class="form-group">
+      <label for="team">Team</label>
+      <select class="form-control" name="teamId">
+        <option value=""> - Select Business Team - </option>
+        <?php foreach ($this->teams as $team) {?>
+        <option value="<?php echo $team->id ?>"><?php echo $team->name ?></option>
+        <?php }?>
+      </select>
+    </div>
+    <div class="form-group">
+      <label for="qty">Qty</label>
+      <input id="qty" name="qty" value="" type="text" class="form-control">
+    </div>
+    <div class="form-group">
+      <label for="type">Transport Type</label>
+      <select class="form-control" name="type">
+        <option value=""> - Select Type - </option>
+        <option value="in">Received In</option>
+        <option value="out">Sent Out</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label for="note">Note</label>
+      <input id="note" name="note" value="" type="text" class="form-control">
+    </div>
+  </fieldset>
+  <fieldset>
+    <legend>Size (inch)</legend>
+    <div class="form-group">
+      <label for="width">Width</label>
+      <input id="width" name="width" value="" type="text" class="form-control">
+    </div>
+    <div class="form-group">
+      <label for="height">Height</label>
+      <input id="height" name="height" value="" type="text" class="form-control">
+    </div>
+    <div class="form-group">
+      <label for="height">Height</label>
+      <input id="height" name="height" value="" type="text" class="form-control">
+    </div>
+    <div class="form-group">
+      <label for="weight">Weight</label>
+      <input id="weight" name="weight" value="" type="text" class="form-control">
+    </div>
+  </fieldset>
+  <fieldset>
+    <legend>Fees ($)</legend>
+    <div class="form-group">
+      <label for="shippingCost">Shipping Cost</label>
+      <input id="shippingCost" name="shippingCost" value="" type="text" class="form-control">
+    </div>
+    <div class="form-group">
+      <label for="shippingFee">Shipping Fee</label>
+      <input id="shippingFee" name="shippingFee" value="" type="text" class="form-control">
+    </div>
+    <div class="form-group">
+      <label for="serviceFee">Service Fee</label>
+      <input id="serviceFee" name="serviceFee" value="" type="text" class="form-control">
+    </div>
+  </fieldset>
+
+  <button type="submit" class="btn btn-primary">Submit</button>
+</form>
+<?php if (!empty($this->message)) { ?>
+<div class="alert alert-danger" role="alert">
+  <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+  <span class="sr-only">Error:</span>
+  <?php echo $this->message ?>
+</div>
+<?php } ?>

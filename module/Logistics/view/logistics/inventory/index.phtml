@@ -1,0 +1,63 @@
+<?php echo $this->flashMessenger()->render('success', array('alert', 'alert-success')); ?>
+<div class="date-nav">
+  <a href="<?php echo $this->url('inventory', ['action' => 'add'], ['query' => ['type' => 'in']]) ?>" class="btn btn-primary right" style="margin-right:10px;">Receive(收货)</a>
+  <div class="clear"></div>
+</div>
+<table id="team-table" class="table display" cellspacing="0" width="100%">
+  <thead>
+  <tr>
+    <th>ID</th>
+    <th>Team</th>
+    <th>Item Name</th>
+    <th>Brand</th>
+    <th>QTY</th>
+    <th>Process Type</th>
+    <th>Shipping Cost</th>
+    <th>Shipping Fee</th>
+    <th>Service Fee</th>
+    <th>Process Date</th>
+    <th>Edit</th>
+    <th>Delete</th>
+  </tr>
+  </thead>
+  <tbody>
+  <?php if ($this->histories->count()) { ?>
+      <?php foreach ($this->histories as $history) { ?>
+      <tr>
+        <td><?php echo $history->id ?></td>
+        <td><?php echo $history->team ?></td>
+        <td><?php echo $history->itemName ?></td>
+        <td><?php echo $history->brand ?></td>
+        <td><?php echo $history->qty ?></td>
+        <td><?php echo $history->renderProcessType() ?></td>
+        <td><?php echo round($history->shippingCost, 2) ?></td>
+        <td><?php echo round($history->shippingFee, 2) ?></td>
+        <td><?php echo round($history->serviceFee, 2) ?></td>
+        <td><?php echo $history->processDate ?></td>
+        <td>
+          <a href="<?php echo $this->url('inventory', ['action' => 'edit', 'id' => $history->id]) ?>" type="button" class="btn btn-primary">Edit</a>
+        </td>
+        <td>
+          <a href="<?php echo $this->url('inventory', ['action' => 'delete', 'id' => $history->id]) ?>" type="button" class="btn btn-danger">Delete</a>
+        </td>
+      </tr>
+      <?php } ?>
+  <?php } ?>
+  </tbody>
+  <tfoot>
+  <tr>
+    <th>ID</th>
+    <th>Team</th>
+    <th>Item Name</th>
+    <th>Brand</th>
+    <th>QTY</th>
+    <th>Process Type</th>
+    <th>Shipping Cost</th>
+    <th>Shipping Fee</th>
+    <th>Service Fee</th>
+    <th>Process Date</th>
+    <th>Edit</th>
+    <th>Delete</th>
+  </tr>
+  </tfoot>
+</table>

@@ -25,6 +25,8 @@ class TeamController extends AbstractBaseController {
     }
 
     public function indexAction() {
+        $this->title = 'Business Teams';
+        $this->nav = 'team';
         $teams = $this->table->getRows();
         return new ViewModel([
             'teams' => $teams
@@ -47,8 +49,10 @@ class TeamController extends AbstractBaseController {
                 $saved = $this->table->add([
                     'name' => $name
                 ]);
-                if (!$saved) {
-                    $data['message'] = 'Team name save failed: ' . $name;
+                if ($saved) {
+                    $data['message'] = 'Team name saved: ' . $name;
+                    $this->flashMessenger()->addSuccessMessage($data['message']);
+                    $this->redirect()->toRoute('team');
                 } else {
                     $data['valid'] = true;
                 }

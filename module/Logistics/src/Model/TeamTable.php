@@ -16,4 +16,10 @@ class TeamTable extends BaseTable {
     public function nameExists($name) {
         return $this->getRowByFields(['name' => $name]);
     }
+
+    public function getTeamListForSelection() {
+        $select = $this->selectTable()
+            ->order('name');
+        return $this->tableGateway->selectWith($select);
+    }
 }
