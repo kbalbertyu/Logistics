@@ -28,6 +28,14 @@ class BaseModel {
         return $extractor->extract($this);
     }
 
+    public static function filterNumericColumns(&$set, $numericColumns) {
+        foreach ($numericColumns as $column) {
+            if (empty($set[$column])) {
+                $set[$column] = 0;
+            }
+        }
+    }
+
     protected static function formatFieldNameMappings($fields) {
         $data = array();
         foreach ($fields as $field) {
