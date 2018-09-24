@@ -71,10 +71,14 @@ abstract class AbstractBaseController extends AbstractActionController {
 
     public function onDispatch(MvcEvent $e) {
         parent::onDispatch($e);
-        $controller = $this->params()->fromRoute('controller');
-        if (!$this->user && $controller == 'User\Controller\UserController') {
-            $this->redirect()->toRoute('user');
-        }
+        $this->checkLogin();
+
+        $this->layout()->setVariables([
+            'title' => $this->title,
+            'nav' => $this->nav,
+            'subNav' => $this->params()->fromRoute('action'),
+            'user' => $this->user
+        ]);
     }
 
     protected function checkPermission() {
@@ -113,6 +117,13 @@ abstract class AbstractBaseController extends AbstractActionController {
 
     protected function listFiles($path) {
         return array_slice(scandir($path), 2);
+    }
+
+    private function checkLogin(): void {
+        $action = $this->params()->fromRoute('action');
+        if (!$this->user && $action !== 'login') {
+            $this->redirect()->toRoute('user');
+        }
     }
 }
 
