@@ -6,6 +6,7 @@ use Application\Model\BaseModel;
 /**
  * @property string username
  * @property string email
+ * @property int teamId
  * @property string password
  * @property integer level
  * @property string role

@@ -5,8 +5,17 @@ use Application\Model\BaseTable;
 use User\Model\User\ValidationResult;
 use Zend\Crypt\Password\Bcrypt;
 use Zend\Authentication\Result;
+use Zend\Db\Sql\Select;
 
 class UserTable extends BaseTable {
+
+    public function getUserList() {
+        $select = new Select();
+        $select->from(['u' => $this->getTable()])
+            ->join(['t' => BaseTable::TEAM_TABLE], 'u.teamId = t.id', ['team' => 'name'], Select::JOIN_LEFT)
+            ->order('t.name');
+        return $this->tableGateway->selectWith($select);
+    }
     
     /**
      * 
@@ -89,21 +98,19 @@ class UserTable extends BaseTable {
         
         $password = trim($data['password']);
         $confirm = trim($data['confirm_password']);
-        
-        if (empty($password) || empty($confirm)) {
-            $validationResult->setMessage('Please provide a password or confirm password.');
-            return $validationResult;
-        }
-        
+
         if ($password != $confirm) {
             $validationResult->setMessage('Please provide the same password.');
             return $validationResult;
         }
-        
-        $this->tableGateway->update([
-            'password' => $this->getCrypter()->create($password)
-        ], 'username = \'' . $username . '\'');
-        
+
+        $data = [
+            'teamId' => $data['teamId']
+        ];
+        if (!empty($password)) {
+            $data['password'] = $this->getCrypter()->create($password);
+        }
+        $this->update($data, $username);
         $validationResult->setSuccess();
         return $validationResult;
     }

@@ -1,7 +1,19 @@
+<?php echo $this->flashMessenger()->render('success', ['alert', 'alert-dismissible', 'alert-success']); ?>
 <form method="post">
   <div class="form-group">
-    <label for="exampleInputEmail1">Username</label>
-    <input type="text" class="form-control" disabled value="<?php echo $this->loginUser ?>" placeholder="Enter username">
+    <label for="username">Username</label>
+    <input type="text" class="form-control" disabled value="<?php echo $this->user->username ?>"
+           placeholder="Enter username">
+  </div>
+  <div class="form-group">
+    <label for="exampleInputEmail1">Business Team</label>
+    <select name="teamId" class="form-control">
+      <option> - Select Team -</option>
+        <?php foreach ($this->teams as $team) { ?>
+          <option <?php echo $team->id == $this->user->teamId ? 'selected' : '' ?>
+              value="<?php echo $team->id ?>"><?php echo $team->name ?></option>
+        <?php } ?>
+    </select>
   </div>
   <div class="form-group">
     <label for="exampleInputPassword1">Password</label>
@@ -13,14 +25,14 @@
   </div>
   <button type="submit" class="btn btn-primary">Submit</button>
 </form>
-<?php if (isset($this->isValid)) {?>
-<?php if ($this->isValid) {?>
-<div class="alert alert-success" role="alert">Password reset!</div>
-<?php } else {?>
-<div class="alert alert-danger" role="alert">
-  <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
-  <span class="sr-only">Error:</span>
-  <?php echo $this->message?>
-</div>
-<?php }?>
-<?php }?>
+<?php if (isset($this->isValid)) { ?>
+  <?php if ($this->isValid) { ?>
+  <div class="alert alert-success" role="alert">Password reset!</div>
+  <?php } else { ?>
+  <div class="alert alert-danger" role="alert">
+    <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+    <span class="sr-only">Error:</span>
+      <?php echo $this->message ?>
+  </div>
+  <?php } ?>
+<?php } ?>

@@ -1,6 +1,7 @@
 <?php
 namespace User\Controller;
 
+use Logistics\Model\TeamTable;
 use User\Model\UserTable;
 use Zend\Stdlib\ArrayUtils;
 use Zend\View\Model\ViewModel;
@@ -27,18 +28,29 @@ class UserController extends AbstractBaseController {
             'user' => $this->user
         ]);
     }
-    
+
+    public function indexAction() {
+        $this->title = 'User List';
+        $this->nav = 'user';
+        $users = $this->table->getUserList();
+        return new ViewModel([
+            'users' => $users
+        ]);
+    }
+
     public function loginAction() {
         $this->title = 'User Login';
         if ($this->user) {
-            $this->redirect()->toRoute('user');
+            $this->redirect()->toRoute('inventory');
         }
         if ($this->getRequest()->isPost()) {
             $data = $this->getRequest()->getPost();
             
             $result = $this->table->auth($data);
             if (!$result->isValid()) {
-                $this->logger->warn(sprintf('Login failed: %s', $data['username']));
+                $message = sprintf('Login failed: %s', $data['username']);
+                $this->logger->warn($message);
+                $this->flashMessenger()->addErrorMessage($message);
                 $this->redirect()->toRoute('user');
                 return;
             }
@@ -67,16 +79,19 @@ class UserController extends AbstractBaseController {
             return $view;
         }
         $this->title = 'User Profile';
+        $id = $this->params()->fromRoute('id');
+        if (empty($id)) {
+            $id = $this->user;
+        }
         if ($this->getRequest()->isPost()) {
             $data = $this->getRequest()->getPost();
-            $result = $this->table->edit($data, $this->user);
-            return new ViewModel([
-                'isValid' => $result->isValid(),
-                'message' => $result->getMessage()
-            ]);
+            $this->table->edit($data, $id);
+            $this->flashMessenger()->addSuccessMessage('User updated.');
+            $this->redirect()->refresh();
         }
         return new ViewModel([
-            'loginUser' => $this->user
+            'user' => $this->table->getRowById($id),
+            'teams' => $this->getTableModel(TeamTable::class)->getRows()
         ]);
     }
     
