@@ -16,9 +16,9 @@ class BaseTable {
     public const SETTING_TABLE = 'settings';
     public const USER_TABLE = 'user';
     public const TEAM_TABLE = 'team';
-    public const INVENTORY_TABLE = 'inventory_history';
     public const PRODUCT_TABLE = 'products';
     public const BRAND_TABLE = 'brand';
+    public const PACKAGE_TABLE = 'packages';
 
     /**
      *
@@ -179,8 +179,22 @@ class BaseTable {
         } catch (\Exception $e) {
             $file = BaseModel::dumpVariable($data, 'BaseTable-update', false, false);
             $this->logger->err(sprintf('Update data error: %s -> %s', $e->getMessage(), $file));
-            throw $e;
+            throw new $e;
         }
+    }
+
+    public function delete($id) {
+        try {
+            return $this->deleteBy([$this->primary => $id]);
+        } catch (\Exception $e) {
+            $this->logger->err(sprintf('Delete %s record failed: %s -> %s',
+                $this->getTable(), $id, $e->getMessage()));
+            throw new $e;
+        }
+    }
+
+    public function deleteBy($where) {
+        return $this->tableGateway->delete($where);
     }
 
     protected function getColumnValueSet($column) {
