@@ -10,27 +10,31 @@ namespace Logistics\Controller;
 
 
 use Application\Controller\AbstractBaseController;
+use Logistics\Model\ProductTable;
 use Logistics\Model\TeamTable;
 use Zend\ServiceManager\ServiceLocatorInterface;
 use Zend\View\Model\ViewModel;
 
 /**
  * @property TeamTable table
+ * @property ProductTable productTable
  */
 class TeamController extends AbstractBaseController {
 
     public function __construct(ServiceLocatorInterface $container) {
         parent::__construct($container);
         $this->table = $this->getTableModel(TeamTable::class);
+        $this->productTable = $this->getTableModel(ProductTable::class);
     }
 
     public function indexAction() {
         $this->title = 'Business Teams';
         $this->nav = 'team';
-        $teams = $this->table->getRows();
-        return new ViewModel([
-            'teams' => $teams
+        $this->addOutPut([
+            'teams' => $this->table->getRows(),
+            'fees' => $this->productTable->getTeamFeesDueList()
         ]);
+        return $this->renderView();
     }
 
     public function addAction() {

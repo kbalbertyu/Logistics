@@ -1,35 +1,42 @@
-<?php echo $this->flashMessenger()->render('success', array('alert', 'alert-dismissible', 'alert-success')); ?>
+<?php echo $this->flashMessenger()->render('success', ['alert', 'alert-dismissible', 'alert-success']); ?>
 <div class="date-nav">
-    <a href="<?php echo $this->url('team', ['action' => 'add']) ?>" class="btn btn-primary right">Create Team</a>
-    <div class="clear"></div>
+  <a href="<?php echo $this->url('team', ['action' => 'add']) ?>" class="btn btn-primary right">Create Team</a>
+  <div class="clear"></div>
 </div>
 <table id="team-table" class="table display" cellspacing="0" width="100%">
-    <thead>
-        <tr>
-            <th>ID</th>
-            <th>Name</th>
-            <th>Edit</th>
-            <th>Delete</th>
-        </tr>
-    </thead>
-    <tbody>
-    <?php if ($this->teams->count()) {?>
-        <?php foreach ($this->teams as $team) {?>
-        <tr>
-            <td><?php echo $team->id ?></td>
-            <td><?php echo $team->name ?></td>
-            <td><button type="button" class="btn btn-primary">Edit</button></td>
-            <td><button type="button" class="btn btn-danger">Delete</button></td>
-        </tr>
-        <?php }?>
-    <?php }?>
-    </tbody>
-    <tfoot>
-        <tr>
-            <th>ID</th>
-            <th>Name</th>
-            <th>Edit</th>
-            <th>Delete</th>
-        </tr>
-    </tfoot>
+  <thead>
+  <tr>
+    <th>ID</th>
+    <th>Name</th>
+    <th>Fees Due ($)</th>
+    <th>Edit</th>
+    <th>Delete</th>
+  </tr>
+  </thead>
+  <tbody>
+  <?php if ($this->teams->count()) { ?>
+      <?php foreach ($this->teams as $team) { ?>
+      <tr>
+        <td><?php echo $team->id ?></td>
+        <td><?php echo $team->name ?></td>
+        <td><?php echo round($this->fees[$team->id], 2) ?></td>
+        <td>
+          <button type="button" class="btn btn-primary">Edit</button>
+        </td>
+        <td>
+          <button type="button" class="btn btn-danger">Delete</button>
+        </td>
+      </tr>
+      <?php } ?>
+  <?php } ?>
+  </tbody>
+  <tfoot>
+  <tr>
+    <th>ID</th>
+    <th>Name</th>
+    <th>Fees Due ($)</th>
+    <th>Edit</th>
+    <th>Delete</th>
+  </tr>
+  </tfoot>
 </table>

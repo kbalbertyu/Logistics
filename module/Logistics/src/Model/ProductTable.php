@@ -97,4 +97,15 @@ class ProductTable extends BaseTable {
 
         return $this->update($set, $data['productId']);
     }
+
+    public function getTeamFeesDueList() {
+        $select = $this->selectTable()
+            ->columns(['teamId', 'feesDue' => new Expression('SUM(feesDue)')])
+            ->group('teamId');
+        $rows = $this->tableGateway->selectWith($select);
+        if (!$rows->count()) {
+            return [];
+        }
+        return array_column($rows->toArray(), 'feesDue', 'teamId');
+    }
 }
