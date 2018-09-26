@@ -4,6 +4,7 @@ namespace Application\Controller;
 use RuntimeException;
 use Zend\Json\Json;
 use Zend\Mvc\Controller\AbstractActionController;
+use Zend\Mvc\Plugin\FlashMessenger\FlashMessenger;
 use Zend\ServiceManager\ServiceLocatorInterface;
 use Zend\Authentication\AuthenticationService;
 use Zend\Mvc\MvcEvent;
@@ -38,7 +39,18 @@ abstract class AbstractBaseController extends AbstractActionController {
      */
     protected $auth;
 
+    /**
+     * @var array output data rendered to view
+     */
+    protected $outPutData = [];
+
+    /**
+     * @var FlashMessenger
+     */
+    protected $messenger;
+
     public function __construct(ServiceLocatorInterface $container) {
+        $this->messenger = $this->flashMessenger();
         $this->logger = BaseModel::getLogger();
         $this->container = $container;
         $auth = new AuthenticationService();
@@ -46,6 +58,16 @@ abstract class AbstractBaseController extends AbstractActionController {
         $this->auth = $auth;
         $this->user = $this->auth->getIdentity();
         $this->initUser();
+    }
+
+    protected function addOutPut($key, $value = null) {
+        if (!is_array($key)) {
+            $this->outPutData[$key] = $value;
+            return;
+        }
+        foreach ($key as $k => $v) {
+            $this->outPutData[$k] = $v;
+        }
     }
 
     protected function initConsoleMode() {
@@ -113,6 +135,10 @@ abstract class AbstractBaseController extends AbstractActionController {
         return new ViewModel([
             'data' => Json::encode($data)
         ]);
+    }
+
+    protected function renderView() {
+        return new ViewModel($this->outPutData);
     }
 
     protected function listFiles($path) {
