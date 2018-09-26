@@ -33,15 +33,15 @@ class Module implements ConfigProviderInterface {
                     $resultSetPrototype->setArrayObjectPrototype(new Model\Team());
                     return new TableGateway(BaseTable::TEAM_TABLE, $dbAdapter, null, $resultSetPrototype);
                 },
-                Model\HistoryTable::class => function ($container) {
-                    $tableGateway = $container->get(Model\HistoryTableGateway::class);
-                    return new Model\HistoryTable($tableGateway);
+                Model\PackageTable::class => function ($container) {
+                    $tableGateway = $container->get(Model\PackageTableGateway::class);
+                    return new Model\PackageTable($tableGateway);
                 },
-                Model\HistoryTableGateway::class => function ($container) {
+                Model\PackageTableGateway::class => function ($container) {
                     $dbAdapter = $container->get('Db\Adapter');
                     $resultSetPrototype = new ResultSet();
-                    $resultSetPrototype->setArrayObjectPrototype(new Model\History());
-                    return new TableGateway(BaseTable::INVENTORY_TABLE, $dbAdapter, null, $resultSetPrototype);
+                    $resultSetPrototype->setArrayObjectPrototype(new Model\Package());
+                    return new TableGateway(BaseTable::PACKAGE_TABLE, $dbAdapter, null, $resultSetPrototype);
                 },
                 Model\ProductTable::class => function ($container) {
                     $tableGateway = $container->get(Model\ProductTableGateway::class);

@@ -1,3 +1,6 @@
+<?php echo $this->flashMessenger()->render('success', array('alert', 'alert-success')); ?>
+<?php echo $this->flashMessenger()->render('error', array('alert', 'alert-danger')); ?>
+
 <table id="team-table" class="table display" cellspacing="0" width="100%">
   <thead>
   <tr>
@@ -6,8 +9,10 @@
     <th>Item Name</th>
     <th>Brand</th>
     <th>Qty</th>
-    <th>Size</th>
-    <th>Weight</th>
+    <th>Shipping Cost($)</th>
+    <th>Shipping Fee($)</th>
+    <th>Service Fee($)</th>
+    <th>Fees Due($)</th>
     <th>Actions</th>
   </tr>
   </thead>
@@ -20,13 +25,16 @@
         <td><?php echo $product->itemName ?></td>
         <td><?php echo $product->brand ?></td>
         <td><?php echo $product->qty ?></td>
-        <td><?php echo $product->renderSize() ?></td>
-        <td><?php echo $product->weight ?></td>
-        <td>
-          <a href="<?php echo $this->url('inventory', ['action' => 'add'], ['query' => ['productId' => $product->id, 'type' => 'in', 'teamId' => $product->teamId]]) ?>" class="btn btn-success">Receive(收货)</a>
-          <a href="<?php echo $this->url('inventory', ['action' => 'add'], ['query' => ['productId' => $product->id, 'type' => 'out', 'teamId' => $product->teamId]]) ?>" class="btn btn-secondary">Send Out(发货)</a>
-          <button type="button" class="btn btn-primary">Edit</button>
-          <button type="button" class="btn btn-danger">Delete</button>
+        <td><?php echo round($product->shippingCost, 2) ?></td>
+        <td><?php echo round($product->shippingFee, 2) ?></td>
+        <td><?php echo round($product->serviceFee, 2) ?></td>
+        <td><?php echo round($product->feesDue, 2) ?></td>
+        <td class="actions">
+          <a href="<?php echo $this->url('inventory', ['action' => 'add', 'id' => $product->id], ['query' => ['type' => 'in', 'teamId' => $product->teamId]]) ?>" class="btn btn-success">Receive Package</a>
+          <a href="<?php echo $this->url('inventory', ['action' => 'add', 'id' => $product->id], ['query' => ['type' => 'out', 'teamId' => $product->teamId]]) ?>" class="btn btn-secondary">Ship Package</a>
+          <a href="<?php echo $this->url('inventory', ['action' => 'charge', 'id' => $product->id]) ?>" class="btn btn-info">Charge Fees</a>
+          <a href="<?php echo $this->url('inventory', ['action' => 'edit-product', 'id' => $product->id]) ?>" class="btn btn-primary">Edit</a>
+          <a href="<?php echo $this->url('inventory', ['action' => 'delete-product', 'id' => $product->id]) ?>" class="btn btn-danger delete">Delete</a>
         </td>
       </tr>
       <?php } ?>
@@ -39,9 +47,22 @@
     <th>Item Name</th>
     <th>Brand</th>
     <th>Qty</th>
-    <th>Size</th>
-    <th>Weight</th>
+    <th>Shipping Cost($)</th>
+    <th>Shipping Fee($)</th>
+    <th>Service Fee($)</th>
+    <th>Fees Due($)</th>
     <th>Actions</th>
   </tr>
   </tfoot>
 </table>
+<script>
+$(function() {
+    $('.delete').click(function(e) {
+        e.preventDefault();
+        if (!confirm('Delete product? Will delete the associated packages.')) {
+            return;
+        }
+        location.href = $(this).attr('href');
+    });
+})
+</script>

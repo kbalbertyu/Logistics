@@ -68,3 +68,5 @@ li{list-style:none;}
 /** Auto Complete **/
 .ui-autocomplete {position: absolute;top: 0;left: 0;cursor: default;padding:0;}
 .ui-menu .ui-menu-item-wrapper {position: relative;padding: 3px 1em 3px .4em;}
+
+.actions .btn{margin-bottom:5px;}

@@ -1,81 +1,64 @@
+<?php echo $this->flashMessenger()->render('success', array('alert', 'alert-success')); ?>
+<?php echo $this->flashMessenger()->render('error', array('alert', 'alert-danger')); ?>
 <form method="post">
   <div class="form-group">
+    <label>Business Team:</label> <?php echo $this->team->name ?>
+  </div>
+  <div class="form-group">
     <label for="itemName">Item Name</label>
-    <input id="itemName" placeholder="Enter item name" name="itemName" value="" type="text" class="form-control">
+    <input id="itemName" data-url="inventory/get-item-names" placeholder="Enter item name" name="itemName" value="<?php echo $this->product->itemName ?>" type="text" class="form-control ui-autocomplete-input">
   </div>
   <fieldset>
-    <legend></legend>
+    <legend>Product Info</legend>
     <div class="form-group">
       <label for="brand">Brand</label>
-      <input id="brand" placeholder="Enter brand name" name="brand" value="" type="text" class="form-control">
+      <input id="brand" data-url="inventory/get-brand-names" placeholder="Enter brand name" name="brand" value="<?php echo $this->brand->name ?>" type="text" class="form-control ui-autocomplete-input">
     </div>
     <div class="form-group">
-      <label for="team">Team</label>
-      <select class="form-control" name="teamId">
-        <option value=""> - Select Business Team - </option>
-        <?php foreach ($this->teams as $team) {?>
-        <option value="<?php echo $team->id ?>"><?php echo $team->name ?></option>
-        <?php }?>
-      </select>
+      <label for="qty">Qty</label> <?php echo $this->package->type == 'out' ? '<em>(Maximum=' . $this->product->qty . ')</em>' : '' ?>
+      <input id="qty" name="qty" min="0" <?php echo $this->package->type == 'out' ? 'max="' . $this->product->qty . '"' : '' ?> value="<?php echo $this->package->qty ?>" type="number" class="form-control">
     </div>
     <div class="form-group">
-      <label for="qty">Qty</label>
-      <input id="qty" name="qty" value="" type="text" class="form-control">
-    </div>
-    <div class="form-group">
-      <label for="type">Transport Type</label>
-      <select class="form-control" name="type">
-        <option value=""> - Select Type - </option>
-        <option value="in">Received In</option>
-        <option value="out">Sent Out</option>
-      </select>
-    </div>
-    <div class="form-group">
-      <label for="note">Note</label>
-      <input id="note" name="note" value="" type="text" class="form-control">
+      <label for="note">Note</label> <em>(Optional)</em>
+      <input id="note" name="note" value="<?php echo $this->package->note ?>" type="text" class="form-control">
     </div>
   </fieldset>
   <fieldset>
     <legend>Size (inch)</legend>
     <div class="form-group">
       <label for="width">Width</label>
-      <input id="width" name="width" value="" type="text" class="form-control">
+      <input id="width" name="width" value="<?php echo $this->package->width ?>" type="text" class="form-control">
+    </div>
+    <div class="form-group">
+      <label for="height">Length</label>
+      <input id="length" name="length" value="<?php echo $this->package->length ?>" type="text" class="form-control">
     </div>
     <div class="form-group">
       <label for="height">Height</label>
-      <input id="height" name="height" value="" type="text" class="form-control">
-    </div>
-    <div class="form-group">
-      <label for="height">Height</label>
-      <input id="height" name="height" value="" type="text" class="form-control">
+      <input id="height" name="height" value="<?php echo $this->package->height ?>" type="text" class="form-control">
     </div>
     <div class="form-group">
       <label for="weight">Weight</label>
-      <input id="weight" name="weight" value="" type="text" class="form-control">
+      <input id="weight" name="weight" value="<?php echo $this->package->weight ?>" type="text" class="form-control">
     </div>
   </fieldset>
   <fieldset>
     <legend>Fees ($)</legend>
     <div class="form-group">
-      <label for="shippingCost">Shipping Cost</label>
-      <input id="shippingCost" name="shippingCost" value="" type="text" class="form-control">
+      <label for="shippingCost">Shipping Cost</label> (<em>Internal use, 内部使用</em>)
+      <input id="shippingCost" name="shippingCost" value="<?php echo $this->package->shippingCost ?>" type="text" class="form-control">
     </div>
     <div class="form-group">
-      <label for="shippingFee">Shipping Fee</label>
-      <input id="shippingFee" name="shippingFee" value="" type="text" class="form-control">
+      <label for="shippingFee">Shipping Fee</label> (<em>External use, 向外收费</em>)
+      <input id="shippingFee" name="shippingFee" value="<?php echo $this->package->shippingFee ?>" type="text" class="form-control">
     </div>
     <div class="form-group">
       <label for="serviceFee">Service Fee</label>
-      <input id="serviceFee" name="serviceFee" value="" type="text" class="form-control">
+      <input id="serviceFee" name="serviceFee" value="<?php echo $this->package->serviceFee ?>" type="text" class="form-control">
     </div>
   </fieldset>
-
   <button type="submit" class="btn btn-primary">Submit</button>
 </form>
-<?php if (!empty($this->message)) { ?>
-<div class="alert alert-danger" role="alert">
-  <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
-  <span class="sr-only">Error:</span>
-  <?php echo $this->message ?>
-</div>
-<?php } ?>
+<link href="<?php echo $this->basePath('js/jquery-ui-1.12.1.custom/jquery-ui.theme.min.css') ?>" media="screen" rel="stylesheet" type="text/css">
+<script type="text/javascript" src="<?php echo $this->basePath('/js/jquery-ui-1.12.1.custom/jquery-ui.min.js') ?>"></script>
+

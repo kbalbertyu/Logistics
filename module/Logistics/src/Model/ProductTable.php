@@ -9,11 +9,11 @@
 namespace Logistics\Model;
 
 
-use Application\Model\BaseModel;
 use Application\Model\BaseTable;
+use RuntimeException;
+use Zend\Db\Sql\Expression;
 use Zend\Db\Sql\Select;
 use Zend\Db\Sql\Where;
-use Zend\Stdlib\ArrayUtils;
 
 class ProductTable extends BaseTable {
 
@@ -28,7 +28,11 @@ class ProductTable extends BaseTable {
 
     public function getProductId($data) {
         if (is_numeric($data['itemName'])) {
-            return $this->getRowById($data['itemName'])->id;
+            $find = $this->getRowById($data['itemName']);
+            if (empty($find)) {
+                throw new RuntimeException('Product ID invalid: ' . $data['itemName']);
+            }
+            return $find->id;
         }
         $set = [
             'itemName' => $data['itemName'],
@@ -39,18 +43,8 @@ class ProductTable extends BaseTable {
         if ($find) {
             return $find->id;
         }
-        $set = ArrayUtils::merge($set, [
-            'length' => $data['length'],
-            'width' => $data['width'],
-            'height' => $data['height'],
-            'weight' => $data['weight']
-        ]);
-        BaseModel::filterNumericColumns($set, Product::NUMERIC_COLUMNS);
-        if ($this->add($set)) {
-            return $this->getInsertId();
-        }
-        throw new \RuntimeException(sprintf('Unable to save product: brand=%d, team=%d, item name=%s',
-            $data['brandId'], $data['teamId'], $data['itemName']));
+        $this->add($set);
+        return $this->getInsertId();
     }
 
     public function search($term) {
@@ -76,5 +70,33 @@ class ProductTable extends BaseTable {
             ];
         }
         return $data;
+    }
+
+    public function updateQtyAndFees($data, Package $package = null, Product $product = null) {
+        $set = [];
+        if (empty($package)) {
+            $set['qty'] = new Expression(sprintf('qty %s %d',
+                $data['type'] == 'in' ? '+' : '-', $data['qty']));
+
+            foreach (['shippingCost', 'shippingFee', 'serviceFee'] as $column) {
+                $data[$column] = !empty($data[$column]) ? $data[$column] : 0;
+                $set[$column] = new Expression(sprintf('%s + %.2f', $column, $data[$column]));
+            }
+            $set['feesDue'] = new Expression(sprintf('feesDue + %.2f',
+                ($data['shippingFee'] + $data['serviceFee'])));
+        } else {
+            $sign = $package->type == 'in' ? 1 : -1;
+            $set['qty'] =  $product->qty + $sign * ($data['qty'] - $package->qty);
+
+            foreach (['shippingCost', 'shippingFee', 'serviceFee'] as $column) {
+                $data[$column] = !empty($data[$column]) ? $data[$column] : 0;
+                $set[$column] = $product->$column + ($data[$column] - $package->$column);
+            }
+            $set['feesDue'] = $product->feesDue +
+                ($data['shippingFee'] + $data['serviceFee']) -
+                ($package->shippingFee + $package->serviceFee);
+        }
+
+        return $this->update($set, $data['productId']);
     }
 }

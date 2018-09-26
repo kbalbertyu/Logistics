@@ -8,9 +8,6 @@
           <option value="<?php echo $team->id ?>"><?php echo $team->name ?></option>
         <?php }?>
     </select>
-    <?php if ($this->product) {?>
-    <input type="hidden" name="productId" value="<?php echo $this->product->id ?>">
-    <?php }?>
     <input type="hidden" name="type" value="<?php echo $this->type ?>">
     <br />
     <button type="submit" class="btn btn-primary">Next</button>
@@ -19,27 +16,24 @@
 <?php } else {?>
 <form method="post">
   <div class="form-group">
+    <label>Business Team:</label> <?php echo $this->team->name ?>
+  </div>
+  <div class="form-group">
     <label for="itemName">Item Name</label>
     <input <?php echo $this->product ? 'disabled' : '' ?> id="itemName" data-url="inventory/get-item-names" placeholder="Enter item name" name="itemName" value="<?php echo $this->product ? $this->product->itemName : '' ?>" type="text" class="form-control ui-autocomplete-input">
-    <?php if ($this->product) {?>
-    <input id="productId" type="hidden" name="itemName" value="<?php echo $this->product ? $this->product->id : '' ?>" />
-    <?php }?>
   </div>
   <fieldset>
     <legend>Product Info</legend>
     <div class="form-group">
       <label for="brand">Brand</label>
       <input <?php echo $this->brand ? 'disabled' : '' ?> id="brand" data-url="inventory/get-brand-names" placeholder="Enter brand name" name="brand" value="<?php echo $this->brand ? $this->brand->name : '' ?>" type="text" class="form-control ui-autocomplete-input">
-      <?php if ($this->brand) {?>
-      <input type="hidden" name="brand" value="<?php echo $this->brand->id ?>" />
-      <?php }?>
     </div>
     <div class="form-group">
-      <label for="qty">Qty</label>
-      <input id="qty" name="qty" value="" type="text" class="form-control">
+      <label for="qty">Qty</label> <?php echo $this->type == 'out' ? '<em>(Maximum=' . $this->product->qty . ')</em>' : '' ?>
+      <input id="qty" name="qty" value="" type="number" min="0" <?php echo $this->type == 'out' ? 'max="' . $this->product->qty . '"' : '' ?> class="form-control">
     </div>
     <div class="form-group">
-      <label for="note">Note</label>
+      <label for="note">Note</label> <em>(Optional)</em>
       <input id="note" name="note" value="" type="text" class="form-control">
     </div>
   </fieldset>
@@ -47,19 +41,19 @@
     <legend>Size (inch)</legend>
     <div class="form-group">
       <label for="width">Width</label>
-      <input <?php echo $this->product ? 'disabled' : '' ?> id="width" name="width" value="<?php echo $this->product ? $this->product->width : '' ?>" type="text" class="form-control">
+      <input id="width" name="width" value="<?php echo $this->product ? $this->product->width : '' ?>" type="text" class="form-control">
     </div>
     <div class="form-group">
       <label for="height">Length</label>
-      <input <?php echo $this->product ? 'disabled' : '' ?> id="length" name="length" value="<?php echo $this->product ? $this->product->length : '' ?>" type="text" class="form-control">
+      <input id="length" name="length" value="<?php echo $this->product ? $this->product->length : '' ?>" type="text" class="form-control">
     </div>
     <div class="form-group">
       <label for="height">Height</label>
-      <input <?php echo $this->product ? 'disabled' : '' ?> id="height" name="height" value="<?php echo $this->product ? $this->product->height : '' ?>" type="text" class="form-control">
+      <input id="height" name="height" value="<?php echo $this->product ? $this->product->height : '' ?>" type="text" class="form-control">
     </div>
     <div class="form-group">
       <label for="weight">Weight</label>
-      <input <?php echo $this->product ? 'disabled' : '' ?> id="weight" name="weight" value="<?php echo $this->product ? $this->product->weight : '' ?>" type="text" class="form-control">
+      <input id="weight" name="weight" value="<?php echo $this->product ? $this->product->weight : '' ?>" type="text" class="form-control">
     </div>
   </fieldset>
   <fieldset>

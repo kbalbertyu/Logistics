@@ -10,23 +10,33 @@ namespace Logistics\Model;
 
 
 use Application\Model\BaseModel;
+use Application\Model\Validation;
 
 /**
  * @property int id
  * @property int teamId
  * @property string itemName
  * @property int brandId
- * @property float length
- * @property float width
- * @property float height
- * @property float weight
+ * @property int qty
+ * @property float shippingCost
+ * @property float shippingFee
+ * @property float serviceFee
+ * @property float feesDue
  */
 class Product extends BaseModel {
+    private const REQUIRED_COLUMNS = ['itemName', 'brand'];
 
-    public const NUMERIC_COLUMNS = ['length', 'width', 'height', 'weight'];
-
-    public function renderSize() {
-        return sprintf('Length=%.2f, Width=%.2f, Height=%.2f',
-            $this->length, $this->weight, $this->height);
+    /**
+     * @param $data
+     * @return Validation
+     */
+    public static function validate($data) {
+        $validation = new Validation();
+        foreach ($data as $field => $value) {
+            if (in_array($field, self::REQUIRED_COLUMNS) && empty($value)) {
+                $validation->addError($field . ' cannot be empty.');
+            }
+        }
+        return $validation;
     }
 }

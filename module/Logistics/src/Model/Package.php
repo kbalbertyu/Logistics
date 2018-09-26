@@ -14,10 +14,14 @@ use Application\Model\Validation;
 
 /**
  * @property int id
- * @property int inventoryId
+ * @property int productId
  * @property int teamId
  * @property string qty
  * @property string type
+ * @property float length
+ * @property float width
+ * @property float height
+ * @property float weight
  * @property float shippingCost
  * @property float shippingFee
  * @property float serviceFee
@@ -26,9 +30,9 @@ use Application\Model\Validation;
  * @property string username
  * @property string note
  */
-class History extends BaseModel {
+class Package extends BaseModel {
 
-    public const NUMERIC_COLUMNS = ['qty', 'shippingCost', 'shippingFee', 'serviceFee'];
+    public const NUMERIC_COLUMNS = ['qty', 'shippingCost', 'shippingFee', 'serviceFee', 'length', 'width', 'height', 'weight'];
 
     private const REQUIRED_COLUMNS = ['itemName', 'brand', 'teamId', 'qty', 'type'];
 
@@ -49,8 +53,13 @@ class History extends BaseModel {
         return $validation;
     }
 
+    public function renderSize() {
+        return sprintf('Length=%.2f, Width=%.2f, Height=%.2f',
+            $this->length, $this->weight, $this->height);
+    }
+
     public function renderProcessType() {
-        return sprintf('<span class="btn btn-%s">%s</span>',
+        return sprintf('<span class="badge badge-%s">%s</span>',
             $this->type == 'in' ? 'success' : 'warning',
             $this->type == 'in' ? 'Received' : 'Sent Out');
     }

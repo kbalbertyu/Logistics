@@ -10,133 +10,251 @@ namespace Logistics\Controller;
 
 
 use Application\Controller\AbstractBaseController;
+use Application\Model\BaseModel;
+use Exception;
 use Logistics\Model\BrandTable;
-use Logistics\Model\History;
+use Logistics\Model\Package;
+use Logistics\Model\Product;
 use Logistics\Model\ProductTable;
-use Logistics\Model\HistoryTable;
+use Logistics\Model\PackageTable;
 use Logistics\Model\TeamTable;
 use Zend\ServiceManager\ServiceLocatorInterface;
-use Zend\View\Model\ViewModel;
 
 /**
- * @property HistoryTable table
+ * @property PackageTable table
  * @property ProductTable productTable
+ * @property TeamTable teamTable
+ * @property BrandTable brandTable
  */
 class InventoryController extends AbstractBaseController {
 
     public function __construct(ServiceLocatorInterface $container) {
         parent::__construct($container);
-        $this->table = $this->getTableModel(HistoryTable::class);
+        $this->table = $this->getTableModel(PackageTable::class);
         $this->productTable = $this->getTableModel(ProductTable::class);
+        $this->teamTable = $this->getTableModel(TeamTable::class);
+        $this->brandTable = $this->getTableModel(BrandTable::class);
         $this->nav = 'inventory';
     }
 
     public function indexAction() {
-        $this->title = 'Inventory History Records';
-        $histories = $this->table->getInventoryList();
-        return new ViewModel([
-            'histories' => $histories
-        ]);
+        $this->title = 'Package List';
+        $this->addOutPut('packages', $this->table->getPackageList());
+        return $this->renderView();
     }
 
     public function productsAction() {
         $this->title = 'Product List';
-        $products = $this->productTable->getProducts();
-        return new ViewModel([
-            'products' => $products
-        ]);
+        $this->addOutPut('products', $this->productTable->getProducts());
+        return $this->renderView();
     }
 
     public function addAction() {
-        $output = [
+        $this->addOutPut([
             'valid' => false,
             'message' => ''
-        ];
+        ]);
 
         // Process Type
         $type = $this->params()->fromQuery('type');
         if (empty($type)) {
-            $this->flashMessenger()->addErrorMessage('Invalid parameter.');
+            $this->messenger->addErrorMessage('Invalid parameter.');
             $this->redirect()->toRoute('inventory');
         }
         $output['type'] = $type;
-        $this->title = $type == 'in' ? 'Receive(收货)' : 'Send Out(发货)';
+        $this->addOutPut('type', $type);
+        $this->title = $type == 'in' ? 'Receive New Package' : 'Ship Package';
 
         // Team
         $teamId = $this->params()->fromQuery('teamId');
         if (!empty($teamId)) {
-            $team = $this->getTableModel(TeamTable::class)->getRowById($teamId);
-            $output['team'] = $team;
+            $team = $this->teamTable->getRowById($teamId);
+            $this->addOutPut('team', $team);
         }
 
         // Product
-        $productId = $this->params()->fromQuery('productId');
+        $productId = $this->params()->fromRoute('id');
         if (!empty($productId)) {
             $product = $this->productTable->getRowById($productId);
-            $output['product'] = $product;
-            $brand = $this->getTableModel(BrandTable::class)->getRowById($product->brandId);
-            $output['brand'] = $brand;
+            $this->addOutPut('product', $product);
+
+            $brand = $this->brandTable->getRowById($product->brandId);
+            $this->addOutPut('brand', $brand);
         }
 
         if ($this->getRequest()->isPost()) {
             $data = $this->getRequest()->getPost()->toArray();
             $data['type'] = $type;
             $data['teamId'] = $teamId;
-            $validate = History::validate($data);
+            if (!empty($product)) {
+                $data['itemName'] = $product->id;
+            }
+            if (!empty($brand)) {
+                $data['brand'] = $brand->id;
+            }
+            $validate = Package::validate($data);
             if (!$validate->isValid()) {
-                $output['post'] = $data;
-                $output['message'] = nl2br($validate->stringify());
-                return new ViewModel($output);
+                $this->addOutPut([
+                    'post' => $data,
+                    'message' => nl2br($validate->stringify())
+                ]);
+                return $this->renderView();
             }
             try {
-                $data['brandId'] = is_numeric($data['brand']) ? $data['brand'] :
-                    $this->getTableModel(BrandTable::class)->getBrandId($data['brand']);
+                $data['brandId'] = $this->brandTable->getBrandId($data['brand']);
                 $data['productId'] = $this->productTable->getProductId($data);
                 $data['username'] = $this->user;
-                $this->table->saveInventory($data);
-                $this->flashMessenger()->addSuccessMessage('Inventory saved successfully.');
-                $this->redirect()->toRoute('inventory');
-            } catch (\Exception $e) {
-                $output['message'] = $e->getMessage();
+                BaseModel::filterNumericColumns($data, Package::NUMERIC_COLUMNS);
+                $packageId = $this->table->savePackage($data);
+                try {
+                    $this->productTable->updateQtyAndFees($data);
+                    $this->messenger->addSuccessMessage('Inventory saved successfully.');
+                    $this->redirect()->toRoute('inventory');
+                } catch (Exception $e) {
+                    $this->table->delete($packageId);
+                }
+            } catch (Exception $e) {
+                $this->addOutPut('message', $e->getMessage());
             }
         }
-        $output['teams'] = $this->getTableModel(TeamTable::class)->getTeamListForSelection();
-        return new ViewModel($output);
+        $this->addOutPut('teams', $this->teamTable->getTeamListForSelection());
+        return $this->renderView();
     }
 
     public function editAction() {
-        $output = [
-            'valid' => false,
-            'message' => ''
-        ];
+        // Inventory Record
         $id = $this->params()->fromRoute('id');
         if (empty($id)) {
-            $output['message'] = 'Please provide the ID.';
-            return new ViewModel($output);
+            $this->messenger->addErrorMessage('Please provide the ID.');
+            $this->redirect()->refresh();
+            return;
         }
-        $output['inventory'] = $this->table->getRowById($id);
+        $package = $this->table->getRowById($id);
+        if (empty($package)) {
+            $this->messenger->addErrorMessage('Invalid package ID: ' . $id);
+            $this->redirect()->refresh();
+        }
+        $this->title = 'Edit Package (ID: ' . $id . ')';
+        $this->addOutPut('package', $package);
+
+        // Product Info
+        $product = $this->productTable->getRowById($package->productId);
+        $this->addOutPut('product', $product);
+
+        // Brand
+        $this->addOutPut('brand', $this->brandTable->getRowById($product->brandId));
+
+        // Team
+        $this->addOutPut('team', $this->teamTable->getRowById($product->teamId));
+
         if ($this->getRequest()->isPost()) {
             $data = $this->getRequest()->getPost();
-            $validate = History::validate($data);
+            $data['teamId'] = $product->teamId;
+            $data['type'] = $package->type;
+            $validate = Package::validate($data);
             if (!$validate->isValid()) {
-                $output['post'] = $data;
-                $output['message'] = nl2br($validate->stringify());
-                return new ViewModel($output);
+                $this->messenger->addErrorMessage(nl2br($validate->stringify()));
+                $this->redirect()->refresh();
             }
             try {
                 $data['brandId'] = is_numeric($data['brand']) ? $data['brand'] :
                     $this->getTableModel(BrandTable::class)->getBrandId($data['brand']);
                 $data['productId'] = $this->productTable->getProductId($data);
-                $data['username'] = $this->user;
-                $this->table->saveInventory($data);
-                $this->flashMessenger()->addSuccessMessage('History saved successfully.');
-                $this->redirect()->toRoute('inventory');
-            } catch (\Exception $e) {
-                $output['message'] = $e->getMessage();
+                BaseModel::filterNumericColumns($data, Package::NUMERIC_COLUMNS);
+                $this->table->savePackage($data, $id);
+
+                $this->productTable->updateQtyAndFees($data, $package, $product);
+                $this->messenger->addSuccessMessage('Package saved successfully.');
+                $this->redirect()->refresh();
+            } catch (Exception $e) {
+                $this->messenger->addSuccessMessage('Package saved failed: ' . $e->getMessage());
+                $this->redirect()->refresh();
             }
         }
-        $output['teams'] = $this->getTableModel(TeamTable::class)->getTeamListForSelection();
-        return new ViewModel($output);
+        $this->addOutPut('teams', $this->teamTable->getTeamListForSelection());
+        return $this->renderView();
+    }
+
+    public function editProductAction() {
+        $id = $this->params()->fromRoute('id');
+        if (empty($id)) {
+            $this->messenger->addErrorMessage('Please provide a product ID.');
+            $this->redirect()->toRoute('inventory', ['action' => 'products']);
+        }
+        $product = $this->productTable->getRowById($id);
+        if (empty($product)) {
+            $this->messenger->addErrorMessage('Invalid product ID.');
+            $this->redirect()->toRoute('inventory', ['action' => 'products']);
+        }
+        $this->addOutPut('product', $product);
+        $this->addOutPut('team', $this->teamTable->getRowById($product->teamId));
+        $this->addOutPut('brand', $this->brandTable->getRowById($product->brandId));
+        if ($this->getRequest()->isPost()) {
+            $data = $this->getRequest()->getPost();
+            $validate = Product::validate($data);
+            if (!$validate->isValid()) {
+                $this->messenger->addErrorMessage(nl2br($validate->stringify()));
+                $this->redirect()->refresh();
+                return;
+            }
+            $data['brandId'] = $this->brandTable->getBrandId($data['brand']);
+            if ($product->brandId == $data['brandId'] &&
+                $product->itemName == $data['itemName']) {
+                $this->messenger->addSuccessMessage('Product info not changed.');
+                $this->redirect()->refresh();
+                return;
+            }
+            $this->productTable->update([
+                'itemName' => $data['itemName'],
+                'brandId' => $data['brandId']
+            ], $id);
+            $this->messenger->addSuccessMessage('Product info updated.');
+            $this->redirect()->refresh();
+            return;
+        }
+        return $this->renderView();
+    }
+
+    public function chargeAction() {
+        $id = $this->params()->fromRoute('id');
+        if (empty($id)) {
+            $this->messenger->addErrorMessage('Invalid product ID.');
+            $this->redirect()->toRoute('inventory', ['action' => 'products']);
+            return;
+        }
+        $product = $this->productTable->getRowById($id);
+        if (empty($product)) {
+            $this->messenger->addErrorMessage('Invalid product ID.');
+            $this->redirect()->toRoute('inventory', ['action' => 'products']);
+            return;
+        }
+        if ($this->getRequest()->isPost()) {
+            $amount = $this->getRequest()->getPost('amount');
+            if ($amount > $product->feesDue) {
+                $this->messenger->addErrorMessage(sprintf('Charging amount %.2f is greater than the due amount %.2f.',
+                    $amount, $product->feesDue));
+                $this->redirect()->refresh();
+                return;
+            }
+            $this->productTable->update([
+                'feesDue' => ($product->feesDue - $amount)
+            ], $id);
+        }
+        $this->addOutPut('product', $product);
+        $this->renderView();
+    }
+
+    public function deleteProductAction() {
+        $id = $this->params()->fromRoute('id');
+        if (empty($id)) {
+            $this->messenger->addErrorMessage('Invalid product ID.');
+        } else {
+            $this->productTable->delete($id);
+            $this->table->deleteBy(['productId' => $id]);
+            $this->messenger->addSuccessMessage('The product and its packages are deleted.');
+        }
+
+        $this->redirect()->toRoute('inventory', ['action' => 'products']);
     }
 
     public function getItemNamesAction() {
