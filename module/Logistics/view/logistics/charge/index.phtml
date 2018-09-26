@@ -1,0 +1,33 @@
+<table id="team-table" class="table display" cellspacing="0" width="100%">
+  <thead>
+  <tr>
+    <th>ID</th>
+    <th>Item Name</th>
+    <th>Team</th>
+    <th>Amount ($)</th>
+    <th>Date</th>
+  </tr>
+  </thead>
+  <tbody>
+  <?php if ($this->charges->count()) { ?>
+      <?php foreach ($this->charges as $charge) { ?>
+      <tr>
+        <td><?php echo $charge->id ?></td>
+        <td><?php echo $charge->itemName ?></td>
+        <td><?php echo $charge->team ?></td>
+        <td><?php echo round($charge->amount, 2) ?></td>
+        <td><?php echo $charge->date ?></td>
+      </tr>
+      <?php } ?>
+  <?php } ?>
+  </tbody>
+  <tfoot>
+  <tr>
+    <th>ID</th>
+    <th>Item Name</th>
+    <th>Team</th>
+    <th>Amount ($)</th>
+    <th>Date</th>
+  </tr>
+  </tfoot>
+</table>

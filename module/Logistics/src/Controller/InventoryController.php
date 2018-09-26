@@ -13,6 +13,7 @@ use Application\Controller\AbstractBaseController;
 use Application\Model\BaseModel;
 use Exception;
 use Logistics\Model\BrandTable;
+use Logistics\Model\ChargeTable;
 use Logistics\Model\Package;
 use Logistics\Model\Product;
 use Logistics\Model\ProductTable;
@@ -58,7 +59,7 @@ class InventoryController extends AbstractBaseController {
         // Process Type
         $type = $this->params()->fromQuery('type');
         if (empty($type)) {
-            $this->messenger->addErrorMessage('Invalid parameter.');
+            $this->flashMessenger()->addErrorMessage('Invalid parameter.');
             $this->redirect()->toRoute('inventory');
         }
         $output['type'] = $type;
@@ -83,6 +84,11 @@ class InventoryController extends AbstractBaseController {
         }
 
         if ($this->getRequest()->isPost()) {
+            if (empty($team)) {
+                $this->flashMessenger()->addErrorMessage('Please select a business team.');
+                $this->redirect()->refresh();
+                return;
+            }
             $data = $this->getRequest()->getPost()->toArray();
             $data['type'] = $type;
             $data['teamId'] = $teamId;
@@ -108,7 +114,7 @@ class InventoryController extends AbstractBaseController {
                 $packageId = $this->table->savePackage($data);
                 try {
                     $this->productTable->updateQtyAndFees($data);
-                    $this->messenger->addSuccessMessage('Inventory saved successfully.');
+                    $this->flashMessenger()->addSuccessMessage('Inventory saved successfully.');
                     $this->redirect()->toRoute('inventory');
                 } catch (Exception $e) {
                     $this->table->delete($packageId);
@@ -125,13 +131,13 @@ class InventoryController extends AbstractBaseController {
         // Inventory Record
         $id = $this->params()->fromRoute('id');
         if (empty($id)) {
-            $this->messenger->addErrorMessage('Please provide the ID.');
+            $this->flashMessenger()->addErrorMessage('Please provide the ID.');
             $this->redirect()->refresh();
             return;
         }
         $package = $this->table->getRowById($id);
         if (empty($package)) {
-            $this->messenger->addErrorMessage('Invalid package ID: ' . $id);
+            $this->flashMessenger()->addErrorMessage('Invalid package ID: ' . $id);
             $this->redirect()->refresh();
         }
         $this->title = 'Edit Package (ID: ' . $id . ')';
@@ -153,7 +159,7 @@ class InventoryController extends AbstractBaseController {
             $data['type'] = $package->type;
             $validate = Package::validate($data);
             if (!$validate->isValid()) {
-                $this->messenger->addErrorMessage(nl2br($validate->stringify()));
+                $this->flashMessenger()->addErrorMessage(nl2br($validate->stringify()));
                 $this->redirect()->refresh();
             }
             try {
@@ -164,10 +170,10 @@ class InventoryController extends AbstractBaseController {
                 $this->table->savePackage($data, $id);
 
                 $this->productTable->updateQtyAndFees($data, $package, $product);
-                $this->messenger->addSuccessMessage('Package saved successfully.');
+                $this->flashMessenger()->addSuccessMessage('Package saved successfully.');
                 $this->redirect()->refresh();
             } catch (Exception $e) {
-                $this->messenger->addSuccessMessage('Package saved failed: ' . $e->getMessage());
+                $this->flashMessenger()->addSuccessMessage('Package saved failed: ' . $e->getMessage());
                 $this->redirect()->refresh();
             }
         }
@@ -178,12 +184,12 @@ class InventoryController extends AbstractBaseController {
     public function editProductAction() {
         $id = $this->params()->fromRoute('id');
         if (empty($id)) {
-            $this->messenger->addErrorMessage('Please provide a product ID.');
+            $this->flashMessenger()->addErrorMessage('Please provide a product ID.');
             $this->redirect()->toRoute('inventory', ['action' => 'products']);
         }
         $product = $this->productTable->getRowById($id);
         if (empty($product)) {
-            $this->messenger->addErrorMessage('Invalid product ID.');
+            $this->flashMessenger()->addErrorMessage('Invalid product ID.');
             $this->redirect()->toRoute('inventory', ['action' => 'products']);
         }
         $this->addOutPut('product', $product);
@@ -193,14 +199,14 @@ class InventoryController extends AbstractBaseController {
             $data = $this->getRequest()->getPost();
             $validate = Product::validate($data);
             if (!$validate->isValid()) {
-                $this->messenger->addErrorMessage(nl2br($validate->stringify()));
+                $this->flashMessenger()->addErrorMessage(nl2br($validate->stringify()));
                 $this->redirect()->refresh();
                 return;
             }
             $data['brandId'] = $this->brandTable->getBrandId($data['brand']);
             if ($product->brandId == $data['brandId'] &&
                 $product->itemName == $data['itemName']) {
-                $this->messenger->addSuccessMessage('Product info not changed.');
+                $this->flashMessenger()->addSuccessMessage('Product info not changed.');
                 $this->redirect()->refresh();
                 return;
             }
@@ -208,7 +214,7 @@ class InventoryController extends AbstractBaseController {
                 'itemName' => $data['itemName'],
                 'brandId' => $data['brandId']
             ], $id);
-            $this->messenger->addSuccessMessage('Product info updated.');
+            $this->flashMessenger()->addSuccessMessage('Product info updated.');
             $this->redirect()->refresh();
             return;
         }
@@ -218,20 +224,20 @@ class InventoryController extends AbstractBaseController {
     public function chargeAction() {
         $id = $this->params()->fromRoute('id');
         if (empty($id)) {
-            $this->messenger->addErrorMessage('Invalid product ID.');
+            $this->flashMessenger()->addErrorMessage('Invalid product ID.');
             $this->redirect()->toRoute('inventory', ['action' => 'products']);
             return;
         }
         $product = $this->productTable->getRowById($id);
         if (empty($product)) {
-            $this->messenger->addErrorMessage('Invalid product ID.');
+            $this->flashMessenger()->addErrorMessage('Invalid product ID.');
             $this->redirect()->toRoute('inventory', ['action' => 'products']);
             return;
         }
         if ($this->getRequest()->isPost()) {
             $amount = $this->getRequest()->getPost('amount');
             if ($amount > $product->feesDue) {
-                $this->messenger->addErrorMessage(sprintf('Charging amount %.2f is greater than the due amount %.2f.',
+                $this->flashMessenger()->addErrorMessage(sprintf('Charging amount %.2f is greater than the due amount %.2f.',
                     $amount, $product->feesDue));
                 $this->redirect()->refresh();
                 return;
@@ -239,19 +245,28 @@ class InventoryController extends AbstractBaseController {
             $this->productTable->update([
                 'feesDue' => ($product->feesDue - $amount)
             ], $id);
+            $this->getTableModel(ChargeTable::class)->add([
+                'amount' => $amount,
+                'productId' => $id,
+                'teamId' => $product->teamId,
+                'date' => date('Y-m-d H:i:s')
+            ]);
+            $this->flashMessenger()->addSuccessMessage(sprintf('$%.2f is charged.', $amount));
+            $this->redirect()->refresh();
         }
         $this->addOutPut('product', $product);
-        $this->renderView();
+        $this->addOutPut('team', $this->teamTable->getRowById($product->teamId));
+        return $this->renderView();
     }
 
     public function deleteProductAction() {
         $id = $this->params()->fromRoute('id');
         if (empty($id)) {
-            $this->messenger->addErrorMessage('Invalid product ID.');
+            $this->flashMessenger()->addErrorMessage('Invalid product ID.');
         } else {
             $this->productTable->delete($id);
             $this->table->deleteBy(['productId' => $id]);
-            $this->messenger->addSuccessMessage('The product and its packages are deleted.');
+            $this->flashMessenger()->addSuccessMessage('The product and its packages are deleted.');
         }
 
         $this->redirect()->toRoute('inventory', ['action' => 'products']);

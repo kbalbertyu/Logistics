@@ -63,6 +63,16 @@ class Module implements ConfigProviderInterface {
                     $resultSetPrototype->setArrayObjectPrototype(new Model\Brand());
                     return new TableGateway(BaseTable::BRAND_TABLE, $dbAdapter, null, $resultSetPrototype);
                 },
+                Model\ChargeTable::class => function ($container) {
+                    $tableGateway = $container->get(Model\ChargeTableGateway::class);
+                    return new Model\ChargeTable($tableGateway);
+                },
+                Model\ChargeTableGateway::class => function ($container) {
+                    $dbAdapter = $container->get('Db\Adapter');
+                    $resultSetPrototype = new ResultSet();
+                    $resultSetPrototype->setArrayObjectPrototype(new Model\Charge());
+                    return new TableGateway(BaseTable::CHARGE_TABLE, $dbAdapter, null, $resultSetPrototype);
+                },
             ]
         ];
     }
@@ -78,6 +88,9 @@ class Module implements ConfigProviderInterface {
                 },
                 Controller\BrandController::class => function ($container) {
                     return new Controller\BrandController($container);
+                },
+                Controller\ChargeController::class => function ($container) {
+                    return new Controller\ChargeController($container);
                 }
             ]
         ];

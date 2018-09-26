@@ -1,0 +1,15 @@
+<?php echo $this->flashMessenger()->render('success', array('alert', 'alert-success')); ?>
+<?php echo $this->flashMessenger()->render('error', array('alert', 'alert-danger')); ?>
+<form method="post">
+    <div class="form-group">
+        <label>Business Team:</label> <?php echo $this->team->name ?>
+    </div>
+    <div class="form-group">
+        <label for="itemName">Item Name:</label> <?php echo $this->product->itemName ?>
+    </div>
+    <div class="form-group">
+      <label for="brand">Amount</label> <em>(Due: $<?php echo $this->product->feesDue ?>)</em>
+      <input style="width: 200px;" placeholder="Enter amount" name="amount" value="" type="number" class="form-control ui-autocomplete-input">
+    </div>
+    <button type="submit" class="btn btn-primary">Submit</button>
+</form>
