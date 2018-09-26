@@ -10,21 +10,27 @@ namespace Logistics\Model;
 
 
 use Application\Model\BaseTable;
+use RuntimeException;
 use Zend\Db\Sql\Where;
 
 class BrandTable extends BaseTable {
 
     public function getBrandId($name) {
         $name = trim($name);
-        $set = ['name' => $name];
-        $find = $this->getRowByFields($set);
-        if ($find) {
+        if (is_numeric($name)) {
+            $find = $this->getRowById($name);
+            if (empty($find)) {
+                throw new RuntimeException('Brand ID invalid: ' . $name);
+            }
             return $find->id;
         }
-        if ($this->add($set)) {
-            return $this->getInsertId();
+        $set = ['name' => $name];
+        $find = $this->getRowByFields($set);
+        if (!empty($find)) {
+            return $find->id;
         }
-        throw new \RuntimeException('Unable to save brand by name: ' . $name);
+        $this->add($set);
+        return $this->getInsertId();
     }
 
     public function search($term) {
