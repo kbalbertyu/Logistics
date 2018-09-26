@@ -79,7 +79,6 @@ class ProductTable extends BaseTable {
                 $data['type'] == 'in' ? '+' : '-', $data['qty']));
 
             foreach (['shippingCost', 'shippingFee', 'serviceFee'] as $column) {
-                $data[$column] = !empty($data[$column]) ? $data[$column] : 0;
                 $set[$column] = new Expression(sprintf('%s + %.2f', $column, $data[$column]));
             }
             $set['feesDue'] = new Expression(sprintf('feesDue + %.2f',
@@ -89,7 +88,6 @@ class ProductTable extends BaseTable {
             $set['qty'] =  $product->qty + $sign * ($data['qty'] - $package->qty);
 
             foreach (['shippingCost', 'shippingFee', 'serviceFee'] as $column) {
-                $data[$column] = !empty($data[$column]) ? $data[$column] : 0;
                 $set[$column] = $product->$column + ($data[$column] - $package->$column);
             }
             $set['feesDue'] = $product->feesDue +
