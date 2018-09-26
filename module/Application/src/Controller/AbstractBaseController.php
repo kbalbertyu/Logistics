@@ -44,13 +44,7 @@ abstract class AbstractBaseController extends AbstractActionController {
      */
     protected $outPutData = [];
 
-    /**
-     * @var FlashMessenger
-     */
-    protected $messenger;
-
     public function __construct(ServiceLocatorInterface $container) {
-        $this->messenger = $this->flashMessenger();
         $this->logger = BaseModel::getLogger();
         $this->container = $container;
         $auth = new AuthenticationService();
