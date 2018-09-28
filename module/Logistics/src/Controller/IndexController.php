@@ -9,13 +9,14 @@
 namespace Logistics\Controller;
 
 
-use Zend\View\Model\ViewModel;
+use Application\Controller\AbstractBaseController;
 
-class IndexController extends LogisticsBaseController {
+class IndexController extends AbstractBaseController {
 
     public function indexAction() {
-        return new ViewModel([
+        $this->addOutPut([
             'content' => 'Hello World'
         ]);
+        return $this->renderView();
     }
 }

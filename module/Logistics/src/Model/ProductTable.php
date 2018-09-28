@@ -10,6 +10,7 @@ namespace Logistics\Model;
 
 
 use Application\Model\BaseTable;
+use Application\Model\Tools;
 use RuntimeException;
 use Zend\Db\Sql\Expression;
 use Zend\Db\Sql\Select;
@@ -30,7 +31,7 @@ class ProductTable extends BaseTable {
         if (is_numeric($data['itemName'])) {
             $find = $this->getRowById($data['itemName']);
             if (empty($find)) {
-                throw new RuntimeException('Product ID invalid: ' . $data['itemName']);
+                throw new RuntimeException(Tools::__('product.id.invalid', ['id' => $data['itemName']]));
             }
             return $find->id;
         }
@@ -72,27 +73,33 @@ class ProductTable extends BaseTable {
         return $data;
     }
 
-    public function updateQtyAndFees($data, Package $package = null, Product $product = null) {
+    public function updateQtyAndFees($data, Package $package = null, Product $product = null, Shipping $shipping = null) {
         $set = [];
         if (empty($package)) {
             $set['qty'] = new Expression(sprintf('qty %s %d',
-                $data['type'] == 'in' ? '+' : '-', $data['qty']));
+                $data['type'] == Package::PROCESS_TYPE_IN ? '+' : '-', $data['qty']));
 
+            if ($this->withoutFees($data)) {
+                return;
+            }
             foreach (['shippingCost', 'shippingFee', 'serviceFee'] as $column) {
                 $set[$column] = new Expression(sprintf('%s + %.2f', $column, $data[$column]));
             }
             $set['feesDue'] = new Expression(sprintf('feesDue + %.2f',
                 ($data['shippingFee'] + $data['serviceFee'])));
         } else {
-            $sign = $package->type == 'in' ? 1 : -1;
+            $sign = $package->type == Package::PROCESS_TYPE_IN ? 1 : -1;
             $set['qty'] =  $product->qty + $sign * ($data['qty'] - $package->qty);
 
+            if ($this->withoutFees($data)) {
+                return;
+            }
             foreach (['shippingCost', 'shippingFee', 'serviceFee'] as $column) {
-                $set[$column] = $product->$column + ($data[$column] - $package->$column);
+                $set[$column] = $product->$column + ($data[$column] - $shipping->$column);
             }
             $set['feesDue'] = $product->feesDue +
                 ($data['shippingFee'] + $data['serviceFee']) -
-                ($package->shippingFee + $package->serviceFee);
+                ($shipping->shippingFee + $shipping->serviceFee);
         }
 
         return $this->update($set, $data['productId']);
@@ -107,5 +114,13 @@ class ProductTable extends BaseTable {
             return [];
         }
         return array_column($rows->toArray(), 'feesDue', 'teamId');
+    }
+
+    /**
+     * @param $data
+     * @return bool
+     */
+    private function withoutFees($data) {
+        return !isset($data['shippingCost']) || !isset($data['shippingFee']) || !isset($data['serviceFee']);
     }
 }

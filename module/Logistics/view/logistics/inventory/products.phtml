@@ -5,15 +5,15 @@
   <thead>
   <tr>
     <th>ID</th>
-    <th>Team</th>
-    <th>Item Name</th>
-    <th>Brand</th>
-    <th>Qty</th>
-    <th>Shipping Cost($)</th>
-    <th>Shipping Fee($)</th>
-    <th>Service Fee($)</th>
-    <th>Fees Due($)</th>
-    <th>Actions</th>
+    <th><?php echo $this->t->translate('team.name') ?></th>
+    <th><?php echo $this->t->translate('item.name') ?></th>
+    <th><?php echo $this->t->translate('brand.name') ?></th>
+    <th><?php echo $this->t->translate('qty') ?></th>
+    <th><?php echo $this->t->translate('shipping.cost') ?></th>
+    <th><?php echo $this->t->translate('shipping.fee') ?></th>
+    <th><?php echo $this->t->translate('service.fee') ?></th>
+    <th><?php echo $this->t->translate('fees.due') ?></th>
+    <th><?php echo $this->t->translate('actions') ?></th>
   </tr>
   </thead>
   <tbody>
@@ -30,11 +30,11 @@
         <td><?php echo round($product->serviceFee, 2) ?></td>
         <td><?php echo round($product->feesDue, 2) ?></td>
         <td class="actions">
-          <a href="<?php echo $this->url('inventory', ['action' => 'add', 'id' => $product->id], ['query' => ['type' => 'in', 'teamId' => $product->teamId]]) ?>" class="btn btn-success">Receive Package</a>
-          <a href="<?php echo $this->url('inventory', ['action' => 'add', 'id' => $product->id], ['query' => ['type' => 'out', 'teamId' => $product->teamId]]) ?>" class="btn btn-secondary">Ship Package</a>
-          <a href="<?php echo $this->url('inventory', ['action' => 'charge', 'id' => $product->id]) ?>" class="btn btn-info">Charge Fees</a>
-          <a href="<?php echo $this->url('inventory', ['action' => 'edit-product', 'id' => $product->id]) ?>" class="btn btn-primary">Edit</a>
-          <a href="<?php echo $this->url('inventory', ['action' => 'delete-product', 'id' => $product->id]) ?>" class="btn btn-danger delete">Delete</a>
+          <a href="<?php echo $this->url('inventory', ['action' => 'add', 'id' => $product->id], ['query' => ['type' => 'in']]) ?>" class="btn btn-success"><?php echo $this->t->translate('receive.new.package') ?></a>
+          <a href="<?php echo $this->url('inventory', ['action' => 'add', 'id' => $product->id], ['query' => ['type' => 'out']]) ?>" class="btn btn-secondary"><?php echo $this->t->translate('ship.package') ?></a>
+          <a href="<?php echo $this->url('inventory', ['action' => 'charge', 'id' => $product->id]) ?>" class="btn btn-info"><?php echo $this->t->translate('charge.fees') ?></a>
+          <a href="<?php echo $this->url('inventory', ['action' => 'edit-product', 'id' => $product->id]) ?>" class="btn btn-primary"><?php echo $this->t->translate('edit') ?></a>
+          <a href="<?php echo $this->url('inventory', ['action' => 'delete-product', 'id' => $product->id]) ?>" class="btn btn-danger delete"><?php echo $this->t->translate('delete') ?></a>
         </td>
       </tr>
       <?php } ?>
@@ -43,15 +43,15 @@
   <tfoot>
   <tr>
     <th>ID</th>
-    <th>Team</th>
-    <th>Item Name</th>
-    <th>Brand</th>
-    <th>Qty</th>
-    <th>Shipping Cost($)</th>
-    <th>Shipping Fee($)</th>
-    <th>Service Fee($)</th>
-    <th>Fees Due($)</th>
-    <th>Actions</th>
+    <th><?php echo $this->t->translate('team.name') ?></th>
+    <th><?php echo $this->t->translate('item.name') ?></th>
+    <th><?php echo $this->t->translate('brand.name') ?></th>
+    <th><?php echo $this->t->translate('qty') ?></th>
+    <th><?php echo $this->t->translate('shipping.cost') ?></th>
+    <th><?php echo $this->t->translate('shipping.fee') ?></th>
+    <th><?php echo $this->t->translate('service.fee') ?></th>
+    <th><?php echo $this->t->translate('fees.due') ?></th>
+    <th><?php echo $this->t->translate('actions') ?></th>
   </tr>
   </tfoot>
 </table>
@@ -59,7 +59,7 @@
 $(function() {
     $('.delete').click(function(e) {
         e.preventDefault();
-        if (!confirm('Delete product? Will delete the associated packages.')) {
+        if (!confirm('<?php echo $this->t->translate('product.delete.confirm'); ?>'')) {
             return;
         }
         location.href = $(this).attr('href');

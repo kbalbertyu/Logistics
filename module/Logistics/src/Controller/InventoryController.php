@@ -12,12 +12,14 @@ namespace Logistics\Controller;
 use Application\Controller\AbstractBaseController;
 use Application\Model\BaseModel;
 use Exception;
+use Logistics\Model\AddressTable;
 use Logistics\Model\BrandTable;
 use Logistics\Model\ChargeTable;
 use Logistics\Model\Package;
 use Logistics\Model\Product;
 use Logistics\Model\ProductTable;
 use Logistics\Model\PackageTable;
+use Logistics\Model\ShippingTable;
 use Logistics\Model\TeamTable;
 use Zend\ServiceManager\ServiceLocatorInterface;
 
@@ -26,6 +28,8 @@ use Zend\ServiceManager\ServiceLocatorInterface;
  * @property ProductTable productTable
  * @property TeamTable teamTable
  * @property BrandTable brandTable
+ * @property ShippingTable shippingTable
+ * @property AddressTable addressTable
  */
 class InventoryController extends AbstractBaseController {
 
@@ -35,17 +39,19 @@ class InventoryController extends AbstractBaseController {
         $this->productTable = $this->getTableModel(ProductTable::class);
         $this->teamTable = $this->getTableModel(TeamTable::class);
         $this->brandTable = $this->getTableModel(BrandTable::class);
+        $this->shippingTable = $this->getTableModel(ShippingTable::class);
+        $this->addressTable = $this->getTableModel(AddressTable::class);
         $this->nav = 'inventory';
     }
 
     public function indexAction() {
-        $this->title = 'Package List';
+        $this->title = $this->__('package.list');
         $this->addOutPut('packages', $this->table->getPackageList());
         return $this->renderView();
     }
 
     public function productsAction() {
-        $this->title = 'Product List';
+        $this->title = $this->__('product.list');
         $this->addOutPut('products', $this->productTable->getProducts());
         return $this->renderView();
     }
@@ -59,33 +65,45 @@ class InventoryController extends AbstractBaseController {
         // Process Type
         $type = $this->params()->fromQuery('type');
         if (empty($type)) {
-            $this->flashMessenger()->addErrorMessage('Invalid parameter.');
+            $this->flashMessenger()->addErrorMessage($this->__('invalid.parameter'));
             $this->redirect()->toRoute('inventory');
         }
         $output['type'] = $type;
         $this->addOutPut('type', $type);
-        $this->title = $type == 'in' ? 'Receive New Package' : 'Ship Package';
-
-        // Team
-        $teamId = $this->params()->fromQuery('teamId');
-        if (!empty($teamId)) {
-            $team = $this->teamTable->getRowById($teamId);
-            $this->addOutPut('team', $team);
-        }
+        $this->title = $type == Package::PROCESS_TYPE_IN ?
+            $this->__('receive.package') : $this->__('ship.package.request');
 
         // Product
         $productId = $this->params()->fromRoute('id');
         if (!empty($productId)) {
             $product = $this->productTable->getRowById($productId);
+            $teamId = $product->teamId;
             $this->addOutPut('product', $product);
 
             $brand = $this->brandTable->getRowById($product->brandId);
             $this->addOutPut('brand', $brand);
+        } else {
+            $teamId = $this->params()->fromQuery('teamId');
+        }
+
+        // Team
+        if (!empty($teamId)) {
+            $team = $this->teamTable->getRowById($teamId);
+            $this->addOutPut('team', $team);
+        }
+
+        // Ship out packages should access from products list page
+        // With product ID and team ID
+        if ($type == Package::PROCESS_TYPE_OUT &&
+            (empty($team) || empty($product))) {
+            $this->flashMessenger()->addErrorMessage($this->__('invalid.parameter'));
+            $this->toProductsPage();
+            return;
         }
 
         if ($this->getRequest()->isPost()) {
             if (empty($team)) {
-                $this->flashMessenger()->addErrorMessage('Please select a business team.');
+                $this->flashMessenger()->addErrorMessage($this->__('select.team'));
                 $this->redirect()->refresh();
                 return;
             }
@@ -110,11 +128,13 @@ class InventoryController extends AbstractBaseController {
                 $data['brandId'] = $this->brandTable->getBrandId($data['brand']);
                 $data['productId'] = $this->productTable->getProductId($data);
                 $data['username'] = $this->user;
-                BaseModel::filterNumericColumns($data, Package::NUMERIC_COLUMNS);
+                BaseModel::formatNumericColumns($data, Package::NUMERIC_COLUMNS);
                 $packageId = $this->table->savePackage($data);
                 try {
                     $this->productTable->updateQtyAndFees($data);
-                    $this->flashMessenger()->addSuccessMessage('Inventory saved successfully.');
+                    $message = $type == Package::PROCESS_TYPE_IN ?
+                        $this->__('package.add.success') : $this->__('package.ship.request.success');
+                    $this->flashMessenger()->addSuccessMessage($message);
                     $this->redirect()->toRoute('inventory');
                 } catch (Exception $e) {
                     $this->table->delete($packageId);
@@ -131,16 +151,16 @@ class InventoryController extends AbstractBaseController {
         // Inventory Record
         $id = $this->params()->fromRoute('id');
         if (empty($id)) {
-            $this->flashMessenger()->addErrorMessage('Please provide the ID.');
+            $this->flashMessenger()->addErrorMessage($this->__('package.id.empty'));
             $this->redirect()->refresh();
             return;
         }
         $package = $this->table->getRowById($id);
         if (empty($package)) {
-            $this->flashMessenger()->addErrorMessage('Invalid package ID: ' . $id);
+            $this->flashMessenger()->addErrorMessage($this->__('package.id.invalid', ['id' => $id]));
             $this->redirect()->refresh();
         }
-        $this->title = 'Edit Package (ID: ' . $id . ')';
+        $this->title = $this->__('edit.package.id', ['id' => $id]);
         $this->addOutPut('package', $package);
 
         // Product Info
@@ -166,14 +186,16 @@ class InventoryController extends AbstractBaseController {
                 $data['brandId'] = is_numeric($data['brand']) ? $data['brand'] :
                     $this->getTableModel(BrandTable::class)->getBrandId($data['brand']);
                 $data['productId'] = $this->productTable->getProductId($data);
-                BaseModel::filterNumericColumns($data, Package::NUMERIC_COLUMNS);
+                BaseModel::formatNumericColumns($data, Package::NUMERIC_COLUMNS);
                 $this->table->savePackage($data, $id);
 
                 $this->productTable->updateQtyAndFees($data, $package, $product);
-                $this->flashMessenger()->addSuccessMessage('Package saved successfully.');
+                $message = $package->type == Package::PROCESS_TYPE_IN ?
+                    $this->__('package.edit.success') : $this->__('package.ship.request.edit.success');
+                $this->flashMessenger()->addSuccessMessage($message);
                 $this->redirect()->refresh();
             } catch (Exception $e) {
-                $this->flashMessenger()->addSuccessMessage('Package saved failed: ' . $e->getMessage());
+                $this->flashMessenger()->addSuccessMessage('package.save.failed', ['message' => $e->getMessage()]);
                 $this->redirect()->refresh();
             }
         }
@@ -184,13 +206,13 @@ class InventoryController extends AbstractBaseController {
     public function editProductAction() {
         $id = $this->params()->fromRoute('id');
         if (empty($id)) {
-            $this->flashMessenger()->addErrorMessage('Please provide a product ID.');
-            $this->redirect()->toRoute('inventory', ['action' => 'products']);
+            $this->flashMessenger()->addErrorMessage($this->__('product.id.empty'));
+            $this->toProductsPage();
         }
         $product = $this->productTable->getRowById($id);
         if (empty($product)) {
-            $this->flashMessenger()->addErrorMessage('Invalid product ID.');
-            $this->redirect()->toRoute('inventory', ['action' => 'products']);
+            $this->flashMessenger()->addErrorMessage($this->__('product.id.invalid', ['id' => $id]));
+            $this->toProductsPage();
         }
         $this->addOutPut('product', $product);
         $this->addOutPut('team', $this->teamTable->getRowById($product->teamId));
@@ -206,7 +228,7 @@ class InventoryController extends AbstractBaseController {
             $data['brandId'] = $this->brandTable->getBrandId($data['brand']);
             if ($product->brandId == $data['brandId'] &&
                 $product->itemName == $data['itemName']) {
-                $this->flashMessenger()->addSuccessMessage('Product info not changed.');
+                $this->flashMessenger()->addErrorMessage($this->__('product.info.not.changed'));
                 $this->redirect()->refresh();
                 return;
             }
@@ -214,7 +236,7 @@ class InventoryController extends AbstractBaseController {
                 'itemName' => $data['itemName'],
                 'brandId' => $data['brandId']
             ], $id);
-            $this->flashMessenger()->addSuccessMessage('Product info updated.');
+            $this->flashMessenger()->addSuccessMessage($this->__('product.info.updated'));
             $this->redirect()->refresh();
             return;
         }
@@ -224,21 +246,21 @@ class InventoryController extends AbstractBaseController {
     public function chargeAction() {
         $id = $this->params()->fromRoute('id');
         if (empty($id)) {
-            $this->flashMessenger()->addErrorMessage('Invalid product ID.');
-            $this->redirect()->toRoute('inventory', ['action' => 'products']);
+            $this->flashMessenger()->addErrorMessage($this->__('product.id.empty'));
+            $this->toProductsPage();
             return;
         }
         $product = $this->productTable->getRowById($id);
         if (empty($product)) {
-            $this->flashMessenger()->addErrorMessage('Invalid product ID.');
-            $this->redirect()->toRoute('inventory', ['action' => 'products']);
+            $this->flashMessenger()->addErrorMessage($this->__('product.id.invalid', ['id' => $id]));
+            $this->toProductsPage();
             return;
         }
         if ($this->getRequest()->isPost()) {
             $amount = $this->getRequest()->getPost('amount');
             if ($amount > $product->feesDue) {
-                $this->flashMessenger()->addErrorMessage(sprintf('Charging amount %.2f is greater than the due amount %.2f.',
-                    $amount, $product->feesDue));
+                $this->flashMessenger()->addErrorMessage($this->__('amount.greater.than.due.amount',
+                    ['amount' => round($amount, 2), 'due' => round($product->feesDue, 2)]));
                 $this->redirect()->refresh();
                 return;
             }
@@ -251,7 +273,7 @@ class InventoryController extends AbstractBaseController {
                 'teamId' => $product->teamId,
                 'date' => date('Y-m-d H:i:s')
             ]);
-            $this->flashMessenger()->addSuccessMessage(sprintf('$%.2f is charged.', $amount));
+            $this->flashMessenger()->addSuccessMessage($this->__('amount.is.charged', ['amount' => round($amount, 2)]));
             $this->redirect()->refresh();
         }
         $this->addOutPut('product', $product);
@@ -262,14 +284,14 @@ class InventoryController extends AbstractBaseController {
     public function deleteProductAction() {
         $id = $this->params()->fromRoute('id');
         if (empty($id)) {
-            $this->flashMessenger()->addErrorMessage('Invalid product ID.');
+            $this->flashMessenger()->addErrorMessage($this->__('product.id.empty'));
         } else {
             $this->productTable->delete($id);
             $this->table->deleteBy(['productId' => $id]);
-            $this->flashMessenger()->addSuccessMessage('The product and its packages are deleted.');
+            $this->flashMessenger()->addSuccessMessage($this->__('product.deleted'));
         }
 
-        $this->redirect()->toRoute('inventory', ['action' => 'products']);
+        $this->toProductsPage();
     }
 
     public function getItemNamesAction() {
@@ -294,5 +316,9 @@ class InventoryController extends AbstractBaseController {
             $data = $this->getTableModel(BrandTable::class)->getRowById($id)->toArray();
         }
         return $this->renderJsonView($data);
+    }
+
+    private function toProductsPage() {
+        $this->redirect()->toRoute('inventory', ['action' => 'products']);
     }
 }

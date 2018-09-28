@@ -10,6 +10,7 @@ namespace Logistics\Model;
 
 
 use Application\Model\BaseModel;
+use Application\Model\Tools;
 use Application\Model\Validation;
 
 /**
@@ -34,7 +35,7 @@ class Product extends BaseModel {
         $validation = new Validation();
         foreach ($data as $field => $value) {
             if (in_array($field, self::REQUIRED_COLUMNS) && empty($value)) {
-                $validation->addError($field . ' cannot be empty.');
+                $validation->addError(Tools::__('field.required', ['field' => $field]));
             }
         }
         return $validation;

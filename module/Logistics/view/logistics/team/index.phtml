@@ -1,16 +1,16 @@
 <?php echo $this->flashMessenger()->render('success', ['alert', 'alert-dismissible', 'alert-success']); ?>
 <div class="date-nav">
-  <a href="<?php echo $this->url('team', ['action' => 'add']) ?>" class="btn btn-primary right">Create Team</a>
+  <a href="<?php echo $this->url('team', ['action' => 'add']) ?>" class="btn btn-primary right"><?php echo $this->t->translate('team.add') ?></a>
   <div class="clear"></div>
 </div>
 <table id="team-table" class="table display" cellspacing="0" width="100%">
   <thead>
   <tr>
     <th>ID</th>
-    <th>Name</th>
-    <th>Fees Due ($)</th>
-    <th>Edit</th>
-    <th>Delete</th>
+    <th><?php echo $this->t->translate('team.name') ?></th>
+    <th><?php echo $this->t->translate('fees.due') ?> (￥)</th>
+    <th><?php echo $this->t->translate('edit') ?></th>
+    <th><?php echo $this->t->translate('delete') ?></th>
   </tr>
   </thead>
   <tbody>
@@ -21,10 +21,10 @@
         <td><?php echo $team->name ?></td>
         <td><?php echo round($this->fees[$team->id], 2) ?></td>
         <td>
-          <button type="button" class="btn btn-primary">Edit</button>
+          <button type="button" class="btn btn-primary"><?php echo $this->t->translate('edit') ?></button>
         </td>
         <td>
-          <button type="button" class="btn btn-danger">Delete</button>
+          <button type="button" class="btn btn-danger"><?php echo $this->t->translate('delete') ?></button>
         </td>
       </tr>
       <?php } ?>
@@ -33,10 +33,10 @@
   <tfoot>
   <tr>
     <th>ID</th>
-    <th>Name</th>
-    <th>Fees Due ($)</th>
-    <th>Edit</th>
-    <th>Delete</th>
+    <th><?php echo $this->t->translate('team.name') ?></th>
+    <th><?php echo $this->t->translate('fees.due') ?> (￥)</th>
+    <th><?php echo $this->t->translate('edit') ?></th>
+    <th><?php echo $this->t->translate('delete') ?></th>
   </tr>
   </tfoot>
 </table>

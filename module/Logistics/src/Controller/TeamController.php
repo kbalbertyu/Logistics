@@ -13,7 +13,6 @@ use Application\Controller\AbstractBaseController;
 use Logistics\Model\ProductTable;
 use Logistics\Model\TeamTable;
 use Zend\ServiceManager\ServiceLocatorInterface;
-use Zend\View\Model\ViewModel;
 
 /**
  * @property TeamTable table
@@ -28,7 +27,7 @@ class TeamController extends AbstractBaseController {
     }
 
     public function indexAction() {
-        $this->title = 'Business Teams';
+        $this->title = $this->__('nav.teams');
         $this->nav = 'team';
         $this->addOutPut([
             'teams' => $this->table->getRows(),
@@ -38,6 +37,7 @@ class TeamController extends AbstractBaseController {
     }
 
     public function addAction() {
+        $this->title = $this->__('team.add');
         $data = [
             'valid' => false,
             'message' => ''
@@ -46,15 +46,15 @@ class TeamController extends AbstractBaseController {
             $name = $this->getRequest()->getPost('name');
             $name = trim($name);
             if (empty($name)) {
-                $data['message'] = 'Team name exists: ' . $name;
+                $data['message'] = $this->__('team.name.empty');
             } elseif($this->table->nameExists($name)) {
-                $data['message'] = 'Team name exists: ' . $name;
+                $data['message'] = $this->__('team.name.exists', ['name' => $name]);
             } else {
                 $saved = $this->table->add([
                     'name' => $name
                 ]);
                 if ($saved) {
-                    $data['message'] = 'Team name saved: ' . $name;
+                    $data['message'] = $this->__('team.saved', ['name' => $name]);
                     $this->flashMessenger()->addSuccessMessage($data['message']);
                     $this->redirect()->toRoute('team');
                 } else {
@@ -62,6 +62,7 @@ class TeamController extends AbstractBaseController {
                 }
             }
         }
-        return new ViewModel($data);
+        $this->addOutPut($data);
+        return $this->renderView();
     }
 }

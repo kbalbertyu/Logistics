@@ -1,21 +1,25 @@
 <?php echo $this->flashMessenger()->render('success', array('alert', 'alert-success')); ?>
 <?php echo $this->flashMessenger()->render('error', array('alert', 'alert-danger')); ?>
 <form method="post">
-  <div class="form-group">
-    <label>Business Team:</label> <?php echo $this->team->name ?>
+  <div class="input-group">
+    <h4><span class="badge badge-secondary"><?php echo $this->t->translate('team.name') ?></span> <?php echo $this->team->name ?></h4>
   </div>
-  <div class="form-group">
-    <label for="itemName">Item Name</label>
+  <div class="input-group">
+    <div class="input-group-prepend">
+      <label class="input-group-text" for="itemName"><?php echo $this->t->translate('item.name') ?></label>
+    </div>
     <input id="itemName" data-url="inventory/get-item-names" placeholder="Enter item name" name="itemName" value="<?php echo $this->product->itemName ?>" type="text" class="form-control ui-autocomplete-input">
   </div>
   <fieldset>
-    <legend>Product Info</legend>
-    <div class="form-group">
-      <label for="brand">Brand</label>
+    <legend><?php echo $this->t->translate('product.info') ?></legend>
+    <div class="input-group">
+      <div class="input-group-prepend">
+        <label class="input-group-text" for="brand"><?php echo $this->t->translate('brand.name') ?></label>
+      </div>
       <input id="brand" data-url="inventory/get-brand-names" placeholder="Enter brand name" name="brand" value="<?php echo $this->brand->name ?>" type="text" class="form-control ui-autocomplete-input">
     </div>
   </fieldset>
-  <button type="submit" class="btn btn-primary">Submit</button>
+  <button type="submit" class="btn btn-primary"><?php echo $this->t->translate('submit') ?></button>
 </form>
 <link href="<?php echo $this->basePath('js/jquery-ui-1.12.1.custom/jquery-ui.theme.min.css') ?>" media="screen" rel="stylesheet" type="text/css">
 <script type="text/javascript" src="<?php echo $this->basePath('/js/jquery-ui-1.12.1.custom/jquery-ui.min.js') ?>"></script>

@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="utf-8">
-    <?php echo $this->headTitle('IBPort Logistics Management')->setSeparator(' - ')->setAutoEscape(false) ?>
+    <?php echo $this->headTitle($this->t->translate('head.title'))->setSeparator(' - ')->setAutoEscape(false) ?>
     <?php echo $this->headMeta()
         ->appendName('viewport', 'width=device-width, initial-scale=1.0')
         ->appendHttpEquiv('X-UA-Compatible', 'IE=edge')
@@ -38,24 +38,24 @@
       <ul class="nav">
         <li class="nav-item dropdown">
           <a href="#" class="nav-link dropdown-toggle<?php echo $this->nav == 'inventory' ? ' active' : ''; ?>" data-toggle="dropdown">
-            Inventory <b class="caret"></b>
+            <?php echo $this->t->translate('nav.inventory') ?> <b class="caret"></b>
           </a>
           <ul class="dropdown-menu">
-            <li><a class="<?php echo $this->subNav == 'products' ? 'active' : ''; ?>" href="<?php echo $this->url('inventory', ['action' => 'products']) ?>">Products</a></li>
-            <li><a class="<?php echo $this->subNav == 'index' ? 'active' : ''; ?>" href="<?php echo $this->url('inventory') ?>">Packages</a></li>
+            <li><a class="<?php echo $this->subNav == 'products' ? 'active' : ''; ?>" href="<?php echo $this->url('inventory', ['action' => 'products']) ?>"><?php echo $this->t->translate('nav.products') ?></a></li>
+            <li><a class="<?php echo $this->subNav == 'index' ? 'active' : ''; ?>" href="<?php echo $this->url('inventory') ?>"><?php echo $this->t->translate('nav.packages') ?></a></li>
           </ul>
         </li>
         <li class="nav-item">
-          <a class="nav-link <?php echo $this->nav == 'brand' ? 'active' : ''; ?>" href="<?php echo $this->url('brand') ?>">Brands</a>
+          <a class="nav-link <?php echo $this->nav == 'brand' ? 'active' : ''; ?>" href="<?php echo $this->url('brand') ?>"><?php echo $this->t->translate('nav.brands') ?></a>
         </li>
         <li class="nav-item">
-          <a class="nav-link <?php echo $this->nav == 'team' ? 'active' : ''; ?>" href="<?php echo $this->url('team') ?>">Teams</a>
+          <a class="nav-link <?php echo $this->nav == 'team' ? 'active' : ''; ?>" href="<?php echo $this->url('team') ?>"><?php echo $this->t->translate('nav.teams') ?></a>
         </li>
         <li class="nav-item">
-          <a class="nav-link <?php echo $this->nav == 'charge' ? 'active' : ''; ?>" href="<?php echo $this->url('charge') ?>">Fee Charges</a>
+          <a class="nav-link <?php echo $this->nav == 'charge' ? 'active' : ''; ?>" href="<?php echo $this->url('charge') ?>"><?php echo $this->t->translate('nav.fee.charges') ?></a>
         </li>
         <li class="nav-item">
-          <a class="nav-link <?php echo $this->nav == 'user' ? 'active' : ''; ?>" href="<?php echo $this->url('user', ['action' => 'index']) ?>">Users</a>
+          <a class="nav-link <?php echo $this->nav == 'user' ? 'active' : ''; ?>" href="<?php echo $this->url('user', ['action' => 'index']) ?>"><?php echo $this->t->translate('nav.users') ?></a>
         </li>
       </ul>
       <hr />
@@ -66,7 +66,7 @@
       <div class="main"><?php echo $this->content ?></div>
       <hr>
       <footer>
-        <p>&copy; 2017 - <?php echo date('Y') ?> by IBPort. All rights reserved.</p>
+        <p>&copy;<?php echo date('Y') ?> by IBPort. All rights reserved.</p>
       </footer>
     </div>
     <?php echo $this->inlineScript() ?>

@@ -4,9 +4,7 @@ namespace User\Controller;
 use Logistics\Model\TeamTable;
 use User\Model\UserTable;
 use Zend\Stdlib\ArrayUtils;
-use Zend\View\Model\ViewModel;
 use Zend\ServiceManager\ServiceLocatorInterface;
-use Zend\Mvc\MvcEvent;
 use Application\Controller\AbstractBaseController;
 use User\Model\User;
 
@@ -19,27 +17,16 @@ class UserController extends AbstractBaseController {
         parent::__construct($container);
         $this->table = $this->container->get(UserTable::class);
     }
-    
-    public function onDispatch(MvcEvent $e) {
-        parent::onDispatch($e);
-        $this->layout()->setVariables([
-            'title' => $this->title,
-            'nav' => $this->params()->fromRoute('action'),
-            'user' => $this->user
-        ]);
-    }
 
     public function indexAction() {
-        $this->title = 'User List';
+        $this->title = $this->__('nav.users');
         $this->nav = 'user';
-        $users = $this->table->getUserList();
-        return new ViewModel([
-            'users' => $users
-        ]);
+        $this->addOutPut('users', $this->table->getUserList());
+        return $this->renderView();
     }
 
     public function loginAction() {
-        $this->title = 'User Login';
+        $this->title = $this->__('user.login');
         if ($this->user) {
             $this->redirect()->toRoute('inventory');
         }
@@ -48,7 +35,7 @@ class UserController extends AbstractBaseController {
             
             $result = $this->table->auth($data);
             if (!$result->isValid()) {
-                $message = sprintf('Login failed: %s', $data['username']);
+                $message = $this->__('login.failed', ['username' => $data['username']]);
                 $this->logger->warn($message);
                 $this->flashMessenger()->addErrorMessage($message);
                 $this->redirect()->toRoute('user');
@@ -66,7 +53,7 @@ class UserController extends AbstractBaseController {
             }
             $this->redirect()->toRoute($route);
         }
-        return new ViewModel();
+        return $this->renderView();
     }
     
     public function logoutAction() {
@@ -78,7 +65,7 @@ class UserController extends AbstractBaseController {
         if (($view = $this->checkPermission()) != null) {
             return $view;
         }
-        $this->title = 'User Profile';
+        $this->title = $this->__('user.profile');
         $id = $this->params()->fromRoute('id');
         if (empty($id)) {
             $id = $this->user;
@@ -86,23 +73,26 @@ class UserController extends AbstractBaseController {
         if ($this->getRequest()->isPost()) {
             $data = $this->getRequest()->getPost();
             $this->table->edit($data, $id);
-            $this->flashMessenger()->addSuccessMessage('User updated.');
+            $this->flashMessenger()->addSuccessMessage($this->__('user.updated'));
             $this->redirect()->refresh();
         }
-        return new ViewModel([
+        $this->addOutPut([
             'user' => $this->table->getRowById($id),
             'teams' => $this->getTableModel(TeamTable::class)->getRows()
         ]);
+        return $this->renderView();
     }
     
     public function registerAction() {
+        $this->title = $this->__('user.register');
         if ($this->getRequest()->isPost()) {
             $data = $this->getRequest()->getPost();
             $result = $this->table->register($data);
-            return new ViewModel([
+            $this->addOutPut([
                 'isValid' => $result->isValid(),
                 'message' => $result->getMessage()
             ]);
         }
+        return $this->renderView();
     }
 }

@@ -25,7 +25,7 @@ class ChargeController extends AbstractBaseController {
     }
 
     public function indexAction() {
-        $this->title = 'Fee Charges History';
+        $this->title = $this->__('fee.charge.list');
         $this->addOutPut('charges', $this->table->getHistory());
         return $this->renderView();
     }

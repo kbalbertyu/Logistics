@@ -12,7 +12,6 @@ namespace Logistics\Controller;
 use Application\Controller\AbstractBaseController;
 use Logistics\Model\BrandTable;
 use Zend\ServiceManager\ServiceLocatorInterface;
-use Zend\View\Model\ViewModel;
 
 /**
  * @property BrandTable table
@@ -25,11 +24,9 @@ class BrandController extends AbstractBaseController {
     }
 
     public function indexAction() {
-        $this->title = 'Brand List';
+        $this->title = $this->__('nav.brands');
         $this->nav = 'brand';
-        $brands = $this->table->getRows();
-        return new ViewModel([
-            'brands' => $brands
-        ]);
+        $this->addOutPut('brands', $this->table->getRows());
+        return $this->renderView();
     }
 }

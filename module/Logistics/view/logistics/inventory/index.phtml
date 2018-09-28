@@ -1,25 +1,22 @@
 <?php echo $this->flashMessenger()->render('success', array('alert', 'alert-success')); ?>
 <div class="date-nav">
-  <a href="<?php echo $this->url('inventory', ['action' => 'add'], ['query' => ['type' => 'in']]) ?>" class="btn btn-primary right" style="margin-right:10px;">Receive New Package</a>
+  <a href="<?php echo $this->url('inventory', ['action' => 'add'], ['query' => ['type' => 'in']]) ?>" class="btn btn-primary right" style="margin-right:10px;"><?php echo $this->t->translate('receive.new.package') ?></a>
   <div class="clear"></div>
 </div>
 <table id="team-table" class="table display" cellspacing="0" width="100%">
   <thead>
   <tr>
     <th>ID</th>
-    <th>Team</th>
-    <th>Item Name</th>
-    <th>Brand</th>
-    <th>QTY</th>
-    <th>Size(in)</th>
-    <th>Weight(lbs)</th>
-    <th>Process Type</th>
-    <th>Shipping Cost($)</th>
-    <th>Shipping Fee($)</th>
-    <th>Service Fee($)</th>
-    <th>Process Date</th>
-    <th>Edit</th>
-    <th>Delete</th>
+    <th><?php echo $this->t->translate('process.type') ?></th>
+    <th><?php echo $this->t->translate('team.name') ?></th>
+    <th><?php echo $this->t->translate('item.name') ?></th>
+    <th><?php echo $this->t->translate('brand.name') ?></th>
+    <th><?php echo $this->t->translate('qty') ?></th>
+    <th><?php echo $this->t->translate('size') ?></th>
+    <th><?php echo $this->t->translate('weight') ?></th>
+    <th><?php echo $this->t->translate('date') ?></th>
+    <th><?php echo $this->t->translate('note') ?></th>
+    <th><?php echo $this->t->translate('actions') ?></th>
   </tr>
   </thead>
   <tbody>
@@ -27,22 +24,21 @@
       <?php foreach ($this->packages as $package) { ?>
       <tr>
         <td><?php echo $package->id ?></td>
+        <td><?php echo $package->renderProcessType() ?></td>
         <td><?php echo $package->team ?></td>
         <td><?php echo $package->itemName ?></td>
         <td><?php echo $package->brand ?></td>
         <td><?php echo $package->qty ?></td>
         <td><?php echo $package->renderSize() ?></td>
         <td><?php echo $package->weight ?></td>
-        <td><?php echo $package->renderProcessType() ?></td>
-        <td><?php echo round($package->shippingCost, 2) ?></td>
-        <td><?php echo round($package->shippingFee, 2) ?></td>
-        <td><?php echo round($package->serviceFee, 2) ?></td>
         <td><?php echo $package->processDate ?></td>
-        <td>
-          <a href="<?php echo $this->url('inventory', ['action' => 'edit', 'id' => $package->id]) ?>" type="button" class="btn btn-primary">Edit</a>
-        </td>
-        <td>
-          <a href="<?php echo $this->url('inventory', ['action' => 'delete', 'id' => $package->id]) ?>" type="button" class="btn btn-danger">Delete</a>
+        <td><?php echo $package->note ?></td>
+        <td class="actions">
+          <?php if ($package->type == 'out') { ?>
+          <a href="<?php echo $this->url('inventory', ['action' => 'view', 'id' => $package->id]) ?>" class="btn btn-info"><?php echo $this->t->translate('view') ?></a>
+          <?php }?>
+          <a href="<?php echo $this->url('inventory', ['action' => 'edit', 'id' => $package->id]) ?>" class="btn btn-primary"><?php echo $this->t->translate('edit') ?></a>
+          <a href="<?php echo $this->url('inventory', ['action' => 'delete', 'id' => $package->id]) ?>" class="btn btn-danger"><?php echo $this->t->translate('delete') ?></a>
         </td>
       </tr>
       <?php } ?>
@@ -51,19 +47,16 @@
   <tfoot>
   <tr>
     <th>ID</th>
-    <th>Team</th>
-    <th>Item Name</th>
-    <th>Brand</th>
-    <th>QTY</th>
-    <th>Size(in)</th>
-    <th>Weight(lbs)</th>
-    <th>Process Type</th>
-    <th>Shipping Cost($)</th>
-    <th>Shipping Fee($)</th>
-    <th>Service Fee($)</th>
-    <th>Process Date</th>
-    <th>Edit</th>
-    <th>Delete</th>
+    <th><?php echo $this->t->translate('process.type') ?></th>
+    <th><?php echo $this->t->translate('team.name') ?></th>
+    <th><?php echo $this->t->translate('item.name') ?></th>
+    <th><?php echo $this->t->translate('brand.name') ?></th>
+    <th><?php echo $this->t->translate('qty.name') ?></th>
+    <th><?php echo $this->t->translate('size') ?></th>
+    <th><?php echo $this->t->translate('weight') ?></th>
+    <th><?php echo $this->t->translate('date') ?></th>
+    <th><?php echo $this->t->translate('note') ?></th>
+    <th><?php echo $this->t->translate('actions') ?></th>
   </tr>
   </tfoot>
 </table>

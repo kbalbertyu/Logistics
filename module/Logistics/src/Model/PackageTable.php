@@ -34,9 +34,6 @@ class PackageTable extends BaseTable {
             'width' => $data['width'],
             'height' => $data['height'],
             'weight' => $data['weight'],
-            'shippingCost' => $data['shippingCost'],
-            'shippingFee' => $data['shippingFee'],
-            'serviceFee' => $data['serviceFee'],
             'note' => $data['note'],
             'recordDate' => $time,
         ];
