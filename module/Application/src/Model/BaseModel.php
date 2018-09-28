@@ -17,6 +17,13 @@ class BaseModel {
      */
     public $count;
 
+    public function __construct($data = []) {
+        if (!empty($data)) {
+            $properties = Tools::getProperties(get_class($this));
+            $this->assign($data, $properties);
+        }
+    }
+
     public function exchangeArray(array $data) {
         foreach ($data as $key => $value) {
             $this->{$key} = $value;
@@ -28,7 +35,11 @@ class BaseModel {
         return $extractor->extract($this);
     }
 
-    public static function filterNumericColumns(&$set, $numericColumns) {
+    public function __(string $key, $parameters = []) {
+        Tools::translate($key, $parameters);
+    }
+
+    public static function formatNumericColumns(&$set, $numericColumns) {
         foreach ($numericColumns as $column) {
             if (empty($set[$column])) {
                 $set[$column] = 0;
@@ -140,6 +151,14 @@ class BaseModel {
             $n--;
         }
         return $str;
+    }
+
+    private function assign($data, $properties) {
+        foreach ($properties as $property) {
+            if (isset($data[$property])) {
+                $this->$property = $data[$property];
+            }
+        }
     }
 
     /**
