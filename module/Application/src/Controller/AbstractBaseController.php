@@ -1,10 +1,10 @@
 <?php
 namespace Application\Controller;
 
+use Application\Model\Tools;
 use RuntimeException;
 use Zend\Json\Json;
 use Zend\Mvc\Controller\AbstractActionController;
-use Zend\Mvc\Plugin\FlashMessenger\FlashMessenger;
 use Zend\ServiceManager\ServiceLocatorInterface;
 use Zend\Authentication\AuthenticationService;
 use Zend\Mvc\MvcEvent;
@@ -54,6 +54,10 @@ abstract class AbstractBaseController extends AbstractActionController {
         $this->initUser();
     }
 
+    protected function __(string $key, $parameters = []) {
+        return Tools::__($key, $parameters);
+    }
+
     protected function addOutPut($key, $value = null) {
         if (!is_array($key)) {
             $this->outPutData[$key] = $value;
@@ -81,8 +85,12 @@ abstract class AbstractBaseController extends AbstractActionController {
         if (!$this->user) {
             return;
         }
-        $userTable = $this->container->get(UserTable::class);
-        $this->userObject = $userTable->getRowById($this->user);
+        try {
+            $userTable = $this->getTableModel(UserTable::class);
+            $this->userObject = $userTable->getRowById($this->user);
+        } catch (\Exception $e) {
+            echo $e->getMessage();
+        }
     }
 
     public function onDispatch(MvcEvent $e) {
@@ -93,7 +101,8 @@ abstract class AbstractBaseController extends AbstractActionController {
             'title' => $this->title,
             'nav' => $this->nav,
             'subNav' => $this->params()->fromRoute('action'),
-            'user' => $this->user
+            'user' => $this->user,
+            't' => Tools::getTranslator()
         ]);
     }
 
@@ -132,6 +141,7 @@ abstract class AbstractBaseController extends AbstractActionController {
     }
 
     protected function renderView() {
+        $this->addOutPut('t', Tools::getTranslator());
         return new ViewModel($this->outPutData);
     }
 
