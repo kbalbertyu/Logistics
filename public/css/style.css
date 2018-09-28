@@ -60,9 +60,14 @@ td.yHighlight, tr.xHighlight > td{background:#007bff1a !important;}
 .warn{background:red;color:#fff;}
 
 /** Form **/
-fieldset div.form-group {
-    float: left; width: 30%; margin-right: 10px;
+fieldset div.input-group {
+    float: left; width:30%; margin-right: 10px;margin-bottom:10px;
 }
+fieldset div.input-group.full-size {width:auto !important;}
+fieldset div.form-check {
+   float:left;width: auto!important; margin-right:20px;
+}
+fieldset div.input-group.textarea {width:100%;}
 li{list-style:none;}
 
 /** Auto Complete **/
