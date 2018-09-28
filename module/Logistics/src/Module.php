@@ -73,6 +73,26 @@ class Module implements ConfigProviderInterface {
                     $resultSetPrototype->setArrayObjectPrototype(new Model\Charge());
                     return new TableGateway(BaseTable::CHARGE_TABLE, $dbAdapter, null, $resultSetPrototype);
                 },
+                Model\ShippingTable::class => function ($container) {
+                    $tableGateway = $container->get(Model\ShippingTableGateway::class);
+                    return new Model\ShippingTable($tableGateway);
+                },
+                Model\ShippingTableGateway::class => function ($container) {
+                    $dbAdapter = $container->get('Db\Adapter');
+                    $resultSetPrototype = new ResultSet();
+                    $resultSetPrototype->setArrayObjectPrototype(new Model\Shipping());
+                    return new TableGateway(BaseTable::SHIPPING_TABLE, $dbAdapter, null, $resultSetPrototype);
+                },
+                Model\AddressTable::class => function ($container) {
+                    $tableGateway = $container->get(Model\AddressTableGateway::class);
+                    return new Model\AddressTable($tableGateway);
+                },
+                Model\AddressTableGateway::class => function ($container) {
+                    $dbAdapter = $container->get('Db\Adapter');
+                    $resultSetPrototype = new ResultSet();
+                    $resultSetPrototype->setArrayObjectPrototype(new Model\Address());
+                    return new TableGateway(BaseTable::ADDRESS_TABLE, $dbAdapter, null, $resultSetPrototype);
+                },
             ]
         ];
     }

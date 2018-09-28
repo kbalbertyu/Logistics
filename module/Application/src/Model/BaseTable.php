@@ -20,6 +20,8 @@ class BaseTable {
     public const BRAND_TABLE = 'brand';
     public const PACKAGE_TABLE = 'packages';
     public const CHARGE_TABLE = 'charges';
+    public const SHIPPING_TABLE = 'shipping';
+    public const ADDRESS_TABLE = 'address';
 
     /**
      *
