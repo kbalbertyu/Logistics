@@ -151,7 +151,7 @@ abstract class AbstractBaseController extends AbstractActionController {
 
     private function checkLogin(): void {
         $action = $this->params()->fromRoute('action');
-        if (!$this->user && $action !== 'login') {
+        if (!$this->user && $action !== 'login' && $action != 'register') {
             $this->redirect()->toRoute('user');
         }
     }
