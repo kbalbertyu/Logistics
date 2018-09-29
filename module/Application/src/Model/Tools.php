@@ -109,7 +109,7 @@ class Tools {
 
     private const FILE_MAX_SIZE_IN_MB = 20;
 
-    private const ATTACHMENT_PATH = 'public/data/';
+    public const ATTACHMENT_PATH = 'public/data/';
 
     public const ATTACHMENT_URL_PATH = 'data/';
 
