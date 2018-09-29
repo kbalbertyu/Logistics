@@ -227,7 +227,10 @@ class InventoryController extends AbstractBaseController {
                     $message = $type == Package::PROCESS_TYPE_IN ?
                         $this->__('package.add.success') : $this->__('package.ship.request.success');
                     $this->flashMessenger()->addSuccessMessage($message);
-                    $this->redirect()->toRoute('inventory');
+
+                    $type == Package::PROCESS_TYPE_OUT ?
+                        $this->redirect()->toRoute('inventory', ['action' => 'view', 'id' => $packageId]) :
+                        $this->redirect()->toRoute('inventory');
                 } catch (Exception $e) {
                     $this->table->delete($packageId);
                 }
