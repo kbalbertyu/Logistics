@@ -35,6 +35,7 @@ class PackageTable extends BaseTable {
             'height' => $data['height'],
             'weight' => $data['weight'],
             'note' => $data['note'],
+            'status' => $data['status'],
             'recordDate' => $time,
         ];
 
