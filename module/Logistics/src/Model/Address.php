@@ -20,4 +20,9 @@ use Application\Model\BaseModel;
  */
 class Address extends BaseModel {
 
+    public function equalsTo($data) {
+        return $data['recipient'] == $this->recipient &&
+            $data['phone'] = $this->phone &&
+                $data['address'] == $this->address;
+    }
 }
