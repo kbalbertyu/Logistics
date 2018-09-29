@@ -38,10 +38,22 @@ class Package extends BaseModel {
     public const PROCESS_TYPE_IN = 'in';
 
     public const STATUS_LIST = [
-        'pending' => 'status.pending',
-        'in-process' => 'status.in.process',
-        'shipped' => 'status.shipped',
-        'completed' => 'status.completed'
+        'pending' => [
+            'label' => 'status.pending',
+            'color' => 'danger'
+        ],
+        'in-process' => [
+            'label' => 'status.in.process',
+            'color' => 'warning'
+        ],
+        'shipped' => [
+            'label' => 'status.shipped',
+            'color' => 'primary'
+        ],
+        'completed' => [
+            'label' => 'status.completed',
+            'color' => 'success'
+        ]
     ];
 
     private const REQUIRED_COLUMNS = ['itemName', 'brand', 'teamId', 'qty', 'type'];
@@ -72,5 +84,11 @@ class Package extends BaseModel {
         return sprintf('<span class="badge badge-%s">%s</span>',
             $this->type == self::PROCESS_TYPE_IN ? 'success' : 'warning',
             $this->type == self::PROCESS_TYPE_IN ? Tools::__('receive') : Tools::__('ship.package'));
+    }
+
+    public function renderStatus() {
+        return sprintf('<span class="badge badge-%s">%s</span>',
+            self::STATUS_LIST[$this->status]['color'],
+            Tools::__(self::STATUS_LIST[$this->status]['label']));
     }
 }
