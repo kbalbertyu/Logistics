@@ -35,7 +35,6 @@ class PackageTable extends BaseTable {
             'productId' => $data['productId'],
             'qty' => $data['qty'],
             'note' => $data['note'],
-            'status' => $data['status'],
             'recordDate' => $time,
         ];
 
@@ -44,6 +43,7 @@ class PackageTable extends BaseTable {
                 'length' => $data['length'],
                 'width' => $data['width'],
                 'height' => $data['height'],
+                'status' => $data['status'],
                 'weight' => $data['weight']
             ]);
         }
