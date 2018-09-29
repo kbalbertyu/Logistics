@@ -3,8 +3,8 @@
   <thead>
   <tr>
     <th>ID</th>
-    <th>Name</th>
-    <th>Edit</th>
+    <th><?php echo $this->t->translate('brand.name') ?></th>
+    <th><?php echo $this->t->translate('edit') ?></th>
   </tr>
   </thead>
   <tbody>
@@ -14,7 +14,7 @@
         <td><?php echo $brand->id ?></td>
         <td><?php echo $brand->name ?></td>
         <td>
-          <button type="button" class="btn btn-primary">Edit</button>
+          <button type="button" class="btn btn-primary"><?php echo $this->t->translate('edit') ?></button>
         </td>
       </tr>
       <?php } ?>
@@ -23,8 +23,8 @@
   <tfoot>
   <tr>
     <th>ID</th>
-    <th>Name</th>
-    <th>Edit</th>
+    <th><?php echo $this->t->translate('brand.name') ?></th>
+    <th><?php echo $this->t->translate('edit') ?></th>
   </tr>
   </tfoot>
 </table>

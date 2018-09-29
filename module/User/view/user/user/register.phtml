@@ -1,17 +1,30 @@
 <form method="post">
-  <div class="form-group">
-    <label for="exampleInputEmail1">Username</label>
-    <input type="text" class="form-control" name="username" value="" placeholder="Enter username">
-  </div>
-  <div class="form-group">
-    <label for="exampleInputPassword1">Password</label>
-    <input type="password" class="form-control" name="password" placeholder="Password">
-  </div>
-  <div class="form-group">
-    <label for="exampleInputPassword1">Confirm Password</label>
-    <input type="password" class="form-control" name="confirm_password" placeholder="Confirm Password">
-  </div>
-  <button type="submit" class="btn btn-primary">Submit</button>
+  <fieldset>
+    <div class="input-group">
+      <div class="input-group-prepend">
+        <label class="input-group-text" for="username"><?php echo $this->t->translate('user.name') ?></label>
+      </div>
+      <input type="text" class="form-control" name="username" value="" placeholder="Enter username">
+    </div>
+    <div class="clear"></div>
+    <div class="input-group">
+      <div class="input-group-prepend">
+        <label class="input-group-text" for="password"><?php echo $this->t->translate('password') ?></label>
+      </div>
+      <input type="password" class="form-control" name="password" placeholder="Password">
+    </div>
+    <div class="clear"></div>
+    <div class="input-group">
+      <div class="input-group-prepend">
+        <label class="input-group-text" for="confirm_password"><?php echo $this->t->translate('confirm.password') ?></label>
+      </div>
+      <input type="password" class="form-control" name="confirm_password" placeholder="Confirm Password">
+    </div>
+    <div class="clear"></div>
+    <div class="input-group">
+      <button type="submit" class="btn btn-primary"><?php echo $this->t->translate('submit') ?></button>
+    </div>
+  </fieldset>
 </form>
 <?php if (isset($this->isValid)) {?>
 <?php if ($this->isValid) {?>
