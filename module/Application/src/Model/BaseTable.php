@@ -95,7 +95,8 @@ class BaseTable {
     }
 
     public function getRowByFields($fieldValueMappings, array $columns = []) {
-        return $this->getRowsByFields($fieldValueMappings, $columns)->current();
+        $rows = $this->getRowsByFields($fieldValueMappings, $columns);
+        return $rows->count() ? $rows->current() : null;
     }
 
     public function getRowsByFields($fieldValueMappings, array $columns = []) {
