@@ -229,5 +229,12 @@ class BaseTable {
     protected function getInsertId() {
         return $this->tableGateway->getLastInsertValue();
     }
+
+    /**
+     * @return BaseModel
+     */
+    protected function getModel() {
+        return $this->tableGateway->getResultSetPrototype()->getArrayObjectPrototype();
+    }
 }
 
