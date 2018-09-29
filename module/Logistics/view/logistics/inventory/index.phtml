@@ -1,8 +1,12 @@
 <?php echo $this->flashMessenger()->render('success', array('alert', 'alert-success')); ?>
+<?php echo $this->flashMessenger()->render('error', array('alert', 'alert-danger')); ?>
+
+<?php if ($this->userObject->isManager()) { ?>
 <div class="date-nav">
   <a href="<?php echo $this->url('inventory', ['action' => 'add'], ['query' => ['type' => 'in']]) ?>" class="btn btn-primary right" style="margin-right:10px;"><?php echo $this->t->translate('receive.new.package') ?></a>
   <div class="clear"></div>
 </div>
+<?php }?>
 <table id="package-table" class="table display" cellspacing="0" width="100%">
   <thead>
   <tr>
@@ -38,9 +42,12 @@
         <td class="actions">
           <?php if ($package->type == 'out') { ?>
           <a href="<?php echo $this->url('inventory', ['action' => 'view', 'id' => $package->id]) ?>" class="btn btn-info"><?php echo $this->t->translate('view') ?></a>
+          <?php } else {?>
+          <a href="<?php echo $this->url('inventory', ['action' => 'edit', 'id' => $package->id]) ?>" class="btn btn-info"><?php echo $this->t->translate('package.info') ?></a>
           <?php }?>
-          <a href="<?php echo $this->url('inventory', ['action' => 'edit', 'id' => $package->id]) ?>" class="btn btn-primary"><?php echo $this->t->translate('edit') ?></a>
+          <?php if ($this->userObject->isManager()) {?>
           <a href="<?php echo $this->url('inventory', ['action' => 'delete', 'id' => $package->id]) ?>" class="btn btn-danger"><?php echo $this->t->translate('delete') ?></a>
+          <?php }?>
         </td>
       </tr>
       <?php } ?>

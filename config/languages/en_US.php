@@ -112,4 +112,5 @@ return [
     'upload.file.fail' => 'File upload failed: {name}',
     'password' => 'Password',
     'confirm.password' => 'Confirm Password',
+    'package.qty.over.inventory' => 'Shipping QTY {qty} is greater than inventory {maximum}',
 ];

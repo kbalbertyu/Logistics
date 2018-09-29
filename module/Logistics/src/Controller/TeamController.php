@@ -27,6 +27,9 @@ class TeamController extends AbstractBaseController {
     }
 
     public function indexAction() {
+        if (($view = $this->onlyManagers()) != null) {
+            return $view;
+        }
         $this->title = $this->__('nav.teams');
         $this->nav = 'team';
         $this->addOutPut([

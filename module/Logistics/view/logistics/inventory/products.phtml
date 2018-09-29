@@ -30,11 +30,14 @@
         <td><?php echo round($product->serviceFee, 2) ?></td>
         <td><?php echo round($product->feesDue, 2) ?></td>
         <td class="actions">
+          <?php if ($this->userObject->isManager()) {?>
           <a href="<?php echo $this->url('inventory', ['action' => 'add', 'id' => $product->id], ['query' => ['type' => 'in']]) ?>" class="btn btn-success"><?php echo $this->t->translate('receive.new.package') ?></a>
-          <a href="<?php echo $this->url('inventory', ['action' => 'add', 'id' => $product->id], ['query' => ['type' => 'out']]) ?>" class="btn btn-secondary"><?php echo $this->t->translate('ship.package') ?></a>
-          <a href="<?php echo $this->url('inventory', ['action' => 'charge', 'id' => $product->id]) ?>" class="btn btn-info"><?php echo $this->t->translate('charge.fees') ?></a>
+            <a href="<?php echo $this->url('inventory', ['action' => 'charge', 'id' => $product->id]) ?>" class="btn btn-info"><?php echo $this->t->translate('charge.fees') ?></a>
+            <a href="<?php echo $this->url('inventory', ['action' => 'delete-product', 'id' => $product->id]) ?>" class="btn btn-danger delete"><?php echo $this->t->translate('delete') ?></a>
+          <?php } elseif ($product->qty > 0) {?>
+          <a href="<?php echo $this->url('inventory', ['action' => 'add', 'id' => $product->id], ['query' => ['type' => 'out']]) ?>" class="btn btn-success"><?php echo $this->t->translate('ship.package.request') ?></a>
+          <?php }?>
           <a href="<?php echo $this->url('inventory', ['action' => 'edit-product', 'id' => $product->id]) ?>" class="btn btn-primary"><?php echo $this->t->translate('edit') ?></a>
-          <a href="<?php echo $this->url('inventory', ['action' => 'delete-product', 'id' => $product->id]) ?>" class="btn btn-danger delete"><?php echo $this->t->translate('delete') ?></a>
         </td>
       </tr>
       <?php } ?>

@@ -48,13 +48,13 @@ class InventoryController extends AbstractBaseController {
 
     public function indexAction() {
         $this->title = $this->__('package.list');
-        $this->addOutPut('packages', $this->table->getPackageList());
+        $this->addOutPut('packages', $this->table->getPackageList($this->userObject));
         return $this->renderView();
     }
 
     public function productsAction() {
         $this->title = $this->__('product.list');
-        $this->addOutPut('products', $this->productTable->getProducts());
+        $this->addOutPut('products', $this->productTable->getProducts($this->userObject));
         return $this->renderView();
     }
 
@@ -74,8 +74,18 @@ class InventoryController extends AbstractBaseController {
             $this->redirect()->toRoute('inventory');
             return;
         }
+
+        if ($package->type == Package::PROCESS_TYPE_IN) {
+            $this->redirect()->toRoute('inventory', ['action' => 'edit', 'id' => $id]);
+            return;
+        }
+
         $this->addOutPut('package', $package);
         $this->addOutPut('statusList', Package::STATUS_LIST);
+
+        if (!$this->userObject->allowTeamAccess($package->teamId)) {
+            return $this->redirectDOS();
+        }
 
         // Shipping
         $shipping = $this->shippingTable->getRowByFields(['packageId' => $id]);
@@ -116,7 +126,15 @@ class InventoryController extends AbstractBaseController {
             // Save to package
             BaseModel::formatNumericColumns($data, Package::NUMERIC_COLUMNS);
             $data['productId'] = $product->id;
-            $this->table->savePackage($data, $id);
+            if ($product->qty < $data['qty']) {
+                $this->flashMessenger()->addErrorMessage($this->__('package.qty.over.inventory', [
+                        'qty' => $data['qty'],
+                        'maximum' => $product->qty
+                    ]));
+                $this->redirect()->refresh();
+                return;
+            }
+            $this->table->savePackage($data, $this->userObject->isManager(), $id);
 
             // Save to address
             try {
@@ -172,10 +190,20 @@ class InventoryController extends AbstractBaseController {
             $teamId = $product->teamId;
             $this->addOutPut('product', $product);
 
+            // Check team for non-manager members
+            if (!$this->userObject->allowTeamAccess($teamId)) {
+                return $this->redirectDOS();
+            }
+
             $brand = $this->brandTable->getRowById($product->brandId);
             $this->addOutPut('brand', $brand);
         } else {
             $teamId = $this->params()->fromQuery('teamId');
+
+            // Only managers can receive packages
+            if (($view = $this->onlyManagers()) != null) {
+                return $view;
+            }
         }
 
         // Team
@@ -217,11 +245,19 @@ class InventoryController extends AbstractBaseController {
                 return $this->renderView();
             }
             try {
+                if (!empty($product) && $product->qty < $data['qty']) {
+                    $this->flashMessenger()->addErrorMessage($this->__('package.qty.over.inventory', [
+                        'qty' => $data['qty'],
+                        'maximum' => $product->qty
+                    ]));
+                    $this->redirect()->refresh();
+                    return;
+                }
                 $data['brandId'] = $this->brandTable->getBrandId($data['brand']);
                 $data['productId'] = $this->productTable->getProductId($data);
                 $data['username'] = $this->user;
                 BaseModel::formatNumericColumns($data, Package::NUMERIC_COLUMNS);
-                $packageId = $this->table->savePackage($data);
+                $packageId = $this->table->savePackage($data, $this->userObject->isManager());
                 try {
                     $this->productTable->updateQtyAndFees($data);
                     $message = $type == Package::PROCESS_TYPE_IN ?
@@ -255,6 +291,17 @@ class InventoryController extends AbstractBaseController {
             $this->flashMessenger()->addErrorMessage($this->__('package.id.invalid', ['id' => $id]));
             $this->redirect()->refresh();
         }
+
+        // Check team for non-manager members
+        if (!$this->userObject->allowTeamAccess($package->teamId)) {
+            return $this->redirectDOS();
+        }
+
+        if ($package->type == Package::PROCESS_TYPE_OUT) {
+            $this->redirect()->toRoute('inventory', ['action' => 'view', 'id' => $id]);
+            return;
+        }
+
         $this->title = $this->__('edit.package.id', ['id' => $id]);
         $this->addOutPut('package', $package);
 
@@ -277,12 +324,21 @@ class InventoryController extends AbstractBaseController {
                 $this->flashMessenger()->addErrorMessage(nl2br($validate->stringify()));
                 $this->redirect()->refresh();
             }
+
+            if ($product->qty < $data['qty']) {
+                $this->flashMessenger()->addErrorMessage($this->__('package.qty.over.inventory', [
+                    'qty' => $data['qty'],
+                    'maximum' => $product->qty
+                ]));
+                $this->redirect()->refresh();
+                return;
+            }
             try {
                 $data['brandId'] = is_numeric($data['brand']) ? $data['brand'] :
                     $this->getTableModel(BrandTable::class)->getBrandId($data['brand']);
                 $data['productId'] = $this->productTable->getProductId($data);
                 BaseModel::formatNumericColumns($data, Package::NUMERIC_COLUMNS);
-                $this->table->savePackage($data, $id);
+                $this->table->savePackage($data, $this->userObject->isManager(), $id);
 
                 $this->productTable->updateQtyAndFees($data, $package, $product);
                 $message = $package->type == Package::PROCESS_TYPE_IN ?
@@ -309,6 +365,12 @@ class InventoryController extends AbstractBaseController {
             $this->flashMessenger()->addErrorMessage($this->__('product.id.invalid', ['id' => $id]));
             $this->toProductsPage();
         }
+
+        // Check team for non-manager members
+        if (!$this->userObject->allowTeamAccess($product->teamId)) {
+            return $this->redirectDOS();
+        }
+
         $this->addOutPut('product', $product);
         $this->addOutPut('team', $this->teamTable->getRowById($product->teamId));
         $this->addOutPut('brand', $this->brandTable->getRowById($product->brandId));
@@ -339,6 +401,9 @@ class InventoryController extends AbstractBaseController {
     }
 
     public function chargeAction() {
+        if (($view = $this->onlyManagers()) != null) {
+            return $view;
+        }
         $id = $this->params()->fromRoute('id');
         if (empty($id)) {
             $this->flashMessenger()->addErrorMessage($this->__('product.id.empty'));
@@ -377,6 +442,9 @@ class InventoryController extends AbstractBaseController {
     }
 
     public function deleteProductAction() {
+        if (($view = $this->onlyManagers()) != null) {
+            return $view;
+        }
         $id = $this->params()->fromRoute('id');
         if (empty($id)) {
             $this->flashMessenger()->addErrorMessage($this->__('product.id.empty'));

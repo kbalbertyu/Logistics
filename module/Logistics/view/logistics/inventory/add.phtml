@@ -57,6 +57,7 @@
       <textarea style="width: 800px;height: 150px;" id="note" name="note" class="form-control"></textarea>
     </div>
   </fieldset>
+  <?php if ($this->type == 'in') {?>
   <fieldset>
     <legend><?php echo $this->t->translate('size') ?></legend>
     <div class="input-group">
@@ -84,6 +85,7 @@
       <input id="weight" name="weight" value="<?php echo $this->product ? $this->product->weight : '' ?>" type="text" class="form-control">
     </div>
   </fieldset>
+  <?php }?>
   <button type="submit" class="btn btn-primary"><?php echo $this->type == 'out' ? $this->t->translate('next') : $this->t->translate('submit') ?></button>
 </form>
 <?php if (!empty($this->message)) { ?>

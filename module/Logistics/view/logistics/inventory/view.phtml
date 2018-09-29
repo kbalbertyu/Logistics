@@ -34,7 +34,7 @@
       <div class="input-group-prepend">
         <label class="input-group-text" for="status"><?php echo $this->t->translate('status') ?></label>
       </div>
-      <select class="custom-select" id="status" name="status">
+      <select class="custom-select" id="status" <?php echo $this->userObject->isManager() ? 'name="status"' : 'disabled ' ?>>
           <?php foreach ($this->statusList as $value => $info) {?>
             <option <?php echo $this->package->status == $value ? 'selected' : '' ?> value="<?php echo $value ?>"><?php echo $this->t->translate($info['label']) ?></option>
           <?php }?>
@@ -54,25 +54,25 @@
       <div class="input-group-prepend">
         <span class="input-group-text" id="length"><?php echo $this->t->translate('length') ?></span>
       </div>
-      <input id="length" name="length" value="<?php echo $this->package->length ?>" type="text" class="form-control">
+      <input id="length" <?php echo $this->userObject->isManager() ? 'name="length"' : 'disabled ' ?> value="<?php echo $this->package->length ?>" type="text" class="form-control">
     </div>
     <div class="input-group">
       <div class="input-group-prepend">
         <span class="input-group-text" id="width"><?php echo $this->t->translate('width') ?></span>
       </div>
-      <input id="width" name="width" value="<?php echo $this->package->width ?>" type="text" class="form-control">
+      <input id="width" <?php echo $this->userObject->isManager() ? 'name="width"' : 'disabled ' ?> value="<?php echo $this->package->width ?>" type="text" class="form-control">
     </div>
     <div class="input-group">
       <div class="input-group-prepend">
         <span class="input-group-text" id="height"><?php echo $this->t->translate('height') ?></span>
       </div>
-      <input id="height" name="height" value="<?php echo $this->package->height ?>" type="text" class="form-control">
+      <input id="height" <?php echo $this->userObject->isManager() ? 'name="height"' : 'disabled ' ?> value="<?php echo $this->package->height ?>" type="text" class="form-control">
     </div>
     <div class="input-group">
       <div class="input-group-prepend">
         <span class="input-group-text" id="weight"><?php echo $this->t->translate('weight') ?></span>
       </div>
-      <input id="weight" name="weight" value="<?php echo $this->package->weight ?>" type="text" class="form-control">
+      <input id="weight" <?php echo $this->userObject->isManager() ? 'name="weight"' : 'disabled ' ?> value="<?php echo $this->package->weight ?>" type="text" class="form-control">
     </div>
   </fieldset>
   <fieldset>
@@ -112,19 +112,19 @@
       <div class="input-group-prepend">
         <span class="input-group-text" id="shippingCost"><?php echo $this->t->translate('shipping.cost') ?></span>
       </div>
-      <input id="shippingCost" name="shippingCost" value="<?php echo round($this->shipping->shippingCost, 2) ?>" type="text" class="form-control">
+      <input id="shippingCost" <?php echo $this->userObject->isManager() ? 'name="shippingCost"' : 'disabled ' ?> value="<?php echo round($this->shipping->shippingCost, 2) ?>" type="text" class="form-control">
     </div>
     <div class="input-group">
       <div class="input-group-prepend">
         <span class="input-group-text" id="shippingFee"><?php echo $this->t->translate('shipping.fee') ?></span>
       </div>
-      <input id="shippingFee" name="shippingFee" value="<?php echo round($this->shipping->shippingFee, 2) ?>" type="text" class="form-control">
+      <input id="shippingFee" <?php echo $this->userObject->isManager() ? 'name="shippingFee"' : 'disabled ' ?> value="<?php echo round($this->shipping->shippingFee, 2) ?>" type="text" class="form-control">
     </div>
     <div class="input-group">
       <div class="input-group-prepend">
         <span class="input-group-text" id="serviceFee"><?php echo $this->t->translate('service.fee') ?></span>
       </div>
-      <input id="serviceFee" name="serviceFee" value="<?php echo round($this->shipping->serviceFee, 2) ?>" type="text" class="form-control">
+      <input id="serviceFee" <?php echo $this->userObject->isManager() ? 'name="serviceFee"' : 'disabled ' ?> value="<?php echo round($this->shipping->serviceFee, 2) ?>" type="text" class="form-control">
     </div>
   </fieldset>
   <fieldset>
@@ -133,13 +133,13 @@
       <div class="input-group-prepend">
         <span class="input-group-text" id="customs"><?php echo $this->t->translate('customs.amount') ?></span>
       </div>
-      <input id="customs" name="customs" value="<?php echo round($this->shipping->customs, 2) ?>" type="text" class="form-control">
+      <input id="customs" <?php echo $this->userObject->isManager() ? 'name="customs"' : 'disabled ' ?> value="<?php echo round($this->shipping->customs, 2) ?>" type="text" class="form-control">
     </div>
     <div class="input-group full-size">
       <div class="input-group-prepend">
         <span class="input-group-text" id="customsNumber"><?php echo $this->t->translate('customs.number') ?></span>
       </div>
-      <input id="customsNumber" name="customsNumber" value="<?php echo $this->shipping->customsNumber ?>" type="text" class="form-control">
+      <input id="customsNumber" <?php echo $this->userObject->isManager() ? 'name="customsNumber"' : 'disabled ' ?> value="<?php echo $this->shipping->customsNumber ?>" type="text" class="form-control">
     </div>
   </fieldset>
   <fieldset>
@@ -168,14 +168,14 @@
       <div class="input-group-prepend">
         <span class="input-group-text" id="carrier"><?php echo $this->t->translate('shipping.carrier') ?></span>
       </div>
-      <input id="carrier" name="carrier" value="<?php echo $this->shipping->carrier ?>" type="text" class="form-control">
+      <input id="carrier" <?php echo $this->userObject->isManager() ? 'name="carrier"' : 'disabled ' ?> value="<?php echo $this->shipping->carrier ?>" type="text" class="form-control">
     </div>
     <div class="form-group">
       <div class="input-group">
         <div class="input-group-prepend">
           <span class="input-group-text" id="trackingNumber"><?php echo $this->t->translate('tracking.number') ?></span>
         </div>
-        <input id="trackingNumber" name="trackingNumber" value="<?php echo $this->shipping->trackingNumber ?>" type="text" class="form-control">
+        <input id="trackingNumber" <?php echo $this->userObject->isManager() ? 'name="trackingNumber"' : 'disabled ' ?> value="<?php echo $this->shipping->trackingNumber ?>" type="text" class="form-control">
       </div>
     </div>
     <div class="clear"></div>

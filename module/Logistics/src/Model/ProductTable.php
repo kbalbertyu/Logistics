@@ -12,18 +12,22 @@ namespace Logistics\Model;
 use Application\Model\BaseTable;
 use Application\Model\Tools;
 use RuntimeException;
+use User\Model\User;
 use Zend\Db\Sql\Expression;
 use Zend\Db\Sql\Select;
 use Zend\Db\Sql\Where;
 
 class ProductTable extends BaseTable {
 
-    public function getProducts() {
+    public function getProducts(User $user = null) {
         $select = new Select();
         $select->from(['p' => $this->getTable()])
             ->join(['t' => BaseTable::TEAM_TABLE], 'p.teamId = t.id', ['team' => 'name'])
             ->join(['b' => BaseTable::BRAND_TABLE], 'p.brandId = b.id', ['brand' => 'name'])
             ->order('itemName');
+        if (!empty($user) && !$user->isManager()) {
+            $select->where(['teamId' => $user->teamId]);
+        }
         return $this->tableGateway->selectWith($select);
     }
 

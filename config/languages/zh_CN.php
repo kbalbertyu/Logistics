@@ -76,7 +76,7 @@ return [
     'submit' => '提交',
     'login' => '登录',
     'product.info' => '产品详细信息',
-    'package.info' => '包裹详细信息',
+    'package.info' => '包裹详情',
     'process.type' => '类型',
     'receive.new.package' => '接收包裹',
     'actions' => '操作',
@@ -112,4 +112,5 @@ return [
     'upload.file.fail' => '文件上传失败: {name}',
     'password' => '密码',
     'confirm.password' => '确认密码',
+    'package.qty.over.inventory' => '发货数量{qty}超过库存数量{maximum}',
 ];

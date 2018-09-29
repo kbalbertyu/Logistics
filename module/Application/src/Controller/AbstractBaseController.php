@@ -3,6 +3,7 @@ namespace Application\Controller;
 
 use Application\Model\Tools;
 use RuntimeException;
+use User\Model\User;
 use Zend\Json\Json;
 use Zend\Mvc\Controller\AbstractActionController;
 use Zend\ServiceManager\ServiceLocatorInterface;
@@ -25,6 +26,9 @@ abstract class AbstractBaseController extends AbstractActionController {
 
     protected $container;
     protected $user;
+    /**
+     * @var User
+     */
     protected $userObject;
     protected $title;
 
@@ -113,9 +117,15 @@ abstract class AbstractBaseController extends AbstractActionController {
         } elseif (empty($this->userObject)) {
             $this->redirect()->toRoute('user');
         } else {
-            $action = $this->getRequest()->isXmlHttpRequest() ? 'access-denied-ajax' : 'access-denied';
-            return $this->forward()->dispatch('Application\Controller\IndexController', ['action' => $action]);
+            return $this->redirectDOS();
         }
+    }
+
+    protected function onlyManagers() {
+        if ($this->userObject->isManager()) {
+            return null;
+        }
+        return $this->redirectDOS();
     }
 
     /**
@@ -141,7 +151,10 @@ abstract class AbstractBaseController extends AbstractActionController {
     }
 
     protected function renderView() {
-        $this->addOutPut('t', Tools::getTranslator());
+        $this->addOutPut([
+            't' => Tools::getTranslator(),
+            'userObject' => $this->userObject
+        ]);
         return new ViewModel($this->outPutData);
     }
 
@@ -154,6 +167,14 @@ abstract class AbstractBaseController extends AbstractActionController {
         if (!$this->user && $action !== 'login' && $action != 'register') {
             $this->redirect()->toRoute('user');
         }
+    }
+
+    /**
+     * Redirect to denied of access page
+     */
+    protected function redirectDOS() {
+        $action = $this->getRequest()->isXmlHttpRequest() ? 'access-denied-ajax' : 'access-denied';
+        return $this->forward()->dispatch('Application\Controller\IndexController', ['action' => $action]);
     }
 }
 

@@ -43,6 +43,14 @@ class User extends BaseModel {
         parent::exchangeArray($data);
         $this->role = !empty($data['role']) ? $data['role'] : self::DEFAULT_ROLE;
     }
+
+    public function isManager() {
+        return $this->role == 'manager' || $this->role == 'admin';
+    }
+
+    public function allowTeamAccess(int $teamId) {
+        return $this->isManager() || $this->teamId == $teamId;
+    }
     
     public function isSuperUser() {
         return $this->level === 0;

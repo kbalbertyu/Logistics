@@ -10,34 +10,43 @@ namespace Logistics\Model;
 
 
 use Application\Model\BaseTable;
+use User\Model\User;
 use Zend\Db\Sql\Select;
 use Zend\Stdlib\ArrayUtils;
 
 class PackageTable extends BaseTable {
 
-    public function getPackageList() {
+    public function getPackageList(User $user = null) {
         $select = new Select();
         $select->from(['i' => $this->getTable()])
             ->join(['t' => BaseTable::TEAM_TABLE], 'i.teamId = t.id', ['team' => 'name'])
             ->join(['p' => BaseTable::PRODUCT_TABLE], 'i.productId = p.id', ['itemName'])
             ->join(['b' => BaseTable::BRAND_TABLE], 'p.brandId = b.id', ['brand' => 'name'])
             ->order('processDate DESC');
+        if (!empty($user) && !$user->isManager()) {
+            $select->where(['i.teamId' => $user->teamId]);
+        }
         return $this->tableGateway->selectWith($select);
     }
 
-    public function savePackage($data, $id = null) {
+    public function savePackage($data, $isManager, $id = null) {
         $time = date('Y-m-d H:i:s');
         $set = [
             'productId' => $data['productId'],
             'qty' => $data['qty'],
-            'length' => $data['length'],
-            'width' => $data['width'],
-            'height' => $data['height'],
-            'weight' => $data['weight'],
             'note' => $data['note'],
             'status' => $data['status'],
             'recordDate' => $time,
         ];
+
+        if ($isManager) {
+            $set = ArrayUtils::merge($set, [
+                'length' => $data['length'],
+                'width' => $data['width'],
+                'height' => $data['height'],
+                'weight' => $data['weight']
+            ]);
+        }
 
         if (empty($id)) {
             $set = ArrayUtils::merge($set, [

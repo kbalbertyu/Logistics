@@ -29,16 +29,15 @@
         </div>
       <?php }?>
     </div>
-    <div class="input-group">
+    <div class="clear"></div>
+    <div class="input-group textarea">
       <div class="input-group-prepend">
         <label class="input-group-text" for="note"><?php echo $this->t->translate('note') ?></label>
       </div>
-      <input id="note" name="note" value="<?php echo $this->package->note ?>" type="text" class="form-control">
-      <div class="input-group-prepend">
-        <label class="input-group-text" for="note"><em>(<?php echo $this->t->translate('optional') ?>)</em></label>
-      </div>
+      <textarea style="width: 800px;height: 150px;" id="note" name="note" class="form-control"><?php echo $this->package->note ?></textarea>
     </div>
   </fieldset>
+  <?php if ($this->package->type == 'in') {?>
   <fieldset>
     <legend><?php echo $this->t->translate('size') ?></legend>
     <div class="input-group">
@@ -66,6 +65,7 @@
       <input id="weight" name="weight" value="<?php echo $this->package->weight ?>" type="text" class="form-control">
     </div>
   </fieldset>
+  <?php }?>
   <button type="submit" class="btn btn-primary"><?php echo $this->t->translate('submit') ?></button>
 </form>
 <link href="<?php echo $this->basePath('js/jquery-ui-1.12.1.custom/jquery-ui.theme.min.css') ?>" media="screen" rel="stylesheet" type="text/css">
