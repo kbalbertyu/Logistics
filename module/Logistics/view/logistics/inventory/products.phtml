@@ -15,7 +15,9 @@
     <th><?php echo $this->t->translate('item.name') ?></th>
     <th><?php echo $this->t->translate('brand.name') ?></th>
     <th><?php echo $this->t->translate('qty') ?></th>
+    <?php if ($this->userObject->isManager()) {?>
     <th><?php echo $this->t->translate('shipping.cost') ?></th>
+    <?php }?>
     <th><?php echo $this->t->translate('shipping.fee') ?></th>
     <th><?php echo $this->t->translate('service.fee') ?></th>
     <th><?php echo $this->t->translate('fees.due') ?></th>
@@ -31,7 +33,9 @@
         <td><?php echo $product->itemName ?></td>
         <td><?php echo $product->brand ?></td>
         <td><?php echo $product->qty ?></td>
+        <?php if ($this->userObject->isManager()) {?>
         <td><?php echo round($product->shippingCost, 2) ?></td>
+        <?php }?>
         <td><?php echo round($product->shippingFee, 2) ?></td>
         <td><?php echo round($product->serviceFee, 2) ?></td>
         <td><?php echo round($product->feesDue, 2) ?></td>
@@ -56,7 +60,9 @@
     <th><?php echo $this->t->translate('item.name') ?></th>
     <th><?php echo $this->t->translate('brand.name') ?></th>
     <th><?php echo $this->t->translate('qty') ?></th>
+    <?php if ($this->userObject->isManager()) {?>
     <th><?php echo $this->t->translate('shipping.cost') ?></th>
+    <?php }?>
     <th><?php echo $this->t->translate('shipping.fee') ?></th>
     <th><?php echo $this->t->translate('service.fee') ?></th>
     <th><?php echo $this->t->translate('fees.due') ?></th>
