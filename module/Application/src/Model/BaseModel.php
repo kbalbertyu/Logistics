@@ -12,16 +12,20 @@ use Zend\Json\Json;
  */
 class BaseModel {
 
-    /**
-     * @var For counting rows
-     */
     public $count;
 
-    public function __construct($data = []) {
-        if (!empty($data)) {
-            $properties = Tools::getProperties(get_class($this));
-            $this->assign($data, $properties);
+    /**
+     * @param array $data
+     * @return array
+     */
+    public function removeExtraColumns($data) {
+        $properties = Tools::getProperties(get_class($this));
+        foreach ($data as $key => $value) {
+            if (!in_array($key, $properties)) {
+                unset($data[$key]);
+            }
         }
+        return $data;
     }
 
     public function exchangeArray(array $data) {
@@ -151,14 +155,6 @@ class BaseModel {
             $n--;
         }
         return $str;
-    }
-
-    private function assign($data, $properties) {
-        foreach ($properties as $property) {
-            if (isset($data[$property])) {
-                $this->$property = $data[$property];
-            }
-        }
     }
 
     /**
