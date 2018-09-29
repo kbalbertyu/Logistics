@@ -3,11 +3,12 @@
   <a href="<?php echo $this->url('inventory', ['action' => 'add'], ['query' => ['type' => 'in']]) ?>" class="btn btn-primary right" style="margin-right:10px;"><?php echo $this->t->translate('receive.new.package') ?></a>
   <div class="clear"></div>
 </div>
-<table id="team-table" class="table display" cellspacing="0" width="100%">
+<table id="package-table" class="table display" cellspacing="0" width="100%">
   <thead>
   <tr>
     <th>ID</th>
     <th><?php echo $this->t->translate('process.type') ?></th>
+    <th><?php echo $this->t->translate('status') ?></th>
     <th><?php echo $this->t->translate('team.name') ?></th>
     <th><?php echo $this->t->translate('item.name') ?></th>
     <th><?php echo $this->t->translate('brand.name') ?></th>
@@ -25,6 +26,7 @@
       <tr>
         <td><?php echo $package->id ?></td>
         <td><?php echo $package->renderProcessType() ?></td>
+        <td><?php echo $package->renderStatus() ?></td>
         <td><?php echo $package->team ?></td>
         <td><?php echo $package->itemName ?></td>
         <td><?php echo $package->brand ?></td>
@@ -48,10 +50,11 @@
   <tr>
     <th>ID</th>
     <th><?php echo $this->t->translate('process.type') ?></th>
+    <th><?php echo $this->t->translate('status') ?></th>
     <th><?php echo $this->t->translate('team.name') ?></th>
     <th><?php echo $this->t->translate('item.name') ?></th>
     <th><?php echo $this->t->translate('brand.name') ?></th>
-    <th><?php echo $this->t->translate('qty.name') ?></th>
+    <th><?php echo $this->t->translate('qty') ?></th>
     <th><?php echo $this->t->translate('size') ?></th>
     <th><?php echo $this->t->translate('weight') ?></th>
     <th><?php echo $this->t->translate('date') ?></th>

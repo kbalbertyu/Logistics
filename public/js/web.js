@@ -78,6 +78,36 @@ $(function(){
 	$('#account-table, #health-table').dataTable({
 		paging: false
 	});
+    $('#package-table').dataTable({
+        "aoColumns": [
+            { "sType": "numeric-comma" },
+            null,
+            null,
+            null,
+            null,
+            null,
+            { "sType": "numeric-comma" },
+            null,
+            { "sType": "numeric-comma" },
+            null,
+            null,
+            null,
+        ],
+    });
+    $('#product-table').dataTable({
+        "aoColumns": [
+            { "sType": "numeric-comma" },
+            null,
+            null,
+            null,
+            { "sType": "numeric-comma" },
+            { "sType": "numeric-comma" },
+            { "sType": "numeric-comma" },
+            { "sType": "numeric-comma" },
+            { "sType": "numeric-comma" },
+            null
+        ],
+    });
 	
 	function highLightCol(index, oTable) {
 		$('td.yHighlight', oTable).removeClass('yHighlight');
@@ -97,53 +127,57 @@ $(function(){
 	});
 	$("[data-toggle='tooltip']").tooltip();
 
+
+    function showBrand(brandId) {
+        $.getJSON(BASE_PATH + 'inventory/get-brand/' + brandId, function(data) {
+            $('#brand').val(data.name);
+        });
+    }
 	/** Auto Complete **/
-	var BRAND_CACHE = {};
-	$('#brand').autocomplete({
-		minLength: 2,
-		source: function(request, response) {
-			var term = request.term;
-			if (term in BRAND_CACHE) {
-				response(BRAND_CACHE[term]);
-				return;
-			}
+	if ($('#brand').length) {
+        var BRAND_CACHE = {};
+        $('#brand').autocomplete({
+            minLength: 2,
+            source: function (request, response) {
+                var term = request.term;
+                if (term in BRAND_CACHE) {
+                    response(BRAND_CACHE[term]);
+                    return;
+                }
 
-			$.getJSON(BASE_PATH + 'inventory/get-brand-names', request, function(data) {
-                BRAND_CACHE[term] = data;
-				response(data);
-			});
-		}
-	});
-
-	function showBrand(brandId) {
-		$.getJSON(BASE_PATH + 'inventory/get-brand/' + brandId, function(data) {
-			$('#brand').val(data.name);
-		});
-	}
-
-	var ITEM_CACHE = {};
-    $('#itemName').autocomplete({
-        minLength: 2,
-        source: function(request, response) {
-            var term = request.term;
-            if (term in ITEM_CACHE) {
-                response(ITEM_CACHE[term]);
-                return;
+                $.getJSON(BASE_PATH + 'inventory/get-brand-names', request, function (data) {
+                    BRAND_CACHE[term] = data;
+                    response(data);
+                });
             }
-            $.getJSON(BASE_PATH + 'inventory/get-item-names', request, function(data) {
-                ITEM_CACHE[term] = data;
-                response(data);
-            });
-        },
-        focus: function(event, ui) {
-            $('#itemName').val(ui.item.label);
-            return false;
-        },
-        select: function(event, ui) {
-            $('#itemName').val(ui.item.label);
-            showBrand(ui.item.brandId);
-            return false;
-        }
-    });
+        });
+    }
+
+    if ($('#itemName').length) {
+        var ITEM_CACHE = {};
+        $('#itemName').autocomplete({
+            minLength: 2,
+            source: function (request, response) {
+                var term = request.term;
+                if (term in ITEM_CACHE) {
+                    response(ITEM_CACHE[term]);
+                    return;
+                }
+                $.getJSON(BASE_PATH + 'inventory/get-item-names', request, function (data) {
+                    ITEM_CACHE[term] = data;
+                    response(data);
+                });
+            },
+            focus: function (event, ui) {
+                $('#itemName').val(ui.item.label);
+                return false;
+            },
+            select: function (event, ui) {
+                $('#itemName').val(ui.item.label);
+                showBrand(ui.item.brandId);
+                return false;
+            }
+        });
+    }
 })
  
