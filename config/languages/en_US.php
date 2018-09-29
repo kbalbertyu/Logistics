@@ -74,6 +74,7 @@ return [
     'customs.number' => 'Customs Number(UK VAT/US TAX/CA BN, etc.)',
     'customs.amount' => 'Customs Amount (￥)',
     'submit' => 'submit',
+    'login' => 'Login',
     'product.info' => 'Product Info',
     'package.info' => 'Package Info',
     'process.type' => 'Process Type',
@@ -109,4 +110,6 @@ return [
     'file.size.limit.alert' => 'Uploaded file size should not greater than {limit}MB.',
     'file.upload.error.with.code' => 'File upload error, error code: {code}',
     'upload.file.fail' => 'File upload failed: {name}',
+    'password' => 'Password',
+    'confirm.password' => 'Confirm Password',
 ];

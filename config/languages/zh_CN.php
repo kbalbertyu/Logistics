@@ -74,6 +74,7 @@ return [
     'customs.number' => '税号(英国VAT/美国TAX/加拿大BN进口权信息等)',
     'customs.amount' => '关税金额 (￥)',
     'submit' => '提交',
+    'login' => '登录',
     'product.info' => '产品详细信息',
     'package.info' => '包裹详细信息',
     'process.type' => '类型',
@@ -109,4 +110,6 @@ return [
     'file.size.limit.alert' => '上传附件不能超过{limit}MB.',
     'file.upload.error.with.code' => '文件上传错误, 错误代码: {code}',
     'upload.file.fail' => '文件上传失败: {name}',
+    'password' => '密码',
+    'confirm.password' => '确认密码',
 ];
