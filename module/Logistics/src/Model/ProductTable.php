@@ -94,6 +94,9 @@ class ProductTable extends BaseTable {
             if ($this->withoutFees($data)) {
                 return;
             }
+            if (empty($shipping)) {
+                $shipping = new Shipping();
+            }
             foreach (['shippingCost', 'shippingFee', 'serviceFee'] as $column) {
                 $set[$column] = $product->$column + ($data[$column] - $shipping->$column);
             }
