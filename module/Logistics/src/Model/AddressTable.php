@@ -25,6 +25,7 @@ class AddressTable extends BaseTable {
             $address = $this->getRowById($id);
         }
         $set = [
+            'teamId' => $data['teamId'],
             'recipient' => $data['recipient'],
             'phone' => $data['phone'],
             'address' => $data['address']
