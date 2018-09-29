@@ -11,7 +11,7 @@ use Zend\Json\Json;
  * @author ACC22-8
  *
  */
-class BaseModel extends ArrayObject {
+class BaseModel {
 
     public $count;
 
@@ -24,7 +24,9 @@ class BaseModel extends ArrayObject {
         foreach ($data as $key => $value) {
             if (!in_array($key, $properties)) {
                 unset($data[$key]);
+                continue;
             }
+            $data[$key] = trim($data[$key]);
         }
         return $data;
     }
