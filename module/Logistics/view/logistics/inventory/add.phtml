@@ -49,14 +49,12 @@
       </div>
       <?php }?>
     </div>
-    <div class="input-group">
+    <div class="clear"></div>
+    <div class="input-group textarea">
       <div class="input-group-prepend">
         <label class="input-group-text" for="note"><?php echo $this->t->translate('note') ?></label>
       </div>
-      <input id="note" name="note" value="" type="text" class="form-control">
-      <div class="input-group-prepend">
-        <label class="input-group-text" for="note"><em>(<?php echo $this->t->translate('optional') ?>)</em></label>
-      </div>
+      <textarea style="width: 800px;height: 150px;" id="note" name="note" class="form-control"></textarea>
     </div>
   </fieldset>
   <fieldset>
@@ -86,7 +84,7 @@
       <input id="weight" name="weight" value="<?php echo $this->product ? $this->product->weight : '' ?>" type="text" class="form-control">
     </div>
   </fieldset>
-  <button type="submit" class="btn btn-primary"><?php echo $this->t->translate('submit') ?></button>
+  <button type="submit" class="btn btn-primary"><?php echo $this->type == 'out' ? $this->t->translate('next') : $this->t->translate('submit') ?></button>
 </form>
 <?php if (!empty($this->message)) { ?>
 <div class="alert alert-danger" role="alert">
