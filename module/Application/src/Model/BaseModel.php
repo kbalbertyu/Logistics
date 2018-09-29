@@ -1,6 +1,7 @@
 <?php
 namespace Application\Model;
 
+use ArrayObject;
 use Zend\Hydrator\ObjectProperty;
 use Zend\Hydrator\Strategy\ExplodeStrategy;
 use Zend\Json\Json;
@@ -10,7 +11,7 @@ use Zend\Json\Json;
  * @author ACC22-8
  *
  */
-class BaseModel {
+class BaseModel extends ArrayObject {
 
     public $count;
 
