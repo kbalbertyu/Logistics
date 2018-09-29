@@ -11,6 +11,7 @@ namespace Logistics\Controller;
 
 use Application\Controller\AbstractBaseController;
 use Application\Model\BaseModel;
+use Application\Model\Tools;
 use Exception;
 use Logistics\Model\AddressTable;
 use Logistics\Model\BrandTable;
@@ -19,6 +20,7 @@ use Logistics\Model\Package;
 use Logistics\Model\Product;
 use Logistics\Model\ProductTable;
 use Logistics\Model\PackageTable;
+use Logistics\Model\Shipping;
 use Logistics\Model\ShippingTable;
 use Logistics\Model\TeamTable;
 use Zend\ServiceManager\ServiceLocatorInterface;
@@ -53,6 +55,96 @@ class InventoryController extends AbstractBaseController {
     public function productsAction() {
         $this->title = $this->__('product.list');
         $this->addOutPut('products', $this->productTable->getProducts());
+        return $this->renderView();
+    }
+
+    public function viewAction() {
+        $this->title = $this->__('shipping.detail');
+        $id = $this->params()->fromRoute('id');
+        if (empty($id)) {
+            $this->flashMessenger()->addErrorMessage($this->__('package.id.empty'));
+            $this->redirect()->toRoute('inventory');
+            return;
+        }
+
+        // Package
+        $package = $this->table->getRowById($id);
+        if (empty($package)) {
+            $this->flashMessenger()->addErrorMessage($this->__('package.id.invalid', ['id' => $id]));
+            $this->redirect()->toRoute('inventory');
+            return;
+        }
+        $this->addOutPut('package', $package);
+        $this->addOutPut('statusList', Package::STATUS_LIST);
+
+        // Shipping
+        $shipping = $this->shippingTable->getRowByFields(['packageId' => $id]);
+        $this->addOutPut('shipping', $shipping);
+
+        // Product
+        $product = $this->productTable->getRowById($package->productId);
+        $this->addOutPut('product', $product);
+
+        // Team
+        $team = $this->teamTable->getRowById($product->teamId);
+        $this->addOutPut('team', $team);
+
+        // Brand
+        $brand = $this->brandTable->getRowById($product->brandId);
+        $this->addOutPut('brand', $brand);
+
+        // Address
+        $this->addOutPut('address', $this->addressTable->getRowById($shipping->addressId));
+
+        if ($this->getRequest()->isPost()) {
+            $data = $this->getRequest()->getPost()->toArray();
+
+            // Upload attachments
+            try {
+                if (isset($_FILES['productLabel']) && $_FILES['productLabel']['size'] > 0) {
+                    $data['productLabel'] = Tools::uploadAttachment($_FILES['productLabel']);
+                }
+                if (isset($_FILES['amazonShippingLabel']) && $_FILES['amazonShippingLabel']['size'] > 0) {
+                    $data['amazonShippingLabel'] = Tools::uploadAttachment($_FILES['amazonShippingLabel']);
+                }
+            } catch (Exception $e) {
+                $this->flashMessenger()->addErrorMessage($e->getMessage());
+                $this->redirect()->refresh();
+                return;
+            }
+
+            // Save to package
+            BaseModel::formatNumericColumns($data, Package::NUMERIC_COLUMNS);
+            $data['productId'] = $product->id;
+            $this->table->savePackage($data, $id);
+
+            // Save to address
+            try {
+                $addressUseCount = !$package->addressId ? 0 :
+                    $this->shippingTable->getAddressUseCount($package->addressId);
+                $data['teamId'] = $team->id;
+                $data['addressId'] = $this->addressTable->saveAddress($data, $shipping->addressId,
+                    $addressUseCount > 1 ? false : true);
+            } catch (Exception $e) {
+                $this->logger->err('Unable to save address.');
+            }
+
+            // Save to shipping
+            $data['packageId'] = $package->id;
+            $this->shippingTable->saveShipping($data, $shipping->id);
+            if ($shipping->productLabel && $data['productLabel'] && $shipping->productLabel != $data['productLabel']) {
+                Shipping::deleteAttachment($shipping->productLabel);
+            }
+            if ($shipping->amazonShippingLabel && $data['amazonShippingLabel'] && $shipping->amazonShippingLabel != $data['amazonShippingLabel']) {
+                Shipping::deleteAttachment($shipping->amazonShippingLabel);
+            }
+
+            // Update QTY adn fees to product
+            $this->productTable->updateQtyAndFees($data, $package, $product, $shipping);
+            $this->flashMessenger()->addSuccessMessage($this->__('shipping.info.updated'));
+            $this->redirect()->refresh();
+            return;
+        }
         return $this->renderView();
     }
 

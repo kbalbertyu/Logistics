@@ -1,0 +1,216 @@
+<?php echo $this->flashMessenger()->render('success', array('alert', 'alert-success')); ?>
+<?php echo $this->flashMessenger()->render('error', array('alert', 'alert-danger')); ?>
+<table id="team-table" class="table display" cellspacing="0" width="100%">
+  <thead>
+  <tr>
+    <th><?php echo $this->t->translate('item.name') ?></th>
+    <th><?php echo $this->t->translate('team.name') ?></th>
+    <th><?php echo $this->t->translate('brand.name') ?></th>
+    <th><?php echo $this->t->translate('package.id') ?></th>
+  </tr>
+  </thead>
+  <tbody>
+  <tr>
+    <td><?php echo $this->product->itemName ?></td>
+    <td><?php echo $this->team->name ?></td>
+    <td><?php echo $this->brand->name ?></td>
+    <td><?php echo $this->package->id ?></td>
+  </tr>
+  </tbody>
+</table>
+<form method="post" enctype="multipart/form-data">
+  <fieldset>
+    <legend><?php echo $this->t->translate('package.info') ?></legend>
+    <div class="input-group">
+      <div class="input-group-prepend">
+        <span class="input-group-text" id="qty"><?php echo $this->t->translate('qty') ?></span>
+      </div>
+      <input id="qty" name="qty" value="<?php echo $this->package->qty ?>" type="number" min="0" max="<?php echo $this->product->qty ?>" class="form-control">
+      <div class="input-group-prepend">
+        <span class="input-group-text"><em>(<?php echo $this->t->translate('maximum') . $this->product->qty ?>)</em></span>
+      </div>
+    </div>
+    <div class="input-group">
+      <div class="input-group-prepend">
+        <label class="input-group-text" for="status"><?php echo $this->t->translate('status') ?></label>
+      </div>
+      <select class="custom-select" id="status" name="status">
+          <?php foreach ($this->statusList as $value => $info) {?>
+            <option <?php echo $this->package->status == $value ? 'selected' : '' ?> value="<?php echo $value ?>"><?php echo $this->t->translate($info['label']) ?></option>
+          <?php }?>
+      </select>
+    </div>
+    <div class="clear"></div>
+    <div class="input-group textarea">
+      <div class="input-group-prepend">
+        <label class="input-group-text" for="note"><?php echo $this->t->translate('note') ?></label>
+      </div>
+      <textarea style="width: 800px;height: 150px;" id="note" name="note" class="form-control"><?php echo $this->package->note ?></textarea>
+    </div>
+  </fieldset>
+  <fieldset>
+    <legend><?php echo $this->t->translate('size') ?></legend>
+    <div class="input-group">
+      <div class="input-group-prepend">
+        <span class="input-group-text" id="length"><?php echo $this->t->translate('length') ?></span>
+      </div>
+      <input id="length" name="length" value="<?php echo $this->package->length ?>" type="text" class="form-control">
+    </div>
+    <div class="input-group">
+      <div class="input-group-prepend">
+        <span class="input-group-text" id="width"><?php echo $this->t->translate('width') ?></span>
+      </div>
+      <input id="width" name="width" value="<?php echo $this->package->width ?>" type="text" class="form-control">
+    </div>
+    <div class="input-group">
+      <div class="input-group-prepend">
+        <span class="input-group-text" id="height"><?php echo $this->t->translate('height') ?></span>
+      </div>
+      <input id="height" name="height" value="<?php echo $this->package->height ?>" type="text" class="form-control">
+    </div>
+    <div class="input-group">
+      <div class="input-group-prepend">
+        <span class="input-group-text" id="weight"><?php echo $this->t->translate('weight') ?></span>
+      </div>
+      <input id="weight" name="weight" value="<?php echo $this->package->weight ?>" type="text" class="form-control">
+    </div>
+  </fieldset>
+  <fieldset>
+    <legend><?php echo $this->t->translate('process.requirements') ?></legend>
+    <div class="form-check">
+      <input <?php echo $this->shipping->needUnpack ? 'checked' : '' ?> id="needUnpack" name="needUnpack" value="1" type="checkbox" class="form-check-input">
+      <label for="needUnpack"><?php echo $this->t->translate('need.unpack') ?></label>
+    </div>
+    <div class="form-check">
+      <input <?php echo $this->shipping->needClean ? 'checked' : '' ?> id="needClean" name="needClean" value="1" type="checkbox" class="form-check-input">
+      <label for="needClean"><?php echo $this->t->translate('need.clean') ?></label>
+    </div>
+    <div class="form-check">
+      <input <?php echo $this->shipping->needCoverLogo ? 'checked' : '' ?> id="needCoverLogo" name="needCoverLogo" value="1" type="checkbox" class="form-check-input">
+      <label for="needCoverLogo"><?php echo $this->t->translate('need.cover.logo') ?></label>
+    </div>
+    <div class="form-check">
+      <input <?php echo $this->shipping->needBook ? 'checked' : '' ?> id="needBook" name="needBook" value="1" type="checkbox" class="form-check-input">
+      <label for="needBook"><?php echo $this->t->translate('need.book') ?></label>
+    </div>
+    <div class="form-check">
+      <input <?php echo $this->shipping->needCaseFill ? 'checked' : '' ?> id="needCaseFill" name="needCaseFill" value="1" type="checkbox" class="form-check-input">
+      <label for="needCaseFill"><?php echo $this->t->translate('need.case.fill') ?></label>
+    </div>
+    <div class="form-check">
+      <input <?php echo $this->shipping->needProductLabel ? 'checked' : '' ?> id="needProductLabel" name="needProductLabel" value="1" type="checkbox" class="form-check-input">
+      <label for="needProductLabel"><?php echo $this->t->translate('need.product.label') ?></label>
+    </div>
+    <div class="form-check">
+      <input <?php echo $this->shipping->needBoxChange ? 'checked' : '' ?> id="needBoxChange" name="needBoxChange" value="1" type="checkbox" class="form-check-input">
+      <label for="needBoxChange"><?php echo $this->t->translate('need.box.change') ?></label>
+    </div>
+  </fieldset>
+  <fieldset>
+    <legend><?php echo $this->t->translate('fees') ?></legend>
+    <div class="input-group">
+      <div class="input-group-prepend">
+        <span class="input-group-text" id="shippingCost"><?php echo $this->t->translate('shipping.cost') ?></span>
+      </div>
+      <input id="shippingCost" name="shippingCost" value="<?php echo round($this->shipping->shippingCost, 2) ?>" type="text" class="form-control">
+    </div>
+    <div class="input-group">
+      <div class="input-group-prepend">
+        <span class="input-group-text" id="shippingFee"><?php echo $this->t->translate('shipping.fee') ?></span>
+      </div>
+      <input id="shippingFee" name="shippingFee" value="<?php echo round($this->shipping->shippingFee, 2) ?>" type="text" class="form-control">
+    </div>
+    <div class="input-group">
+      <div class="input-group-prepend">
+        <span class="input-group-text" id="serviceFee"><?php echo $this->t->translate('service.fee') ?></span>
+      </div>
+      <input id="serviceFee" name="serviceFee" value="<?php echo round($this->shipping->serviceFee, 2) ?>" type="text" class="form-control">
+    </div>
+  </fieldset>
+  <fieldset>
+    <legend><?php echo $this->t->translate('customs') ?></legend>
+    <div class="input-group">
+      <div class="input-group-prepend">
+        <span class="input-group-text" id="customs"><?php echo $this->t->translate('customs.amount') ?></span>
+      </div>
+      <input id="customs" name="customs" value="<?php echo round($this->shipping->customs, 2) ?>" type="text" class="form-control">
+    </div>
+    <div class="input-group full-size">
+      <div class="input-group-prepend">
+        <span class="input-group-text" id="customsNumber"><?php echo $this->t->translate('customs.number') ?></span>
+      </div>
+      <input id="customsNumber" name="customsNumber" value="<?php echo $this->shipping->customsNumber ?>" type="text" class="form-control">
+    </div>
+  </fieldset>
+  <fieldset>
+    <legend><?php echo $this->t->translate('shipping.info') ?></legend>
+    <div class="input-group">
+      <div class="input-group-prepend">
+        <span class="input-group-text" id="recipient"><?php echo $this->t->translate('recipient') ?></span>
+      </div>
+      <input id="recipient" name="recipient" value="<?php echo $this->address->recipient ?>" type="text" class="form-control">
+    </div>
+    <div class="input-group">
+      <div class="input-group-prepend">
+        <span class="input-group-text" id="phone"><?php echo $this->t->translate('phone') ?></span>
+      </div>
+      <input id="phone" name="phone" value="<?php echo $this->address->phone ?>" type="text" class="form-control">
+    </div>
+    <div class="clear"></div>
+    <div class="input-group textarea">
+      <div class="input-group-prepend">
+        <label class="input-group-text" for="address"><?php echo $this->t->translate('address') ?></label>
+      </div>
+      <textarea style="width:800px;height: 150px;" id="address" name="address" class="form-control"><?php echo $this->address->address ?></textarea>
+    </div>
+    <div class="clear"></div>
+    <div class="input-group">
+      <div class="input-group-prepend">
+        <span class="input-group-text" id="carrier"><?php echo $this->t->translate('shipping.carrier') ?></span>
+      </div>
+      <input id="carrier" name="carrier" value="<?php echo $this->shipping->carrier ?>" type="text" class="form-control">
+    </div>
+    <div class="form-group">
+      <div class="input-group">
+        <div class="input-group-prepend">
+          <span class="input-group-text" id="trackingNumber"><?php echo $this->t->translate('tracking.number') ?></span>
+        </div>
+        <input id="trackingNumber" name="trackingNumber" value="<?php echo $this->shipping->trackingNumber ?>" type="text" class="form-control">
+      </div>
+    </div>
+    <div class="clear"></div>
+  </fieldset>
+  <fieldset>
+    <legend><?php echo $this->t->translate('attachments') ?></legend>
+    <div class="input-group" style="width: 60%;">
+      <div class="input-group-prepend">
+        <span class="input-group-text" id="productLabel"><?php echo $this->t->translate('product.label.file') ?></span>
+      </div>
+      <input id="productLabel" name="productLabel" type="file" class="form-control">
+      <?php if ($this->shipping->productLabel) {?>
+      <div class="input-group-prepend">
+        <span class="input-group-text" id="productLabel"><a target="_blank" href="<?php echo $this->basePath($this->shipping->getProductLabelFile()) ?>"><?php echo $this->shipping->productLabel ?></a></span>
+      </div>
+      <?php }?>
+    </div>
+    <div class="input-group" style="width: 60%;">
+      <div class="input-group-prepend">
+        <span class="input-group-text" id="amazonShippingLabel"><?php echo $this->t->translate('amazon.shipping.label') ?></span>
+      </div>
+      <input id="amazonShippingLabel" name="amazonShippingLabel" type="file" class="form-control">
+      <?php if ($this->shipping->amazonShippingLabel) {?>
+      <div class="input-group-prepend">
+        <span class="input-group-text" id="amazonShippingLabel"><a target="_blank" href="<?php echo $this->basePath($this->shipping->getAmazonShippingLabelFile()) ?>"><?php echo $this->shipping->amazonShippingLabel ?></a></span>
+      </div>
+      <?php }?>
+    </div>
+  </fieldset>
+  <button type="submit" class="btn btn-primary"><?php echo $this->t->translate('submit') ?></button>
+</form>
+<?php if (!empty($this->message)) { ?>
+  <div class="alert alert-danger" role="alert">
+    <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+    <span class="sr-only">Error:</span>
+      <?php echo $this->message ?>
+  </div>
+<?php } ?>
