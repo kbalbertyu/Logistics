@@ -86,7 +86,7 @@ class ProductTable extends BaseTable {
                 $set[$column] = new Expression(sprintf('%s + %.2f', $column, $data[$column]));
             }
             $set['feesDue'] = new Expression(sprintf('feesDue + %.2f',
-                ($data['shippingFee'] + $data['serviceFee'])));
+                ($data['shippingFee'] + $data['serviceFee'] + $data['customs'])));
         } else {
             $sign = $package->type == Package::PROCESS_TYPE_IN ? 1 : -1;
             $set['qty'] =  $product->qty + $sign * ($data['qty'] - $package->qty);
@@ -98,8 +98,8 @@ class ProductTable extends BaseTable {
                 $set[$column] = $product->$column + ($data[$column] - $shipping->$column);
             }
             $set['feesDue'] = $product->feesDue +
-                ($data['shippingFee'] + $data['serviceFee']) -
-                ($shipping->shippingFee + $shipping->serviceFee);
+                ($data['shippingFee'] + $data['serviceFee'] + $data['customs']) -
+                ($shipping->shippingFee + $shipping->serviceFee + $shipping->customs);
         }
 
         return $this->update($set, $data['productId']);
