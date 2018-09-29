@@ -20,22 +20,15 @@ class ShippingTable extends PackageTable {
         return $this->getCount(['addressId' => $addressId]);
     }
 
-    /**
-     * @param $data
-     * @param null $id
-     * @return Shipping
-     * @throws \Exception
-     */
     public function saveShipping($data, $id = null) {
-        $shipping = new Shipping($data);
+        $data = $this->getModel()->removeExtraColumns($data);
         $find = !empty($id) ? $this->getRowById($id) : null;
         if (empty($find)) {
-            $this->add($shipping->toArray());
+            $this->add($data);
             $id = $this->getInsertId();
         } else {
-            $this->update($shipping->toArray(), $id);
+            $this->update($data, $id);
         }
-        $shipping->id = $id;
-        return $shipping;
+        return $id;
     }
 }

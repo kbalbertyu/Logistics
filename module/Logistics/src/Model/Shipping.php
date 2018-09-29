@@ -15,6 +15,7 @@ use Application\Model\Tools;
  * @property int addressId
  * @property string productLabel
  * @property string trackingNumber
+ * @property string carrier
  * @property string amazonShippingLabel
  * @property float shippingCost
  * @property float shippingFee
@@ -32,6 +33,12 @@ use Application\Model\Tools;
  */
 class Shipping extends Package {
 
+    private const BOOLEAN_COLUMNS = ['needUnpack', 'needClean', 'needCoverLogo', 'needBook', 'needCaseFill', 'needProductLabel', 'needBoxChange'];
+
+    public static function deleteAttachment($file) {
+        @unlink(ZF_PATH . '/' . Tools::ATTACHMENT_PATH . $file);
+    }
+
     public function getProductLabelFile() {
         return Tools::ATTACHMENT_URL_PATH . $this->productLabel;
     }
@@ -40,11 +47,13 @@ class Shipping extends Package {
         return Tools::ATTACHMENT_URL_PATH . $this->amazonShippingLabel;
     }
 
-    public function saveShipping($data) {
-        $set = [
-            'shippingCost' => $data['shippingCost'],
-            'shippingFee' => $data['shippingFee'],
-            'serviceFee' => $data['serviceFee'],
-        ];
+    public function removeExtraColumns($data) {
+        $data = parent::removeExtraColumns($data);
+        foreach (self::BOOLEAN_COLUMNS as $column) {
+            if (!isset($data[$column])) {
+                $data[$column] = 0;
+            }
+        }
+        return $data;
     }
 }
