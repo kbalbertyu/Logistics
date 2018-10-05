@@ -17,7 +17,8 @@ use Application\Model\Validation;
  * @property int id
  * @property int productId
  * @property int teamId
- * @property string qty
+ * @property int qty
+ * @property int caseQty
  * @property string type
  * @property float length
  * @property float width
@@ -76,8 +77,10 @@ class Package extends BaseModel {
     }
 
     public function renderSize() {
-        return sprintf('Length=%.2f, Width=%.2f, Height=%.2f',
-            $this->length, $this->weight, $this->height);
+        return sprintf('%s=%.2f, %s=%.2f, %s=%.2f',
+            $this->__('length'), $this->length,
+            $this->__('width'), $this->width,
+            $this->__('height'), $this->height);
     }
 
     public function renderProcessType() {
