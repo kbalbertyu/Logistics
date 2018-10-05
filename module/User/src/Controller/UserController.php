@@ -75,6 +75,9 @@ class UserController extends AbstractBaseController {
         }
         if ($this->getRequest()->isPost()) {
             $data = $this->getRequest()->getPost();
+            if (!$this->userObject->isManager()) {
+                unset($data['teamId']);
+            }
             $this->table->edit($data, $id);
             $this->flashMessenger()->addSuccessMessage($this->__('user.updated'));
             $this->redirect()->refresh();
