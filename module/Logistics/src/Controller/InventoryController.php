@@ -325,7 +325,7 @@ class InventoryController extends AbstractBaseController {
                 $this->redirect()->refresh();
             }
 
-            if ($product->qty < $data['qty']) {
+            if ($package->type == Package::PROCESS_TYPE_OUT && $product->qty < $data['qty']) {
                 $this->flashMessenger()->addErrorMessage($this->__('package.qty.over.inventory', [
                     'qty' => $data['qty'],
                     'maximum' => $product->qty
