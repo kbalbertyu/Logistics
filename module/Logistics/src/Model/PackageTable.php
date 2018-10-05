@@ -16,12 +16,13 @@ use Zend\Stdlib\ArrayUtils;
 
 class PackageTable extends BaseTable {
 
-    public function getPackageList(User $user = null) {
+    public function getPackageList(User $user = null, $packageType = Package::PROCESS_TYPE_IN) {
         $select = new Select();
         $select->from(['i' => $this->getTable()])
             ->join(['t' => BaseTable::TEAM_TABLE], 'i.teamId = t.id', ['team' => 'name'])
             ->join(['p' => BaseTable::PRODUCT_TABLE], 'i.productId = p.id', ['itemName'])
             ->join(['b' => BaseTable::BRAND_TABLE], 'p.brandId = b.id', ['brand' => 'name'])
+            ->where(['type' => $packageType])
             ->order('processDate DESC');
         if (!empty($user) && !$user->isManager()) {
             $select->where(['i.teamId' => $user->teamId]);

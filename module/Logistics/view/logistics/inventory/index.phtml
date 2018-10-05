@@ -11,12 +11,12 @@
   <thead>
   <tr>
     <th>ID</th>
-    <th><?php echo $this->t->translate('process.type') ?></th>
     <th><?php echo $this->t->translate('status') ?></th>
     <th><?php echo $this->t->translate('team.name') ?></th>
     <th><?php echo $this->t->translate('item.name') ?></th>
     <th><?php echo $this->t->translate('brand.name') ?></th>
     <th><?php echo $this->t->translate('qty') ?></th>
+    <th><?php echo $this->t->translate('case.qty') ?></th>
     <th><?php echo $this->t->translate('size') ?></th>
     <th><?php echo $this->t->translate('weight') ?></th>
     <th><?php echo $this->t->translate('date') ?></th>
@@ -29,12 +29,12 @@
       <?php foreach ($this->packages as $package) { ?>
       <tr>
         <td><?php echo $package->id ?></td>
-        <td><?php echo $package->renderProcessType() ?></td>
         <td><?php echo $package->renderStatus() ?></td>
         <td><?php echo $package->team ?></td>
         <td><?php echo $package->itemName ?></td>
         <td><?php echo $package->brand ?></td>
         <td><?php echo $package->qty ?></td>
+        <td><?php echo $package->caseQty ?></td>
         <td><?php echo $package->renderSize() ?></td>
         <td><?php echo $package->weight ?></td>
         <td><?php echo $package->processDate ?></td>
@@ -56,12 +56,12 @@
   <tfoot>
   <tr>
     <th>ID</th>
-    <th><?php echo $this->t->translate('process.type') ?></th>
     <th><?php echo $this->t->translate('status') ?></th>
     <th><?php echo $this->t->translate('team.name') ?></th>
     <th><?php echo $this->t->translate('item.name') ?></th>
     <th><?php echo $this->t->translate('brand.name') ?></th>
     <th><?php echo $this->t->translate('qty') ?></th>
+    <th><?php echo $this->t->translate('case.qty') ?></th>
     <th><?php echo $this->t->translate('size') ?></th>
     <th><?php echo $this->t->translate('weight') ?></th>
     <th><?php echo $this->t->translate('date') ?></th>

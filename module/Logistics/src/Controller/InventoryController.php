@@ -47,8 +47,9 @@ class InventoryController extends AbstractBaseController {
     }
 
     public function indexAction() {
-        $this->title = $this->__('package.list');
-        $this->addOutPut('packages', $this->table->getPackageList($this->userObject));
+        $type = $this->params()->fromQuery('type', 'in');
+        $this->title = $this->__('nav.packages.'.$type);
+        $this->addOutPut('packages', $this->table->getPackageList($this->userObject, $type));
         return $this->renderView();
     }
 
