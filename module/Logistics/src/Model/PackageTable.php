@@ -56,6 +56,9 @@ class PackageTable extends BaseTable {
                 'processDate' => $time,
                 'username' => $data['username']
             ]);
+            if (!isset($set['status'])) {
+                $set['status'] = 'pending';
+            }
             $this->add($set);
             return $this->getInsertId();
         }
