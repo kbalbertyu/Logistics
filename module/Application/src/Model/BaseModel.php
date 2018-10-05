@@ -43,7 +43,7 @@ class BaseModel {
     }
 
     public function __(string $key, $parameters = []) {
-        Tools::translate($key, $parameters);
+        return Tools::__($key, $parameters);
     }
 
     public static function formatNumericColumns(&$set, $numericColumns) {
