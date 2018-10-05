@@ -41,8 +41,9 @@
             <?php echo $this->t->translate('nav.inventory') ?> <b class="caret"></b>
           </a>
           <ul class="dropdown-menu">
+            <li><a class="<?php echo $this->subNav == 'index' ? 'active' : ''; ?>" href="<?php echo $this->url('inventory', ['action' => 'index'], ['query' => ['type' => 'in']]) ?>"><?php echo $this->t->translate('nav.packages.in') ?></a></li>
             <li><a class="<?php echo $this->subNav == 'products' ? 'active' : ''; ?>" href="<?php echo $this->url('inventory', ['action' => 'products']) ?>"><?php echo $this->t->translate('nav.products') ?></a></li>
-            <li><a class="<?php echo $this->subNav == 'index' ? 'active' : ''; ?>" href="<?php echo $this->url('inventory') ?>"><?php echo $this->t->translate('nav.packages') ?></a></li>
+            <li><a class="<?php echo $this->subNav == 'index' ? 'active' : ''; ?>" href="<?php echo $this->url('inventory', ['action' => 'index'], ['query' => ['type' => 'out']]) ?>"><?php echo $this->t->translate('nav.packages.out') ?></a></li>
           </ul>
         </li>
         <li class="nav-item">
