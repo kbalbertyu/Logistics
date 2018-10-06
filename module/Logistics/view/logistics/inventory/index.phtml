@@ -3,7 +3,7 @@
 
 <?php if ($this->userObject->isManager()) { ?>
 <div class="date-nav">
-  <a href="<?php echo $this->url('inventory', ['action' => 'add'], ['query' => ['type' => 'in']]) ?>" class="btn btn-primary right" style="margin-right:10px;"><?php echo $this->t->translate('receive.new.package') ?></a>
+  <a href="<?php echo $this->url('inventory', ['action' => 'add'], ['query' => ['type' => 'in']]) ?>" class="btn btn-primary right" style="margin-right:10px;">+<?php echo $this->t->translate('receive.package') ?></a>
   <div class="clear"></div>
 </div>
 <?php }?>
