@@ -87,13 +87,15 @@ abstract class AbstractBaseController extends AbstractActionController {
 
     private function initUser() {
         if (!$this->user) {
+            $this->userObject = new User();
             return;
         }
         try {
             $userTable = $this->getTableModel(UserTable::class);
             $this->userObject = $userTable->getRowById($this->user);
         } catch (\Exception $e) {
-            echo $e->getMessage();
+            $this->logger->err('Unable to find the logged in user: ' . $this->user);
+            $this->userObject = new User();
         }
     }
 
