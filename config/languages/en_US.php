@@ -48,6 +48,7 @@ return [
     'team.saved' => 'Team is saved: {name}',
     'team.name' => 'Team Name',
     'fees.due' => 'Fees Due',
+    'fees.paid' => 'Fees Paid',
     'edit' => 'Edit',
     'delete' => 'Delete',
     'view' => 'View',
@@ -117,4 +118,6 @@ return [
     'password' => 'Password',
     'confirm.password' => 'Confirm Password',
     'package.qty.over.inventory' => 'Shipping QTY {qty} is greater than inventory {maximum}',
+    'team.edit' => 'Edit Team Name',
+    'team.id.invalid' => 'Team ID: {id} not exists',
 ];

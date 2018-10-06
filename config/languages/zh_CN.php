@@ -46,7 +46,8 @@ return [
     'team.name.exists' => '团队名({name})已存在，请尝试另一个名称.',
     'team.saved' => '团队已保存: {name}.',
     'team.name' => '团队名称',
-    'fees.due' => '待付款额',
+    'fees.due' => '待付',
+    'fees.paid' => '已付',
     'edit' => '编辑',
     'delete' => '删除',
     'view' => '发货详情',
@@ -116,4 +117,6 @@ return [
     'password' => '密码',
     'confirm.password' => '确认密码',
     'package.qty.over.inventory' => '发货数量{qty}超过库存数量{maximum}',
+    'team.edit' => '修改团队名称',
+    'team.id.invalid' => '团队ID: {id}不存在',
 ];
