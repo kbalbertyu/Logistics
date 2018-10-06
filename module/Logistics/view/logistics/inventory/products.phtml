@@ -42,8 +42,10 @@
         <td class="actions">
           <?php if ($this->userObject->isManager()) {?>
           <a href="<?php echo $this->url('inventory', ['action' => 'add', 'id' => $product->id], ['query' => ['type' => 'in']]) ?>" class="btn btn-success"><?php echo $this->t->translate('receive.new.package') ?></a>
-            <a href="<?php echo $this->url('inventory', ['action' => 'charge', 'id' => $product->id]) ?>" class="btn btn-info"><?php echo $this->t->translate('charge.fees') ?></a>
-            <a href="<?php echo $this->url('inventory', ['action' => 'delete-product', 'id' => $product->id]) ?>" class="btn btn-danger delete"><?php echo $this->t->translate('delete') ?></a>
+          <?php if ($product->feesDue > 0) {?>
+          <a href="<?php echo $this->url('inventory', ['action' => 'charge', 'id' => $product->id]) ?>" class="btn btn-info"><?php echo $this->t->translate('charge.fees') ?></a>
+          <?php }?>
+          <a href="<?php echo $this->url('inventory', ['action' => 'delete-product', 'id' => $product->id]) ?>" class="btn btn-danger delete"><?php echo $this->t->translate('delete') ?></a>
           <?php } elseif ($product->qty > 0) {?>
           <a href="<?php echo $this->url('inventory', ['action' => 'add', 'id' => $product->id], ['query' => ['type' => 'out']]) ?>" class="btn btn-success"><?php echo $this->t->translate('ship.package.request') ?></a>
           <?php }?>
