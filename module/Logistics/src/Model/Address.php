@@ -20,6 +20,16 @@ use Application\Model\BaseModel;
  */
 class Address extends BaseModel {
 
+    public static function isValid(&$data) {
+        foreach (['recipient', 'phone', 'address'] as $column) {
+            $data[$column] = trim($data[$column]);
+            if (empty($data[$column])) {
+                return false;
+            }
+        }
+        return true;
+    }
+
     public function equalsTo($data) {
         return $data['recipient'] == $this->recipient &&
             $data['phone'] = $this->phone &&
