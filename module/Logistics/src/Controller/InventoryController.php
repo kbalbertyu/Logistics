@@ -50,6 +50,7 @@ class InventoryController extends AbstractBaseController {
     public function indexAction() {
         $type = $this->params()->fromQuery('type', 'in');
         $this->title = $this->__('nav.packages.'.$type);
+        $this->addOutPut('type', $type);
         $this->addOutPut('packages', $this->table->getPackageList($this->userObject, $type));
         return $this->renderView();
     }
@@ -249,7 +250,8 @@ class InventoryController extends AbstractBaseController {
                 return $this->renderView();
             }
             try {
-                if (!empty($product) && $product->qty < $data['qty']) {
+                if ($type == Package::PROCESS_TYPE_OUT &&
+                    !empty($product) && $product->qty < $data['qty']) {
                     $this->flashMessenger()->addErrorMessage($this->__('package.qty.over.inventory', [
                         'qty' => $data['qty'],
                         'maximum' => $product->qty
