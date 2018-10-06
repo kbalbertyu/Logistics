@@ -26,17 +26,21 @@ class AddressTable extends BaseTable {
         }
         $set = [
             'teamId' => $data['teamId'],
-            'recipient' => $data['recipient'],
-            'phone' => $data['phone'],
-            'address' => $data['address']
+            'recipient' => trim($data['recipient']),
+            'phone' => trim($data['phone']),
+            'address' => trim($data['address'])
         ];
-        if (!empty($address)) {
-            if ($address->equalsTo($data)) {
-                return $id;
-            } elseif ($replace) {
-                $this->update($set, $id);
-                return $id;
+        if (empty($address)) {
+            $address = $this->getRowByFields($set);
+            if (!empty($address)) {
+                return $address->id;
             }
+        } elseif ($address->equalsTo($set)) {
+            return $address->id;
+        }
+        if (!empty($id) && $replace) {
+            $this->update($set, $id);
+            return $id;
         }
         $this->add($set);
         return $this->getInsertId();
