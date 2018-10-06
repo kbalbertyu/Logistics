@@ -9,8 +9,8 @@
     <th>ID</th>
     <th><?php echo $this->t->translate('team.name') ?></th>
     <th><?php echo $this->t->translate('fees.due') ?> (￥)</th>
-    <th><?php echo $this->t->translate('edit') ?></th>
-    <th><?php echo $this->t->translate('delete') ?></th>
+    <th><?php echo $this->t->translate('fees.paid') ?> (￥)</th>
+    <th><?php echo $this->t->translate('actions') ?></th>
   </tr>
   </thead>
   <tbody>
@@ -20,12 +20,8 @@
         <td><?php echo $team->id ?></td>
         <td><?php echo $team->name ?></td>
         <td><?php echo round($this->fees[$team->id], 2) ?></td>
-        <td>
-          <button type="button" class="btn btn-primary"><?php echo $this->t->translate('edit') ?></button>
-        </td>
-        <td>
-          <button type="button" class="btn btn-danger"><?php echo $this->t->translate('delete') ?></button>
-        </td>
+        <td><?php echo round($this->feesPaid[$team->id], 2) ?></td>
+        <td><a href="<?php echo $this->url('team', ['action' => 'edit', 'id' => $team->id]) ?>" class="btn btn-primary"><?php echo $this->t->translate('edit') ?></a></td>
       </tr>
       <?php } ?>
   <?php } ?>
@@ -35,8 +31,8 @@
     <th>ID</th>
     <th><?php echo $this->t->translate('team.name') ?></th>
     <th><?php echo $this->t->translate('fees.due') ?> (￥)</th>
-    <th><?php echo $this->t->translate('edit') ?></th>
-    <th><?php echo $this->t->translate('delete') ?></th>
+    <th><?php echo $this->t->translate('fees.paid') ?> (￥)</th>
+    <th><?php echo $this->t->translate('actions') ?></th>
   </tr>
   </tfoot>
 </table>

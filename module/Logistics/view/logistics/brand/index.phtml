@@ -4,7 +4,6 @@
   <tr>
     <th>ID</th>
     <th><?php echo $this->t->translate('brand.name') ?></th>
-    <th><?php echo $this->t->translate('edit') ?></th>
   </tr>
   </thead>
   <tbody>
@@ -13,9 +12,6 @@
       <tr>
         <td><?php echo $brand->id ?></td>
         <td><?php echo $brand->name ?></td>
-        <td>
-          <button type="button" class="btn btn-primary"><?php echo $this->t->translate('edit') ?></button>
-        </td>
       </tr>
       <?php } ?>
   <?php } ?>
@@ -24,7 +20,6 @@
   <tr>
     <th>ID</th>
     <th><?php echo $this->t->translate('brand.name') ?></th>
-    <th><?php echo $this->t->translate('edit') ?></th>
   </tr>
   </tfoot>
 </table>

@@ -78,14 +78,29 @@ $(function(){
 	$('#account-table, #health-table').dataTable({
 		paging: false
 	});
-    $('#package-table').dataTable({
+    $('#package-table-in').dataTable({
+        "aoColumns": [
+            { "sType": "numeric-comma" },
+            null,
+            null,
+            null,
+            { "sType": "numeric-comma" },
+            { "sType": "numeric-comma" },
+            null,
+            { "sType": "numeric-comma" },
+            null,
+            null,
+            null,
+        ],
+    });
+    $('#package-table-out').dataTable({
         "aoColumns": [
             { "sType": "numeric-comma" },
             null,
             null,
             null,
             null,
-            null,
+            { "sType": "numeric-comma" },
             { "sType": "numeric-comma" },
             null,
             { "sType": "numeric-comma" },
@@ -104,6 +119,24 @@ $(function(){
             { "sType": "numeric-comma" },
             { "sType": "numeric-comma" },
             { "sType": "numeric-comma" },
+            { "sType": "numeric-comma" },
+            null
+        ],
+    });
+    $('#team-table').dataTable({
+        "aoColumns": [
+            { "sType": "numeric-comma" },
+            null,
+            { "sType": "numeric-comma" },
+            { "sType": "numeric-comma" },
+            null
+        ],
+    });
+    $('#charge-table').dataTable({
+        "aoColumns": [
+            { "sType": "numeric-comma" },
+            null,
+            null,
             { "sType": "numeric-comma" },
             null
         ],

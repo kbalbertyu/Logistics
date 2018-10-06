@@ -7,11 +7,13 @@
   <div class="clear"></div>
 </div>
 <?php }?>
-<table id="package-table" class="table display" cellspacing="0" width="100%">
+<table id="package-table-<?php echo $this->type ?>" class="table display" cellspacing="0" width="100%">
   <thead>
   <tr>
     <th>ID</th>
+    <?php if ($this->type == 'out') { ?>
     <th><?php echo $this->t->translate('status') ?></th>
+    <?php }?>
     <th><?php echo $this->t->translate('team.name') ?></th>
     <th><?php echo $this->t->translate('item.name') ?></th>
     <th><?php echo $this->t->translate('brand.name') ?></th>
@@ -29,7 +31,9 @@
       <?php foreach ($this->packages as $package) { ?>
       <tr>
         <td><?php echo $package->id ?></td>
+        <?php if ($this->type == 'out') { ?>
         <td><?php echo $package->renderStatus() ?></td>
+        <?php }?>
         <td><?php echo $package->team ?></td>
         <td><?php echo $package->itemName ?></td>
         <td><?php echo $package->brand ?></td>
@@ -56,7 +60,9 @@
   <tfoot>
   <tr>
     <th>ID</th>
+    <?php if ($this->type == 'out') { ?>
     <th><?php echo $this->t->translate('status') ?></th>
+    <?php }?>
     <th><?php echo $this->t->translate('team.name') ?></th>
     <th><?php echo $this->t->translate('item.name') ?></th>
     <th><?php echo $this->t->translate('brand.name') ?></th>
