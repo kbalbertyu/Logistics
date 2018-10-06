@@ -45,9 +45,11 @@ class PackageTable extends BaseTable {
                 'length' => $data['length'],
                 'width' => $data['width'],
                 'height' => $data['height'],
-                'status' => $data['status'],
                 'weight' => $data['weight']
             ]);
+            if (isset($data['status'])) {
+                $set['status'] = $data['status'];
+            }
         }
 
         if (empty($id)) {
