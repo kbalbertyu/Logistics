@@ -1,4 +1,11 @@
 <?php echo $this->flashMessenger()->render('success', ['alert', 'alert-dismissible', 'alert-success']); ?>
+
+<?php if ($this->userObject->isManager()) { ?>
+  <div class="date-nav">
+    <a href="<?php echo $this->url('user', ['action' => 'register']) ?>" class="btn btn-primary right" style="margin-right:10px;"><?php echo $this->t->translate('user.register') ?></a>
+    <div class="clear"></div>
+  </div>
+<?php }?>
 <table id="team-table" class="table display" cellspacing="0" width="100%">
     <thead>
     <tr>
