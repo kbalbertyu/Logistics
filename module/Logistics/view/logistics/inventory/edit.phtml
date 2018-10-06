@@ -29,6 +29,12 @@
         </div>
       <?php }?>
     </div>
+    <div class="input-group">
+      <div class="input-group-prepend">
+        <label class="input-group-text" for="caseQty"><?php echo $this->t->translate('case.qty') ?></label>
+      </div>
+      <input id="caseQty" name="caseQty" min="0" value="<?php echo $this->package->caseQty ?>" type="number" class="form-control">
+    </div>
     <div class="clear"></div>
     <div class="input-group textarea">
       <div class="input-group-prepend">

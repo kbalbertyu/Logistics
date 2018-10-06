@@ -35,6 +35,7 @@ class PackageTable extends BaseTable {
         $set = [
             'productId' => $data['productId'],
             'qty' => $data['qty'],
+            'caseQty' => $data['caseQty'],
             'note' => $data['note'],
             'recordDate' => $time,
         ];
