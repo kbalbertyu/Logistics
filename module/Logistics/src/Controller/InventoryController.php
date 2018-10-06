@@ -352,7 +352,7 @@ class InventoryController extends AbstractBaseController {
                 $this->flashMessenger()->addSuccessMessage($message);
                 $this->redirect()->refresh();
             } catch (Exception $e) {
-                $this->flashMessenger()->addSuccessMessage('package.save.failed', ['message' => $e->getMessage()]);
+                $this->flashMessenger()->addErrorMessage($this->__('package.save.failed', ['message' => $e->getMessage()]));
                 $this->redirect()->refresh();
             }
         }
