@@ -25,10 +25,16 @@
       <div class="input-group-prepend">
         <span class="input-group-text" id="qty"><?php echo $this->t->translate('qty') ?></span>
       </div>
-      <input id="qty" name="qty" value="<?php echo $this->package->qty ?>" type="number" min="0" max="<?php echo $this->product->qty ?>" class="form-control">
+      <input id="qty" name="qty" value="<?php echo $this->package->qty ?>" type="number" min="0" max="<?php echo $this->product->qty + $this->package->qty ?>" class="form-control">
       <div class="input-group-prepend">
-        <span class="input-group-text"><em>(<?php echo $this->t->translate('maximum') . $this->product->qty ?>)</em></span>
+        <span class="input-group-text"><em>(<?php echo $this->t->translate('maximum') . ($this->product->qty + $this->package->qty) ?>)</em></span>
       </div>
+    </div>
+    <div class="input-group">
+      <div class="input-group-prepend">
+        <span class="input-group-text" id="caseQty"><?php echo $this->t->translate('case.qty') ?></span>
+      </div>
+      <input id="caseQty" name="caseQty" value="<?php echo $this->package->caseQty ?>" type="number" min="0" class="form-control">
     </div>
     <div class="input-group">
       <div class="input-group-prepend">
@@ -142,26 +148,27 @@
       <input id="customsNumber" <?php echo $this->userObject->isManager() ? 'name="customsNumber"' : 'disabled ' ?> value="<?php echo $this->shipping->customsNumber ?>" type="text" class="form-control">
     </div>
   </fieldset>
+  <?php if ($this->userObject->isManager() || !empty($this->address)) {?>
   <fieldset>
     <legend><?php echo $this->t->translate('shipping.info') ?></legend>
     <div class="input-group">
       <div class="input-group-prepend">
         <span class="input-group-text" id="recipient"><?php echo $this->t->translate('recipient') ?></span>
       </div>
-      <input id="recipient" name="recipient" value="<?php echo $this->address->recipient ?>" type="text" class="form-control">
+      <input id="recipient" <?php echo $this->userObject->isManager() ? 'name="recipient"' : 'disabled ' ?> value="<?php echo $this->address->recipient ?>" type="text" class="form-control">
     </div>
     <div class="input-group">
       <div class="input-group-prepend">
         <span class="input-group-text" id="phone"><?php echo $this->t->translate('phone') ?></span>
       </div>
-      <input id="phone" name="phone" value="<?php echo $this->address->phone ?>" type="text" class="form-control">
+      <input id="phone" <?php echo $this->userObject->isManager() ? 'name="phone"' : 'disabled ' ?> value="<?php echo $this->address->phone ?>" type="text" class="form-control">
     </div>
     <div class="clear"></div>
     <div class="input-group textarea">
       <div class="input-group-prepend">
         <label class="input-group-text" for="address"><?php echo $this->t->translate('address') ?></label>
       </div>
-      <textarea style="width:800px;height: 150px;" id="address" name="address" class="form-control"><?php echo $this->address->address ?></textarea>
+      <textarea style="width:800px;height: 150px;" id="address" <?php echo $this->userObject->isManager() ? 'name="address"' : 'disabled ' ?> class="form-control"><?php echo $this->address->address ?></textarea>
     </div>
     <div class="clear"></div>
     <div class="input-group">
@@ -180,30 +187,22 @@
     </div>
     <div class="clear"></div>
   </fieldset>
+  <?php }?>
   <fieldset>
     <legend><?php echo $this->t->translate('attachments') ?></legend>
+    <?php foreach ($this->attachments as $field => $langKey) {?>
     <div class="input-group" style="width: 60%;">
       <div class="input-group-prepend">
-        <span class="input-group-text" id="productLabel"><?php echo $this->t->translate('product.label.file') ?></span>
+        <span class="input-group-text" id="<?php echo $field ?>"><?php echo $this->t->translate($langKey) ?></span>
       </div>
-      <input id="productLabel" name="productLabel" type="file" class="form-control">
-      <?php if ($this->shipping->productLabel) {?>
+      <input id="<?php echo $field ?>" name="<?php echo $field ?>" type="file" class="form-control">
+      <?php if ($this->shipping->$field) {?>
       <div class="input-group-prepend">
-        <span class="input-group-text" id="productLabel"><a target="_blank" href="<?php echo $this->basePath($this->shipping->getProductLabelFile()) ?>"><?php echo $this->shipping->productLabel ?></a></span>
+        <span class="input-group-text"><a target="_blank" href="<?php echo $this->basePath($this->shipping->getAttachment($field)) ?>"><?php echo $this->shipping->$field ?></a></span>
       </div>
       <?php }?>
     </div>
-    <div class="input-group" style="width: 60%;">
-      <div class="input-group-prepend">
-        <span class="input-group-text" id="amazonShippingLabel"><?php echo $this->t->translate('amazon.shipping.label') ?></span>
-      </div>
-      <input id="amazonShippingLabel" name="amazonShippingLabel" type="file" class="form-control">
-      <?php if ($this->shipping->amazonShippingLabel) {?>
-      <div class="input-group-prepend">
-        <span class="input-group-text" id="amazonShippingLabel"><a target="_blank" href="<?php echo $this->basePath($this->shipping->getAmazonShippingLabelFile()) ?>"><?php echo $this->shipping->amazonShippingLabel ?></a></span>
-      </div>
-      <?php }?>
-    </div>
+    <?php }?>
   </fieldset>
   <button type="submit" class="btn btn-primary"><?php echo $this->t->translate('submit') ?></button>
 </form>

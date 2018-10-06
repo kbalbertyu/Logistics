@@ -16,7 +16,9 @@ use Application\Model\Tools;
  * @property string productLabel
  * @property string trackingNumber
  * @property string carrier
+ * @property string amazonSendCheckList
  * @property string amazonShippingLabel
+ * @property string productImage
  * @property float shippingCost
  * @property float shippingFee
  * @property float serviceFee
@@ -35,16 +37,19 @@ class Shipping extends Package {
 
     private const BOOLEAN_COLUMNS = ['needUnpack', 'needClean', 'needCoverLogo', 'needBook', 'needCaseFill', 'needProductLabel', 'needBoxChange'];
 
+    public const ATTACHMENTS = [
+        'amazonSendCheckList' => 'amazon.send.check.list',
+        'productLabel' => 'product.label.file',
+        'amazonShippingLabel' => 'amazon.shipping.label',
+        'productImage' => 'product.image',
+    ];
+
     public static function deleteAttachment($file) {
         @unlink(ZF_PATH . '/' . Tools::ATTACHMENT_PATH . $file);
     }
 
-    public function getProductLabelFile() {
-        return Tools::ATTACHMENT_URL_PATH . $this->productLabel;
-    }
-
-    public function getAmazonShippingLabelFile() {
-        return Tools::ATTACHMENT_URL_PATH . $this->amazonShippingLabel;
+    public function getAttachment($name) {
+        return Tools::ATTACHMENT_URL_PATH . $this->$name;
     }
 
     public function removeExtraColumns($data) {

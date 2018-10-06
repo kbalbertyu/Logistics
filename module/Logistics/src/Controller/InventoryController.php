@@ -13,6 +13,7 @@ use Application\Controller\AbstractBaseController;
 use Application\Model\BaseModel;
 use Application\Model\Tools;
 use Exception;
+use Logistics\Model\Address;
 use Logistics\Model\AddressTable;
 use Logistics\Model\BrandTable;
 use Logistics\Model\ChargeTable;
@@ -107,16 +108,17 @@ class InventoryController extends AbstractBaseController {
         // Address
         $this->addOutPut('address', $this->addressTable->getRowById($shipping->addressId));
 
+        $this->addOutPut('attachments', Shipping::ATTACHMENTS);
+
         if ($this->getRequest()->isPost()) {
             $data = $this->getRequest()->getPost()->toArray();
 
             // Upload attachments
             try {
-                if (isset($_FILES['productLabel']) && $_FILES['productLabel']['size'] > 0) {
-                    $data['productLabel'] = Tools::uploadAttachment($_FILES['productLabel']);
-                }
-                if (isset($_FILES['amazonShippingLabel']) && $_FILES['amazonShippingLabel']['size'] > 0) {
-                    $data['amazonShippingLabel'] = Tools::uploadAttachment($_FILES['amazonShippingLabel']);
+                foreach (Shipping::ATTACHMENTS as $field => $label) {
+                    if (isset($_FILES[$field]) && $_FILES[$field]['size'] > 0) {
+                        $data[$field] = Tools::uploadAttachment($_FILES[$field]);
+                    }
                 }
             } catch (Exception $e) {
                 $this->flashMessenger()->addErrorMessage($e->getMessage());
@@ -127,7 +129,7 @@ class InventoryController extends AbstractBaseController {
             // Save to package
             BaseModel::formatNumericColumns($data, Package::NUMERIC_COLUMNS);
             $data['productId'] = $product->id;
-            if ($product->qty < $data['qty']) {
+            if (($product->qty + $package->qty) < $data['qty']) {
                 $this->flashMessenger()->addErrorMessage($this->__('package.qty.over.inventory', [
                         'qty' => $data['qty'],
                         'maximum' => $product->qty
@@ -138,24 +140,25 @@ class InventoryController extends AbstractBaseController {
             $this->table->savePackage($data, $this->userObject->isManager(), $id);
 
             // Save to address
-            try {
-                $addressUseCount = !$package->addressId ? 0 :
-                    $this->shippingTable->getAddressUseCount($package->addressId);
-                $data['teamId'] = $team->id;
-                $data['addressId'] = $this->addressTable->saveAddress($data, $shipping->addressId,
-                    $addressUseCount > 1 ? false : true);
-            } catch (Exception $e) {
-                $this->logger->err('Unable to save address.');
+            if ($this->userObject->isManager() && Address::isValid($data)) {
+                try {
+                    $addressUseCount = !$package->addressId ? 0 :
+                        $this->shippingTable->getAddressUseCount($package->addressId);
+                    $data['teamId'] = $team->id;
+                    $data['addressId'] = $this->addressTable->saveAddress($data, $shipping->addressId,
+                        $addressUseCount > 1 ? false : true);
+                } catch (Exception $e) {
+                    $this->logger->err('Unable to save address.');
+                }
             }
 
             // Save to shipping
             $data['packageId'] = $package->id;
             $this->shippingTable->saveShipping($data, $shipping->id);
-            if ($shipping->productLabel && $data['productLabel'] && $shipping->productLabel != $data['productLabel']) {
-                Shipping::deleteAttachment($shipping->productLabel);
-            }
-            if ($shipping->amazonShippingLabel && $data['amazonShippingLabel'] && $shipping->amazonShippingLabel != $data['amazonShippingLabel']) {
-                Shipping::deleteAttachment($shipping->amazonShippingLabel);
+            foreach (Shipping::ATTACHMENTS as $field => $label) {
+                if ($shipping->$field && $data[$field] && $shipping->$field != $data[$field]) {
+                    Shipping::deleteAttachment($shipping->$field);
+                }
             }
 
             // Update QTY adn fees to product
