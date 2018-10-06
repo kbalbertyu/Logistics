@@ -10,6 +10,7 @@ namespace Logistics\Controller;
 
 
 use Application\Controller\AbstractBaseController;
+use Logistics\Model\ChargeTable;
 use Logistics\Model\ProductTable;
 use Logistics\Model\TeamTable;
 use Zend\ServiceManager\ServiceLocatorInterface;
@@ -17,6 +18,7 @@ use Zend\ServiceManager\ServiceLocatorInterface;
 /**
  * @property TeamTable table
  * @property ProductTable productTable
+ * @property ChargeTable chargeTable
  */
 class TeamController extends AbstractBaseController {
 
@@ -24,8 +26,12 @@ class TeamController extends AbstractBaseController {
         parent::__construct($container);
         $this->table = $this->getTableModel(TeamTable::class);
         $this->productTable = $this->getTableModel(ProductTable::class);
+        $this->chargeTable = $this->getTableModel(ChargeTable::class);
     }
 
+    /**
+     * @return mixed|null|\Zend\View\Model\ViewModel
+     */
     public function indexAction() {
         if (($view = $this->onlyManagers()) != null) {
             return $view;
@@ -34,38 +40,68 @@ class TeamController extends AbstractBaseController {
         $this->nav = 'team';
         $this->addOutPut([
             'teams' => $this->table->getRows(),
-            'fees' => $this->productTable->getTeamFeesDueList()
+            'fees' => $this->productTable->getTeamFeesDueList(),
+            'feesPaid' => $this->chargeTable->getTeamChargeList()
         ]);
         return $this->renderView();
     }
 
     public function addAction() {
         $this->title = $this->__('team.add');
-        $data = [
-            'valid' => false,
-            'message' => ''
-        ];
         if ($this->getRequest()->isPost()) {
             $name = $this->getRequest()->getPost('name');
             $name = trim($name);
             if (empty($name)) {
-                $data['message'] = $this->__('team.name.empty');
+                $this->flashMessenger()->addErrorMessage($this->__('team.name.empty'));
+                $this->redirect()->refresh();
+                return;
             } elseif($this->table->nameExists($name)) {
-                $data['message'] = $this->__('team.name.exists', ['name' => $name]);
+                $this->flashMessenger()->addErrorMessage($this->__('team.name.exists', ['name' => $name]));
+                $this->redirect()->refresh();
+                return;
             } else {
-                $saved = $this->table->add([
-                    'name' => $name
-                ]);
-                if ($saved) {
-                    $data['message'] = $this->__('team.saved', ['name' => $name]);
-                    $this->flashMessenger()->addSuccessMessage($data['message']);
-                    $this->redirect()->toRoute('team');
-                } else {
-                    $data['valid'] = true;
-                }
+                $this->table->add(['name' => $name]);
+                $this->flashMessenger()->addSuccessMessage($this->__('team.saved', ['name' => $name]));
+                $this->redirect()->toRoute('team');
+                return;
             }
         }
-        $this->addOutPut($data);
+        return $this->renderView();
+    }
+
+    public function editAction() {
+        $this->title = $this->__('team.edit');
+        $id = $this->params()->fromRoute('id');
+        if (empty($id)) {
+            $this->flashMessenger()->addErrorMessage($this->__('invalid.parameter'));
+            $this->redirect()->toRoute('team');
+            return;
+        }
+        $team = $this->table->getRowById($id);
+        if (empty($team)) {
+            $this->flashMessenger()->addErrorMessage($this->__('team.id.invalid', ['id' => $id]));
+            $this->redirect()->toRoute('team');
+            return;
+        }
+        $this->addOutPut('team', $team);
+        if ($this->getRequest()->isPost()) {
+            $name = $this->getRequest()->getPost('name');
+            $name = trim($name);
+            if (empty($name)) {
+                $this->flashMessenger()->addErrorMessage($this->__('team.name.empty'));
+                $this->redirect()->refresh();
+                return;
+            } elseif($this->table->nameExists($name, $id)) {
+                $this->flashMessenger()->addErrorMessage($this->__('team.name.exists', ['name' => $name]));
+                $this->redirect()->refresh();
+                return;
+            } else {
+                $this->table->update(['name' => $name], $id);
+                $this->flashMessenger()->addSuccessMessage($this->__('team.saved', ['name' => $name]));
+                $this->redirect()->refresh();
+                return;
+            }
+        }
         return $this->renderView();
     }
 }

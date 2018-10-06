@@ -1,3 +1,4 @@
+<?php echo $this->flashMessenger()->render('success', ['alert', 'alert-dismissible', 'alert-success']); ?>
 <?php echo $this->flashMessenger()->render('error', ['alert', 'alert-danger']); ?>
 
 <form method="post">
@@ -6,7 +7,7 @@
       <div class="input-group-prepend">
         <label class="input-group-text" for="name"><?php echo $this->t->translate('team.name') ?></label>
       </div>
-      <input id="name" type="text" class="form-control" name="name" value="" placeholder="Enter team name">
+      <input id="name" type="text" class="form-control" name="name" value="<?php echo $this->team->name ?>" placeholder="Enter team name">
     </div>
     <button type="submit" class="btn btn-primary"><?php echo $this->t->translate('submit') ?></button>
   </fieldset>

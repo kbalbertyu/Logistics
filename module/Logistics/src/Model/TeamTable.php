@@ -13,8 +13,9 @@ use Application\Model\BaseTable;
 
 class TeamTable extends BaseTable {
 
-    public function nameExists($name) {
-        return $this->getRowByFields(['name' => $name]);
+    public function nameExists($name, $id = null) {
+        $find = $this->getRowByFields(['name' => $name]);
+        return !empty($find) && (empty($id) || $find->id != $id);
     }
 
     public function getTeamListForSelection() {
