@@ -58,7 +58,7 @@ class PackageTable extends BaseTable {
                 'username' => $data['username']
             ]);
             if (!isset($set['status'])) {
-                $set['status'] = 'pending';
+                $set['status'] = $data['type'] == Package::PROCESS_TYPE_IN ? 'completed' : 'pending';
             }
             $this->add($set);
             return $this->getInsertId();
