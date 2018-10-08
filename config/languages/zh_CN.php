@@ -95,7 +95,7 @@ return [
     'need.book' => '包装盒里加入广告书或说明书等(￥0.3/个)',
     'need.case.fill' => '叠盒子以及装盒子(￥0.3/个)',
     'need.product.label' => '产品贴标签(￥0.3/个)',
-    'need.box.change' => '产品换箱(￥20)',
+    'need.box.change' => '产品换箱(￥20/箱)',
     'shipping.info' => '收件信息',
     'recipient' => '收件人',
     'phone' => '联系电话',
@@ -119,4 +119,5 @@ return [
     'package.qty.over.inventory' => '发货数量{qty}超过库存数量{maximum}',
     'team.edit' => '修改团队名称',
     'team.id.invalid' => '团队ID: {id}不存在',
+    'service.fee.total' => '服务费总价(￥)',
 ];

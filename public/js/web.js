@@ -212,5 +212,51 @@ $(function(){
             }
         });
     }
+    function showServiceFeeTotal() {
+	    var total = 0;
+        $('[id$=-preview]').each(function() {
+            if ($(this).attr('id') == 'total-preview') {
+                return;
+            }
+            var fee = parseFloat($(this).text());
+            total += isNaN(fee) ? 0 : fee;
+        });
+        $('#serviceFee').val(total);
+    }
+    function parsePrice(label) {
+        var price = label.replace(/[^\.0-9]/ig,"");
+        return parseFloat(price);
+    }
+    function getServiceFee(field, unitPrice) {
+	    var count;
+        if (field == 'needBoxChange') {
+            count = $('#caseQty').val();
+        } else {
+            count = $('#qty').val();
+        }
+        count = parseInt(count);
+        count = isNaN(count) ? 0 : count;
+        return count * unitPrice;
+    }
+    function previewServiceFee(obj) {
+        var field = obj.attr('name');
+        var objPreview = $('#' + field + '-preview');
+        if (obj.is(':checked')) {
+            var label = obj.siblings('[for=' + field + ']').eq(0).text();
+            var unitPrice = parsePrice(label);
+            var fee = getServiceFee(field, unitPrice);
+            objPreview.text(fee);
+        } else {
+            objPreview.text('0');
+        }
+        showServiceFeeTotal();
+    }
+    $('#requirements-table input[type=checkbox]').change(function () {
+        previewServiceFee($(this));
+    });
+	$('#requirements-table input[type=checkbox]').each(function () {
+        previewServiceFee($(this));
+    });
+    showServiceFeeTotal();
 })
  

@@ -96,7 +96,7 @@ return [
     'need.book' => 'Instructions/Ads papers in Box(￥0.3/each)',
     'need.case.fill' => 'Stack Case and Fill in Case(￥0.3/each)',
     'need.product.label' => 'Product Labeling(￥0.3/each)',
-    'need.box.change' => 'Change Product Box(￥20)',
+    'need.box.change' => 'Change Product Box(￥20/box)',
     'shipping.info' => 'Shipping Information',
     'recipient' => 'Recipient',
     'phone' => 'Phone',
@@ -120,4 +120,5 @@ return [
     'package.qty.over.inventory' => 'Shipping QTY {qty} is greater than inventory {maximum}',
     'team.edit' => 'Edit Team Name',
     'team.id.invalid' => 'Team ID: {id} not exists',
+    'service.fee.total' => 'Total Service Fee(￥)',
 ];

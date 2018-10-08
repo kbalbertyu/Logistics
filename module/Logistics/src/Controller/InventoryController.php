@@ -155,6 +155,7 @@ class InventoryController extends AbstractBaseController {
 
             // Save to shipping
             $data['packageId'] = $package->id;
+            $data['serviceFee'] = Shipping::calcServiceFee($data);
             $this->shippingTable->saveShipping($data, $shipping->id);
             foreach (Shipping::ATTACHMENTS as $field => $label) {
                 if ($shipping->$field && $data[$field] && $shipping->$field != $data[$field]) {
@@ -168,6 +169,7 @@ class InventoryController extends AbstractBaseController {
             $this->redirect()->refresh();
             return;
         }
+        $this->addOutPut('requirements', Shipping::REQUIREMENT_COLUMNS);
         return $this->renderView();
     }
 
