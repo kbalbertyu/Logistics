@@ -20,6 +20,7 @@
     <?php }?>
     <th><?php echo $this->t->translate('shipping.fee') ?></th>
     <th><?php echo $this->t->translate('service.fee') ?></th>
+    <th><?php echo $this->t->translate('customs') ?></th>
     <th><?php echo $this->t->translate('fees.due') ?></th>
     <th><?php echo $this->t->translate('actions') ?></th>
   </tr>
@@ -38,6 +39,7 @@
         <?php }?>
         <td><?php echo round($product->shippingFee, 2) ?></td>
         <td><?php echo round($product->serviceFee, 2) ?></td>
+        <td><?php echo round($product->customs, 2) ?></td>
         <td><?php echo round($product->feesDue, 2) ?></td>
         <td class="actions">
           <?php if ($this->userObject->isManager()) {?>
@@ -67,6 +69,7 @@
     <?php }?>
     <th><?php echo $this->t->translate('shipping.fee') ?></th>
     <th><?php echo $this->t->translate('service.fee') ?></th>
+    <th><?php echo $this->t->translate('customs') ?></th>
     <th><?php echo $this->t->translate('fees.due') ?></th>
     <th><?php echo $this->t->translate('actions') ?></th>
   </tr>

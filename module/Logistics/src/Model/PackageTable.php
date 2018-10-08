@@ -18,14 +18,17 @@ class PackageTable extends BaseTable {
 
     public function getPackageList(User $user = null, $packageType = Package::PROCESS_TYPE_IN) {
         $select = new Select();
-        $select->from(['i' => $this->getTable()])
-            ->join(['t' => BaseTable::TEAM_TABLE], 'i.teamId = t.id', ['team' => 'name'])
-            ->join(['p' => BaseTable::PRODUCT_TABLE], 'i.productId = p.id', ['itemName'])
-            ->join(['b' => BaseTable::BRAND_TABLE], 'p.brandId = b.id', ['brand' => 'name'])
+        $select->from(['pa' => $this->getTable()])
+            ->join(['t' => BaseTable::TEAM_TABLE], 'pa.teamId = t.id', ['team' => 'name'], Select::JOIN_LEFT)
+            ->join(['p' => BaseTable::PRODUCT_TABLE], 'pa.productId = p.id', ['itemName'], Select::JOIN_LEFT)
+            ->join(['b' => BaseTable::BRAND_TABLE], 'p.brandId = b.id', ['brand' => 'name'], Select::JOIN_LEFT)
             ->where(['type' => $packageType])
             ->order('processDate DESC');
+        if ($packageType == Package::PROCESS_TYPE_OUT) {
+            $select->join(['s' => BaseTable::SHIPPING_TABLE], 'pa.id = s.packageId', ['shippingCost', 'shippingFee', 'serviceFee', 'customs'], Select::JOIN_LEFT);
+        }
         if (!empty($user) && !$user->isManager()) {
-            $select->where(['i.teamId' => $user->teamId]);
+            $select->where(['pa.teamId' => $user->teamId]);
         }
         return $this->tableGateway->selectWith($select);
     }

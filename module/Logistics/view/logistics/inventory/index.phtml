@@ -21,6 +21,14 @@
     <th><?php echo $this->t->translate('case.qty') ?></th>
     <th><?php echo $this->t->translate('size') ?></th>
     <th><?php echo $this->t->translate('weight') ?></th>
+    <?php if ($this->type == 'out') { ?>
+    <?php if ($this->userObject->isManager()) {?>
+    <th><?php echo $this->t->translate('shipping.cost') ?></th>
+    <?php }?>
+    <th><?php echo $this->t->translate('shipping.fee') ?></th>
+    <th><?php echo $this->t->translate('service.fee') ?></th>
+    <th><?php echo $this->t->translate('customs') ?></th>
+    <?php }?>
     <th><?php echo $this->t->translate('date') ?></th>
     <th><?php echo $this->t->translate('note') ?></th>
     <th><?php echo $this->t->translate('actions') ?></th>
@@ -41,6 +49,14 @@
         <td><?php echo $package->caseQty ?></td>
         <td><?php echo $package->renderSize() ?></td>
         <td><?php echo $package->weight ?></td>
+        <?php if ($this->type == 'out') { ?>
+        <?php if ($this->userObject->isManager()) {?>
+        <td><?php echo round($package->shippingCost, 2) ?></td>
+        <?php }?>
+        <td><?php echo round($package->shippingFee, 2) ?></td>
+        <td><?php echo round($package->serviceFee, 2) ?></td>
+        <td><?php echo round($package->customs, 2) ?></td>
+        <?php }?>
         <td><?php echo $package->processDate ?></td>
         <td><?php echo $package->note ?></td>
         <td class="actions">
@@ -70,6 +86,14 @@
     <th><?php echo $this->t->translate('case.qty') ?></th>
     <th><?php echo $this->t->translate('size') ?></th>
     <th><?php echo $this->t->translate('weight') ?></th>
+    <?php if ($this->type == 'out') { ?>
+    <?php if ($this->userObject->isManager()) {?>
+    <th><?php echo $this->t->translate('shipping.cost') ?></th>
+    <?php }?>
+    <th><?php echo $this->t->translate('shipping.fee') ?></th>
+    <th><?php echo $this->t->translate('service.fee') ?></th>
+    <th><?php echo $this->t->translate('customs') ?></th>
+    <?php }?>
     <th><?php echo $this->t->translate('date') ?></th>
     <th><?php echo $this->t->translate('note') ?></th>
     <th><?php echo $this->t->translate('actions') ?></th>

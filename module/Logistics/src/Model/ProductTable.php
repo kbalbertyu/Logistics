@@ -86,7 +86,7 @@ class ProductTable extends BaseTable {
             if ($this->withoutFees($data)) {
                 return;
             }
-            foreach (['shippingCost', 'shippingFee', 'serviceFee'] as $column) {
+            foreach (['shippingCost', 'shippingFee', 'serviceFee', 'customs'] as $column) {
                 $set[$column] = new Expression(sprintf('%s + %.2f', $column, $data[$column]));
             }
             $set['feesDue'] = new Expression(sprintf('feesDue + %.2f',
@@ -101,7 +101,7 @@ class ProductTable extends BaseTable {
             if (empty($shipping)) {
                 $shipping = new Shipping();
             }
-            foreach (['shippingCost', 'shippingFee', 'serviceFee'] as $column) {
+            foreach (['shippingCost', 'shippingFee', 'serviceFee', 'customs'] as $column) {
                 $set[$column] = $product->$column + ($data[$column] - $shipping->$column);
             }
             $set['feesDue'] = $product->feesDue +
@@ -128,6 +128,7 @@ class ProductTable extends BaseTable {
      * @return bool
      */
     private function withoutFees($data) {
-        return !isset($data['shippingCost']) || !isset($data['shippingFee']) || !isset($data['serviceFee']);
+        return !isset($data['shippingCost']) || !isset($data['shippingFee']) ||
+            !isset($data['serviceFee']) || !isset($data['customs']);
     }
 }
