@@ -72,7 +72,7 @@ class InventoryController extends AbstractBaseController {
     public function downloadInvoiceAction() {
         $this->useBlankLayout();
         $packageIds = $this->params()->fromQuery('packageIds');
-        $packageIds = empty($packageIds) ? [] : implode(',', $packageIds);
+        $packageIds = empty($packageIds) ? [] : explode(',', $packageIds);
         $this->addOutPut('packages', $this->table->getInvoice($packageIds));
         return $this->renderView();
     }
