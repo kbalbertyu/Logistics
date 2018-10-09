@@ -12,23 +12,53 @@ namespace Logistics\Model;
 use Application\Model\BaseTable;
 use User\Model\User;
 use Zend\Db\Sql\Select;
+use Zend\Db\Sql\Where;
 use Zend\Stdlib\ArrayUtils;
 
 class PackageTable extends BaseTable {
 
-    public function getPackageList(User $user = null, $packageType = Package::PROCESS_TYPE_IN) {
+    public function getPackageList(User $user = null, $packageType = Package::PROCESS_TYPE_IN, $keywords = []) {
+        $where = new Where();
+        $where->equalTo('type', $packageType);
+
         $select = new Select();
         $select->from(['pa' => $this->getTable()])
             ->join(['t' => BaseTable::TEAM_TABLE], 'pa.teamId = t.id', ['team' => 'name'], Select::JOIN_LEFT)
             ->join(['p' => BaseTable::PRODUCT_TABLE], 'pa.productId = p.id', ['itemName'], Select::JOIN_LEFT)
             ->join(['b' => BaseTable::BRAND_TABLE], 'p.brandId = b.id', ['brand' => 'name'], Select::JOIN_LEFT)
-            ->where(['type' => $packageType])
             ->order('processDate DESC');
         if ($packageType == Package::PROCESS_TYPE_OUT) {
-            $select->join(['s' => BaseTable::SHIPPING_TABLE], 'pa.id = s.packageId', ['shippingCost', 'shippingFee', 'serviceFee', 'customs'], Select::JOIN_LEFT);
+            $select->join(['s' => BaseTable::SHIPPING_TABLE], 'pa.id = s.packageId', ['shippingCost', 'shippingFee', 'serviceFee', 'customs', 'carrier'], Select::JOIN_LEFT);
         }
         if (!empty($user) && !$user->isManager()) {
-            $select->where(['pa.teamId' => $user->teamId]);
+            $where->equalTo('pa.teamId', $user->teamId);
+        } elseif ($packageType == Package::PROCESS_TYPE_OUT && $user->isManager()) {
+            if (!empty($keywords['itemName'])) {
+                $where->equalTo('p.itemName', $keywords['itemName']);
+            }
+            if (!empty($keywords['teamId'])) {
+                $where->equalTo('pa.teamId', $keywords['teamId']);
+            }
+            if (!empty($keywords['carrier'])) {
+                $where->equalTo('s.carrier', $keywords['carrier']);
+            }
+        }
+        $select->where($where);
+        return $this->tableGateway->selectWith($select);
+    }
+
+    public function getInvoice($packageIds) {
+        $select = new Select();
+        $select->from(['pa' => $this->getTable()])
+            ->join(['t' => BaseTable::TEAM_TABLE], 'pa.teamId = t.id', ['team' => 'name'], Select::JOIN_LEFT)
+            ->join(['p' => BaseTable::PRODUCT_TABLE], 'pa.productId = p.id', ['itemName'], Select::JOIN_LEFT)
+            ->join(['b' => BaseTable::BRAND_TABLE], 'p.brandId = b.id', ['brand' => 'name'], Select::JOIN_LEFT)
+            ->join(['s' => BaseTable::SHIPPING_TABLE], 'pa.id = s.packageId', ['shippingCost', 'shippingFee', 'serviceFee', 'customs', 'carrier'], Select::JOIN_LEFT)
+            ->order('processDate DESC');
+        if (!empty($packageIds)) {
+            $where = new Where();
+            $where->in('pa.id', $packageIds);
+            $select->where($where);
         }
         return $this->tableGateway->selectWith($select);
     }

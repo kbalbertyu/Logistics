@@ -2,7 +2,44 @@
 <?php echo $this->flashMessenger()->render('error', array('alert', 'alert-danger')); ?>
 
 <?php if ($this->userObject->isManager()) { ?>
+<link href="<?php echo $this->basePath('js/jquery-ui-1.12.1.custom/jquery-ui.theme.min.css') ?>" media="screen" rel="stylesheet" type="text/css">
+<script type="text/javascript" src="<?php echo $this->basePath('/js/jquery-ui-1.12.1.custom/jquery-ui.min.js') ?>"></script>
+
 <div class="date-nav">
+  <form id="search" class="left" method="get">
+    <input type="hidden" name="type" value="<?php echo $this->type ?>">
+    <input type="submit" style="display: none;" />
+    <a id="download-invoice" href="javascript:void(0);" class="btn btn-success dropdown-filter"><?php echo $this->t->translate('download.invoice') ?></a>
+    <button class="btn btn-primary dropdown-filter" type="submit"><?php echo $this->t->translate('submit') ?></button>
+    <div class="input-group dropdown-filter">
+      <div class="input-group-prepend">
+        <label class="input-group-text" for="select-team"><?php echo $this->t->translate('select.team') ?></label>
+      </div>
+      <select onselect="this.form.submit();" id="select-team" class="form-control" name="teamId">
+        <option value=""> - </option>
+        <?php foreach ($this->teams as $team) {?>
+        <option <?php echo $this->teamId == $team->id ? 'selected' : '' ?> value="<?php echo $team->id ?>"><?php echo $team->name ?></option>
+        <?php }?>
+      </select>
+    </div>
+    <div class="input-group dropdown-filter">
+      <div class="input-group-prepend">
+        <label class="input-group-text" for="select-carrier"><?php echo $this->t->translate('shipping.carrier') ?></label>
+      </div>
+      <select onselect="this.form.submit();" id="select-carrier" class="form-control" name="carrier">
+        <option value=""> - </option>
+        <?php foreach ($this->carriers as $carrier) {?>
+        <option <?php echo $this->carrier == $carrier ? 'selected' : '' ?> value="<?php echo $carrier ?>"><?php echo $carrier ?></option>
+        <?php }?>
+      </select>
+    </div>
+    <div class="input-group dropdown-filter">
+      <div class="input-group-prepend">
+        <label class="input-group-text" for="itemName"><?php echo $this->t->translate('item.name') ?></label>
+      </div>
+      <input id="itemName" data-url="inventory/get-item-names" name="itemName" value="<?php echo $this->itemName ?>" type="text" class="form-control ui-autocomplete-input">
+    </div>
+  </form>
   <a href="<?php echo $this->url('inventory', ['action' => 'add'], ['query' => ['type' => 'in']]) ?>" class="btn btn-primary right" style="margin-right:10px;">+<?php echo $this->t->translate('receive.package') ?></a>
   <div class="clear"></div>
 </div>
@@ -28,6 +65,7 @@
     <th><?php echo $this->t->translate('shipping.fee') ?></th>
     <th><?php echo $this->t->translate('service.fee') ?></th>
     <th><?php echo $this->t->translate('customs') ?></th>
+    <th><?php echo $this->t->translate('shipping.carrier') ?></th>
     <?php }?>
     <th><?php echo $this->t->translate('date') ?></th>
     <th><?php echo $this->t->translate('note') ?></th>
@@ -38,7 +76,7 @@
   <?php if ($this->packages->count()) { ?>
       <?php foreach ($this->packages as $package) { ?>
       <tr>
-        <td><?php echo $package->id ?></td>
+        <td class="packageId"><?php echo $package->id ?></td>
         <?php if ($this->type == 'out') { ?>
         <td><?php echo $package->renderStatus() ?></td>
         <?php }?>
@@ -56,6 +94,7 @@
         <td><?php echo round($package->shippingFee, 2) ?></td>
         <td><?php echo round($package->serviceFee, 2) ?></td>
         <td><?php echo round($package->customs, 2) ?></td>
+        <td><?php echo $package->carrier ?></td>
         <?php }?>
         <td><?php echo $package->processDate ?></td>
         <td><?php echo $package->note ?></td>
@@ -93,6 +132,7 @@
     <th><?php echo $this->t->translate('shipping.fee') ?></th>
     <th><?php echo $this->t->translate('service.fee') ?></th>
     <th><?php echo $this->t->translate('customs') ?></th>
+    <th><?php echo $this->t->translate('shipping.carrier') ?></th>
     <?php }?>
     <th><?php echo $this->t->translate('date') ?></th>
     <th><?php echo $this->t->translate('note') ?></th>

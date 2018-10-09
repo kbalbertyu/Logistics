@@ -49,9 +49,31 @@ class InventoryController extends AbstractBaseController {
 
     public function indexAction() {
         $type = $this->params()->fromQuery('type', 'in');
+        $itemName = $this->params()->fromQuery('itemName', '');
+        $teamId = $this->params()->fromQuery('teamId', 0);
+        $carrier = $this->params()->fromQuery('carrier', '');
         $this->title = $this->__('nav.packages.'.$type);
-        $this->addOutPut('type', $type);
-        $this->addOutPut('packages', $this->table->getPackageList($this->userObject, $type));
+        $this->addOutPut([
+            'type' => $type,
+            'itemName' => $itemName,
+            'teamId' => $teamId,
+            'carrier' => $carrier,
+            'packages' => $this->table->getPackageList($this->userObject, $type, [
+                'itemName' => $itemName,
+                'teamId' => $teamId,
+                'carrier' => $carrier
+            ]),
+            'teams' => $this->teamTable->getTeamListForSelection(),
+            'carriers' => $this->shippingTable->getCarriers()
+        ]);
+        return $this->renderView();
+    }
+
+    public function downloadInvoiceAction() {
+        $this->useBlankLayout();
+        $packageIds = $this->params()->fromQuery('packageIds');
+        $packageIds = empty($packageIds) ? [] : implode(',', $packageIds);
+        $this->addOutPut('packages', $this->table->getInvoice($packageIds));
         return $this->renderView();
     }
 

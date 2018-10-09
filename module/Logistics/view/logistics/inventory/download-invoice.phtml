@@ -1,0 +1,40 @@
+<?php
+/**
+ * Created by PhpStorm.
+ * User: AlbertYu
+ * Date: 10/8/2018
+ * Time: 8:01 PM
+ */
+header('Content-Type: text/csv');
+header("Content-Disposition: attachment; filename=invoice.csv");
+header("Pragma: no-cache");
+header("Expires: 0");
+
+$fh = @fopen( 'php://output', 'w' );
+$header = [
+    'ID',
+    $this->t->translate('item.name'),
+    $this->t->translate('shipping.carrier'),
+    $this->t->translate('team.name'),
+    $this->t->translate('brand.name'),
+    $this->t->translate('shipping.fee'),
+    $this->t->translate('service.fee'),
+    $this->t->translate('customs'),
+    $this->t->translate('date'),
+];
+fputcsv($fh, $header);
+foreach ($this->packages as $package) {
+    $row = [
+        $package->id,
+        $package->itemName,
+        $package->carrier,
+        $package->team,
+        $package->brand,
+        $package->shippingFee,
+        $package->serviceFee,
+        $package->customs,
+        $package->processDate
+    ];
+    fputcsv($fh, $row);
+}
+fclose($fh);

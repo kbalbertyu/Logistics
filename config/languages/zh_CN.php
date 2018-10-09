@@ -8,7 +8,7 @@ return [
     'receive' => '收货',
     'ship.package.request' => '发货请求',
     'ship.package' => '发货',
-    'select.team' => '请选择团队.',
+    'select.team' => '选择团队',
     'package.add.success' => '包裹接收成功.',
     'package.ship.request.success' => '发货请求已提交',
     'package.edit.success' => '入库记录修改成功.',
@@ -120,4 +120,5 @@ return [
     'team.edit' => '修改团队名称',
     'team.id.invalid' => '团队ID: {id}不存在',
     'service.fee.total' => '服务费总价(￥)',
+    'download.invoice' => '下载账单',
 ];

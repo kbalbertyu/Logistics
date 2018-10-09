@@ -9,7 +9,7 @@ return [
     'receive' => 'Receive Package',
     'ship.package.request' => 'Ship Package Request',
     'ship.package' => 'Ship Package',
-    'select.team' => 'Please select a business team.',
+    'select.team' => 'Select team',
     'package.add.success' => 'Package is received successfully.',
     'package.ship.request.success' => 'Package shipping request is submitted.',
     'package.edit.success' => 'Package info modified successfully.',
@@ -121,4 +121,5 @@ return [
     'team.edit' => 'Edit Team Name',
     'team.id.invalid' => 'Team ID: {id} not exists',
     'service.fee.total' => 'Total Service Fee(￥)',
+    'download.invoice' => 'Download Invoice',
 ];

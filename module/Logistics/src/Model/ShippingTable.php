@@ -9,6 +9,8 @@
 namespace Logistics\Model;
 
 
+use Zend\Db\Sql\Where;
+
 class ShippingTable extends PackageTable {
 
     /**
@@ -30,5 +32,17 @@ class ShippingTable extends PackageTable {
             $this->update($data, $id);
         }
         return $id;
+    }
+
+    public function getCarriers() {
+        $where = new Where();
+        $where->isNotNull('carrier')
+            ->notEqualTo('carrier', '');
+        $select = $this->selectTable()
+            ->columns(['carrier'])
+            ->where($where)
+            ->group('carrier');
+        $rows = $this->tableGateway->selectWith($select);
+        return $rows->count() == 0 ? [] : array_column($rows->toArray(), 'carrier');
     }
 }

@@ -90,8 +90,9 @@ $(function(){
             { "sType": "numeric-comma" },
             null,
             null,
-            null,
+            null
         ],
+        paging: false
     });
     $('#package-table-out').dataTable({
         "aoColumns": [
@@ -104,10 +105,16 @@ $(function(){
             { "sType": "numeric-comma" },
             null,
             { "sType": "numeric-comma" },
+            { "sType": "numeric-comma" },
+            { "sType": "numeric-comma" },
+            { "sType": "numeric-comma" },
+            { "sType": "numeric-comma" },
             null,
             null,
             null,
+            null
         ],
+        paging: false
     });
     $('#product-table').dataTable({
         "aoColumns": [
@@ -186,6 +193,7 @@ $(function(){
         });
     }
 
+    // Auto complete for product name
     if ($('#itemName').length) {
         var ITEM_CACHE = {};
         $('#itemName').autocomplete({
@@ -212,6 +220,8 @@ $(function(){
             }
         });
     }
+
+    // Calculate service fee on package detail page
     function showServiceFeeTotal() {
 	    var total = 0;
         $('[id$=-preview]').each(function() {
@@ -258,5 +268,18 @@ $(function(){
         previewServiceFee($(this));
     });
     showServiceFeeTotal();
+
+    // Download invoice
+    $('#download-invoice').click(function (e) {
+        e.preventDefault();
+        var packageIds = [];
+        $('.packageId').each(function () {
+            packageIds.push($(this).text());
+        });
+        if (packageIds.length == 0) {
+            return;
+        }
+        location.href = BASE_PATH + 'inventory/download-invoice?packageIds=' + packageIds.join(',');
+    });
 })
  
