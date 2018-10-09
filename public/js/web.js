@@ -127,6 +127,7 @@ $(function(){
             { "sType": "numeric-comma" },
             { "sType": "numeric-comma" },
             { "sType": "numeric-comma" },
+            { "sType": "numeric-comma" },
             null
         ],
     });
