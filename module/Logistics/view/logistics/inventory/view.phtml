@@ -146,18 +146,22 @@
   <?php if ($this->userObject->isManager() || !empty($this->address)) {?>
   <fieldset>
     <legend><?php echo $this->t->translate('shipping.info') ?></legend>
+    <?php
+    $fields = [
+        'recipient' => 'recipient',
+        'phone' => 'phone',
+        'zip' => 'zip',
+        'country' => 'country',
+    ];
+    ?>
+    <?php foreach ($fields as $field => $label) {?>
     <div class="input-group">
       <div class="input-group-prepend">
-        <label class="input-group-text" for="recipient"><?php echo $this->t->translate('recipient') ?></label>
+        <label class="input-group-text" for="<?php echo $field ?>"><?php echo $this->t->translate($label) ?></label>
       </div>
-      <input id="recipient" <?php echo $this->userObject->isManager() ? 'name="recipient"' : 'disabled ' ?> value="<?php echo $this->address->recipient ?>" type="text" class="form-control">
+      <input id="<?php echo $field ?>" <?php echo $this->userObject->isManager() ? 'name="' . $field . '"' : 'disabled ' ?> value="<?php echo $this->address->$field ?>" type="text" class="form-control">
     </div>
-    <div class="input-group">
-      <div class="input-group-prepend">
-        <label class="input-group-text" for="phone"><?php echo $this->t->translate('phone') ?></label>
-      </div>
-      <input id="phone" <?php echo $this->userObject->isManager() ? 'name="phone"' : 'disabled ' ?> value="<?php echo $this->address->phone ?>" type="text" class="form-control">
-    </div>
+    <?php }?>
     <div class="clear"></div>
     <div class="input-group textarea">
       <div class="input-group-prepend">

@@ -17,6 +17,8 @@ use Application\Model\BaseModel;
  * @property string recipient
  * @property string phone
  * @property string address
+ * @property string zip
+ * @property string country
  */
 class Address extends BaseModel {
 
@@ -33,6 +35,8 @@ class Address extends BaseModel {
     public function equalsTo($data) {
         return $data['recipient'] == $this->recipient &&
             $data['phone'] = $this->phone &&
-                $data['address'] == $this->address;
+            $data['address'] == $this->address &&
+            $data['zip'] == $this->zip &&
+            $data['country'] == $this->country;
     }
 }

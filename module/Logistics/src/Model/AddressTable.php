@@ -28,7 +28,9 @@ class AddressTable extends BaseTable {
             'teamId' => $data['teamId'],
             'recipient' => trim($data['recipient']),
             'phone' => trim($data['phone']),
-            'address' => trim($data['address'])
+            'address' => trim($data['address']),
+            'zip' => trim($data['zip']),
+            'country' => trim($data['country']),
         ];
         if (empty($address)) {
             $address = $this->getRowByFields($set);

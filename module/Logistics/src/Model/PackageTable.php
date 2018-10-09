@@ -53,7 +53,8 @@ class PackageTable extends BaseTable {
             ->join(['t' => BaseTable::TEAM_TABLE], 'pa.teamId = t.id', ['team' => 'name'], Select::JOIN_LEFT)
             ->join(['p' => BaseTable::PRODUCT_TABLE], 'pa.productId = p.id', ['itemName'], Select::JOIN_LEFT)
             ->join(['b' => BaseTable::BRAND_TABLE], 'p.brandId = b.id', ['brand' => 'name'], Select::JOIN_LEFT)
-            ->join(['s' => BaseTable::SHIPPING_TABLE], 'pa.id = s.packageId', ['shippingCost', 'shippingFee', 'serviceFee', 'customs', 'carrier'], Select::JOIN_LEFT)
+            ->join(['s' => BaseTable::SHIPPING_TABLE], 'pa.id = s.packageId', ['shippingCost', 'shippingFee', 'serviceFee', 'customs', 'carrier', 'trackingNumber'], Select::JOIN_LEFT)
+            ->join(['a' => BaseTable::ADDRESS_TABLE], 's.addressId = a.id', ['country', 'zip'], Select::JOIN_LEFT)
             ->order('processDate DESC');
         if (!empty($packageIds)) {
             $where = new Where();

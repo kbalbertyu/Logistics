@@ -13,27 +13,47 @@ header("Expires: 0");
 $fh = @fopen( 'php://output', 'w' );
 $header = [
     'ID',
-    $this->t->translate('item.name'),
+    $this->t->translate('received.date'),
+    $this->t->translate('tracking.number'),
     $this->t->translate('shipping.carrier'),
+    $this->t->translate('country'),
+    $this->t->translate('case.qty'),
+    $this->t->translate('weight'),
+    $this->t->translate('volume.weight'),
+    $this->t->translate('charging.weight'),
+    $this->t->translate('zip'),
+    $this->t->translate('item.name'),
     $this->t->translate('team.name'),
     $this->t->translate('brand.name'),
     $this->t->translate('shipping.fee'),
     $this->t->translate('service.fee'),
     $this->t->translate('customs'),
-    $this->t->translate('date'),
+    $this->t->translate('total'),
+    $this->t->translate('fee.note'),
+    $this->t->translate('invoice.note'),
 ];
 fputcsv($fh, $header);
 foreach ($this->packages as $package) {
     $row = [
         $package->id,
-        $package->itemName,
+        $package->processDate,
+        $package->trackingNumber,
         $package->carrier,
+        $package->country,
+        $package->caseQty,
+        $package->weight,
+        '',
+        '',
+        $package->zip,
+        $package->itemName,
         $package->team,
         $package->brand,
         $package->shippingFee,
         $package->serviceFee,
         $package->customs,
-        $package->processDate
+        ($package->shippingFee + $package->serviceFee + $package->customs),
+        '',
+        '',
     ];
     fputcsv($fh, $row);
 }
