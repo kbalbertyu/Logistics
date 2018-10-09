@@ -9,7 +9,9 @@
   <form id="search" class="left" method="get">
     <input type="hidden" name="type" value="<?php echo $this->type ?>">
     <input type="submit" style="display: none;" />
+    <?php if ($this->type == 'out') {?>
     <a id="download-invoice" href="javascript:void(0);" class="btn btn-success dropdown-filter"><?php echo $this->t->translate('download.invoice') ?></a>
+    <?php }?>
     <button class="btn btn-primary dropdown-filter" type="submit"><?php echo $this->t->translate('submit') ?></button>
     <div class="input-group dropdown-filter">
       <div class="input-group-prepend">
@@ -22,6 +24,7 @@
         <?php }?>
       </select>
     </div>
+    <?php if ($this->type == 'out') {?>
     <div class="input-group dropdown-filter">
       <div class="input-group-prepend">
         <label class="input-group-text" for="select-carrier"><?php echo $this->t->translate('shipping.carrier') ?></label>
@@ -33,6 +36,7 @@
         <?php }?>
       </select>
     </div>
+    <?php }?>
     <div class="input-group dropdown-filter">
       <div class="input-group-prepend">
         <label class="input-group-text" for="itemName"><?php echo $this->t->translate('item.name') ?></label>
