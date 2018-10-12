@@ -34,7 +34,9 @@ return [
     'nav.brands' => 'Brands',
     'nav.teams' => 'Teams',
     'nav.users' => 'Users',
-    'nav.fee.charges' => 'Fee Charges',
+    'nav.fee.manage' => 'Fee Management',
+    'nav.fee.charges' => 'Charge History',
+    'nav.fee.summary' => 'Fee Summary',
     'nav.shipping' => 'Package Shipping',
     'fee.charge.list' => 'Fee Charges History',
     'user.login' => 'User Login',
@@ -130,4 +132,7 @@ return [
     'fee.note' => 'Fee Note',
     'invoice.note' => 'Invoice Note',
     'received.date' => 'Received Date',
+    'fee.list' => 'Fees List',
+    'date.from' => 'Start Date',
+    'date.to' => 'End Date',
 ];

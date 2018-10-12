@@ -33,7 +33,9 @@ return [
     'nav.brands' => '品牌管理',
     'nav.teams' => '团队管理',
     'nav.users' => '用户管理',
-    'nav.fee.charges' => '收费管理',
+    'nav.fee.manage' => '费用管理',
+    'nav.fee.charges' => '收费记录',
+    'nav.fee.summary' => '费用汇总',
     'nav.shipping' => '发货管理',
     'fee.charge.list' => '收费记录',
     'user.login' => '用户登录',
@@ -130,4 +132,7 @@ return [
     'invoice.note' => '备注',
     'received.date' => '收货日期',
     'real.weight' => '实重',
+    'fee.list' => '费用记录',
+    'date.from' => '开始日期',
+    'date.to' => '结束日期',
 ];

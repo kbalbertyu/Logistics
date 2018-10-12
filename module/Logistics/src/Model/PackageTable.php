@@ -11,6 +11,7 @@ namespace Logistics\Model;
 
 use Application\Model\BaseTable;
 use User\Model\User;
+use Zend\Db\Sql\Expression;
 use Zend\Db\Sql\Select;
 use Zend\Db\Sql\Where;
 use Zend\Stdlib\ArrayUtils;
@@ -101,5 +102,26 @@ class PackageTable extends BaseTable {
         }
         $this->update($set, $id);
         return $id;
+    }
+
+    public function getFees($params) {
+        $select = $this->selectTable('p')
+            ->join(['t' => BaseTable::TEAM_TABLE], 'p.teamId = t.id', ['team' => 'name'], Select::JOIN_LEFT)
+            ->join(['s' => BaseTable::SHIPPING_TABLE], 'p.id = s.packageId', [
+                'shippingCost' => new Expression('SUM(shippingCost)'),
+                'shippingFee' => new Expression('SUM(shippingFee)'),
+                'serviceFee' => new Expression('SUM(serviceFee)'),
+                'customs' => new Expression('SUM(customs)')
+            ], Select::JOIN_LEFT)
+            ->group('p.teamId');
+        $where = new Where();
+        if (!empty($params['teamId'])) {
+            $where->equalTo('p.teamId', $params['teamId']);
+        }
+        if (!empty($params['date'])) {
+            $where->like('p.processDate', $params['date'] . '%');
+        }
+        $select->where($where);
+        return $this->tableGateway->selectWith($select);
     }
 }

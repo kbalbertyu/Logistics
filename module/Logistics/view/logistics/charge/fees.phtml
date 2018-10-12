@@ -1,0 +1,60 @@
+<div class="date-nav">
+  <form id="search" method="get">
+    <button class="btn btn-primary dropdown-filter" type="submit"><?php echo $this->t->translate('submit') ?></button>
+
+    <div class="input-group dropdown-filter">
+      <div class="input-group-prepend">
+        <label class="input-group-text" for="date"><?php echo $this->t->translate('date') ?></label>
+      </div>
+      <input id="date" name="date" class="form-control" type="month" value="<?php echo $this->date; ?>" />
+    </div>
+    <div class="input-group dropdown-filter">
+      <div class="input-group-prepend">
+        <label class="input-group-text" for="select-team"><?php echo $this->t->translate('select.team') ?></label>
+      </div>
+      <select onselect="this.form.submit();" id="select-team" class="form-control" name="teamId">
+        <option value=""> - </option>
+        <?php foreach ($this->teams as $team) {?>
+          <option <?php echo $this->teamId == $team->id ? 'selected' : '' ?> value="<?php echo $team->id ?>"><?php echo $team->name ?></option>
+        <?php }?>
+      </select>
+    </div>
+  </form>
+  <div class="clear"></div>
+</div>
+<table id="charge-table" class="table display" cellspacing="0" width="100%">
+  <thead>
+  <tr>
+    <th><?php echo $this->t->translate('team.name') ?></th>
+    <th><?php echo $this->t->translate('shipping.cost') ?></th>
+    <th><?php echo $this->t->translate('shipping.fee') ?></th>
+    <th><?php echo $this->t->translate('service.fee') ?></th>
+    <th><?php echo $this->t->translate('customs') ?></th>
+    <th><?php echo $this->t->translate('total') ?></th>
+  </tr>
+  </thead>
+  <tbody>
+  <?php if ($this->fees->count()) { ?>
+      <?php foreach ($this->fees as $fee) { ?>
+      <tr>
+        <td><?php echo $fee->team ?></td>
+        <td><?php echo round($fee->shippingCost, 2) ?></td>
+        <td><?php echo round($fee->shippingFee, 2) ?></td>
+        <td><?php echo round($fee->serviceFee, 2) ?></td>
+        <td><?php echo round($fee->customs, 2) ?></td>
+        <td><?php echo round($fee->shippingFee + $fee->serviceFee + $fee->customs, 2) ?></td>
+      </tr>
+      <?php } ?>
+  <?php } ?>
+  </tbody>
+  <tfoot>
+  <tr>
+    <th><?php echo $this->t->translate('team.name') ?></th>
+    <th><?php echo $this->t->translate('shipping.cost') ?></th>
+    <th><?php echo $this->t->translate('shipping.fee') ?></th>
+    <th><?php echo $this->t->translate('service.fee') ?></th>
+    <th><?php echo $this->t->translate('customs') ?></th>
+    <th><?php echo $this->t->translate('total') ?></th>
+  </tr>
+  </tfoot>
+</table>
