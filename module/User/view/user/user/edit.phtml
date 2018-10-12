@@ -13,7 +13,7 @@
         <label class="input-group-text" for="teamId"><?php echo $this->t->translate('team.name') ?></label>
       </div>
       <select <?php echo $this->userObject->isManager() ? 'name="teamId"' : 'disabled' ?> class="form-control">
-        <option> - <?php echo $this->t->translate('select.team') ?> -</option>
+        <option value="0"> - <?php echo $this->t->translate('select.team') ?> -</option>
           <?php foreach ($this->teams as $team) { ?>
             <option <?php echo $team->id == $this->user->teamId ? 'selected' : '' ?>
                 value="<?php echo $team->id ?>"><?php echo $team->name ?></option>
