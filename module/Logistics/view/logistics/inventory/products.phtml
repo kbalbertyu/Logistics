@@ -48,7 +48,8 @@
           <a href="<?php echo $this->url('inventory', ['action' => 'charge', 'id' => $product->id]) ?>" class="btn btn-info"><?php echo $this->t->translate('charge.fees') ?></a>
           <?php }?>
           <a href="<?php echo $this->url('inventory', ['action' => 'delete-product', 'id' => $product->id]) ?>" class="btn btn-danger delete"><?php echo $this->t->translate('delete') ?></a>
-          <?php } elseif ($product->qty > 0) {?>
+          <?php }
+          if ($product->qty > 0) {?>
           <a href="<?php echo $this->url('inventory', ['action' => 'add', 'id' => $product->id], ['query' => ['type' => 'out']]) ?>" class="btn btn-success"><?php echo $this->t->translate('ship.package.request') ?></a>
           <?php }?>
           <a href="<?php echo $this->url('inventory', ['action' => 'edit-product', 'id' => $product->id]) ?>" class="btn btn-primary"><?php echo $this->t->translate('edit') ?></a>
