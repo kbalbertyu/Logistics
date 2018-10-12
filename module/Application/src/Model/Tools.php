@@ -70,6 +70,7 @@ class Tools {
     }
 
     /**
+     * @param string $locale
      * @return Translator
      */
     public static function getTranslator($locale = 'zh_CN') {
