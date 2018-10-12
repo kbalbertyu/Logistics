@@ -219,11 +219,12 @@ class BaseTable {
     }
 
     /**
+     * @param null|string $alias the table alias
      * @return Select
      */
-    protected function selectTable() {
+    protected function selectTable($alias = null) {
         $select = new Select();
-        $select->from($this->getTable());
+        $select->from(empty($alias) ? $this->getTable() : [$alias => $this->getTable()]);
         return $select;
     }
 
