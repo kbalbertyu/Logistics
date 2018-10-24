@@ -31,6 +31,7 @@ use Application\Model\Tools;
  * @property boolean needCaseFill
  * @property boolean needProductLabel
  * @property boolean needBoxChange
+ * @property boolean noOperation
  * @property string dateUpdated
  */
 class Shipping extends Package {
@@ -48,7 +49,8 @@ class Shipping extends Package {
         'needBook' => 'need.book',
         'needCaseFill' => 'need.case.fill',
         'needProductLabel' => 'need.product.label',
-        'needBoxChange' => 'need.box.change'
+        'needBoxChange' => 'need.box.change',
+        'noOperation' => 'no.operation'
     ];
 
     public const ATTACHMENTS = [

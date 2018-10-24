@@ -102,6 +102,7 @@ return [
     'need.case.fill' => '叠盒子以及装盒子(￥0.3/个)',
     'need.product.label' => '产品贴标签(￥0.3/个)',
     'need.box.change' => '产品换箱(￥20/箱)',
+    'no.operation' => '无需操作',
     'shipping.info' => '收件信息',
     'recipient' => '收件人',
     'phone' => '联系电话',

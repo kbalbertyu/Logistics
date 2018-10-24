@@ -103,6 +103,7 @@ return [
     'need.case.fill' => 'Stack Case and Fill in Case(￥0.3/each)',
     'need.product.label' => 'Product Labeling(￥0.3/each)',
     'need.box.change' => 'Change Product Box(￥20/box)',
+    'no.operation' => 'No Operation',
     'shipping.info' => 'Shipping Information',
     'recipient' => 'Recipient',
     'phone' => 'Phone',

@@ -127,7 +127,6 @@ $(function(){
             { "sType": "numeric-comma" },
             { "sType": "numeric-comma" },
             { "sType": "numeric-comma" },
-            { "sType": "numeric-comma" },
             null
         ],
     });
@@ -245,7 +244,8 @@ $(function(){
     }
     function parsePrice(label) {
         var price = label.replace(/[^\.0-9]/ig,"");
-        return parseFloat(price);
+        price = parseFloat(price);
+        return isNaN(price) ? 0 : price;
     }
     function getServiceFee(field, unitPrice) {
 	    var count;
@@ -271,13 +271,42 @@ $(function(){
         }
         showServiceFeeTotal();
     }
+    function setCheckStatus(obj) {
+	    var checked = obj.is(':checked');
+        if (obj.attr('name') == 'noOperation') {
+            if (checked) {
+                $('#requirements-table input[type=checkbox]').each(function () {
+                    if ($(this).attr('name') == 'noOperation') {
+                        return;
+                    }
+                    if ($(this).prop('checked')) {
+                        $(this).trigger('click');
+                    }
+                });
+                return true;
+            }
+        } else if (checked) {
+            $('#noOperation').prop('checked', false);
+        }
+        return false;
+    }
     $('#requirements-table input[type=checkbox]').change(function () {
+        var noServiceFee = setCheckStatus($(this));
         previewServiceFee($(this));
+        if (noServiceFee && $('#serviceFee') != '0') {
+            $('#serviceFee').val(0);
+        }
     });
 	$('#requirements-table input[type=checkbox]').each(function () {
         previewServiceFee($(this));
     });
     showServiceFeeTotal();
+    $('#shippingForm').submit(function (e) {
+        if ($('#serviceFee').val() == '0' && !$('#noOperation').prop('checked')) {
+            e.preventDefault();
+            alert('需求详情至少需要选择一个选项！');
+        }
+    });
 
     // Download invoice
     $('#download-invoice').click(function (e) {
