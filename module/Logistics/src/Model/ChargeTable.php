@@ -20,8 +20,6 @@ class ChargeTable extends BaseTable {
         $select->from(['c' => $this->getTable()])
             ->join(['t' => BaseTable::TEAM_TABLE],
                 'c.teamId = t.id', ['team' => 'name'], Select::JOIN_LEFT)
-            ->join(['p' => BaseTable::PRODUCT_TABLE],
-                'c.productId = p.id', ['itemName'], Select::JOIN_LEFT)
             ->order('date DESC');
         return $this->tableGateway->selectWith($select);
     }
@@ -35,5 +33,13 @@ class ChargeTable extends BaseTable {
             return [];
         }
         return array_column($rows->toArray(), 'amount', 'teamId');
+    }
+
+    public function getChargedTotal($teamId) {
+        $select = $this->selectTable()
+            ->columns(['amount' => new Expression('SUM(amount)')])
+            ->where(['teamId' => $teamId]);
+        $rows = $this->tableGateway->selectWith($select);
+        return $rows->count() ? $rows->current()->amount : 0;
     }
 }

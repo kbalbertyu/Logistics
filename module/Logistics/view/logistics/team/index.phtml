@@ -15,13 +15,19 @@
   </thead>
   <tbody>
   <?php if ($this->teams->count()) { ?>
-      <?php foreach ($this->teams as $team) { ?>
+      <?php foreach ($this->teams as $team) {
+        $feesDue = $this->fees[$team->id] - $this->feesPaid[$team->id]; ?>
       <tr>
         <td><?php echo $team->id ?></td>
         <td><?php echo $team->name ?></td>
-        <td><?php echo round($this->fees[$team->id], 2) ?></td>
+        <td><?php echo round($feesDue, 2) ?></td>
         <td><?php echo round($this->feesPaid[$team->id], 2) ?></td>
-        <td><a href="<?php echo $this->url('team', ['action' => 'edit', 'id' => $team->id]) ?>" class="btn btn-primary"><?php echo $this->t->translate('edit') ?></a></td>
+        <td>
+          <?php if ($feesDue > 0) {?>
+          <a href="<?php echo $this->url('inventory', ['action' => 'charge', 'id' => $team->id]) ?>" class="btn btn-success"><?php echo $this->t->translate('charge.fees') ?></a>
+          <?php }?>
+          <a href="<?php echo $this->url('team', ['action' => 'edit', 'id' => $team->id]) ?>" class="btn btn-primary"><?php echo $this->t->translate('edit') ?></a>
+        </td>
       </tr>
       <?php } ?>
   <?php } ?>

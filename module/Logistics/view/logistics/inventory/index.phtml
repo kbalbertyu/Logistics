@@ -44,7 +44,9 @@
       <input id="itemName" data-url="inventory/get-item-names" name="itemName" value="<?php echo $this->itemName ?>" type="text" class="form-control ui-autocomplete-input">
     </div>
   </form>
+  <?php if ($this->type == 'in') { ?>
   <a href="<?php echo $this->url('inventory', ['action' => 'add'], ['query' => ['type' => 'in']]) ?>" class="btn btn-primary right" style="margin-right:10px;">+<?php echo $this->t->translate('receive.package') ?></a>
+  <?php }?>
   <div class="clear"></div>
 </div>
 <?php }?>
@@ -107,9 +109,6 @@
           <a href="<?php echo $this->url('inventory', ['action' => 'view', 'id' => $package->id]) ?>" class="btn btn-info"><?php echo $this->t->translate('view') ?></a>
           <?php } else {?>
           <a href="<?php echo $this->url('inventory', ['action' => 'edit', 'id' => $package->id]) ?>" class="btn btn-info"><?php echo $this->t->translate('package.info') ?></a>
-          <?php }?>
-          <?php if ($this->userObject->isManager()) {?>
-          <a href="<?php echo $this->url('inventory', ['action' => 'delete', 'id' => $package->id]) ?>" class="btn btn-danger"><?php echo $this->t->translate('delete') ?></a>
           <?php }?>
         </td>
       </tr>

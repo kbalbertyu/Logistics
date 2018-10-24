@@ -144,9 +144,18 @@ $(function(){
         "aoColumns": [
             { "sType": "numeric-comma" },
             null,
-            null,
             { "sType": "numeric-comma" },
             null
+        ],
+    });
+    $('#fees-table').dataTable({
+        "aoColumns": [
+            null,
+            { "sType": "numeric-comma" },
+            { "sType": "numeric-comma" },
+            { "sType": "numeric-comma" },
+            { "sType": "numeric-comma" },
+            { "sType": "numeric-comma" }
         ],
     });
 	

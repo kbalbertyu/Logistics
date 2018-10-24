@@ -23,7 +23,6 @@ use Application\Model\Validation;
  * @property float shippingFee
  * @property float serviceFee
  * @property float customs
- * @property float feesDue
  */
 class Product extends BaseModel {
     private const REQUIRED_COLUMNS = ['itemName', 'brand'];

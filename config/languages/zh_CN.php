@@ -48,6 +48,8 @@ return [
     'team.name.exists' => '团队名({name})已存在，请尝试另一个名称.',
     'team.saved' => '团队已保存: {name}.',
     'team.name' => '团队名称',
+    'team.id.empty' => '请求参数错误',
+    'team.id.invalid' => '团队ID不存在: {id}',
     'fees.due' => '待付',
     'fees.paid' => '已付',
     'edit' => '编辑',

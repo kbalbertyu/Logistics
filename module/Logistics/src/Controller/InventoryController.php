@@ -33,6 +33,7 @@ use Zend\ServiceManager\ServiceLocatorInterface;
  * @property BrandTable brandTable
  * @property ShippingTable shippingTable
  * @property AddressTable addressTable
+ * @property ChargeTable chargeTable
  */
 class InventoryController extends AbstractBaseController {
 
@@ -44,6 +45,7 @@ class InventoryController extends AbstractBaseController {
         $this->brandTable = $this->getTableModel(BrandTable::class);
         $this->shippingTable = $this->getTableModel(ShippingTable::class);
         $this->addressTable = $this->getTableModel(AddressTable::class);
+        $this->chargeTable = $this->getTableModel(ChargeTable::class);
         $this->nav = 'inventory';
     }
 
@@ -79,7 +81,17 @@ class InventoryController extends AbstractBaseController {
 
     public function productsAction() {
         $this->title = $this->__('product.list');
-        $this->addOutPut('products', $this->productTable->getProducts($this->userObject));
+        $itemName = $this->params()->fromQuery('itemName', '');
+        $teamId = $this->params()->fromQuery('teamId', 0);
+        $products = $this->productTable->getProducts($this->userObject, $teamId, $itemName);
+        $productIds = array_column($products->toArray(), 'id');
+        $this->addOutPut([
+            'itemName' => $itemName,
+            'teamId' => $teamId,
+            'products' => $products,
+            'teams' => $this->teamTable->getTeamListForSelection(),
+            'feeList' => $this->table->getProductFeeList($productIds)
+        ]);
         return $this->renderView();
     }
 
@@ -188,7 +200,7 @@ class InventoryController extends AbstractBaseController {
             // Update QTY adn fees to product
             $this->productTable->updateQtyAndFees($data, $package, $product, $shipping);
             $this->flashMessenger()->addSuccessMessage($this->__('shipping.info.updated'));
-            $this->redirect()->refresh();
+            $this->redirect()->toRoute('inventory', ['action' => 'index'], ['query' => ['type' => Package::PROCESS_TYPE_OUT, 'teamId' => $package->teamId]]);
             return;
         }
         $this->addOutPut('requirements', Shipping::REQUIREMENT_COLUMNS);
@@ -296,7 +308,7 @@ class InventoryController extends AbstractBaseController {
 
                     $type == Package::PROCESS_TYPE_OUT ?
                         $this->redirect()->toRoute('inventory', ['action' => 'view', 'id' => $packageId]) :
-                        $this->redirect()->toRoute('inventory');
+                        $this->redirect()->toRoute('inventory', ['action' => 'index'], ['query' => ['type' => Package::PROCESS_TYPE_IN, 'teamId' => $teamId]]);
                 } catch (Exception $e) {
                     $this->table->delete($packageId);
                 }
@@ -374,7 +386,7 @@ class InventoryController extends AbstractBaseController {
                 $message = $package->type == Package::PROCESS_TYPE_IN ?
                     $this->__('package.edit.success') : $this->__('package.ship.request.edit.success');
                 $this->flashMessenger()->addSuccessMessage($message);
-                $this->redirect()->refresh();
+                $this->redirect()->toRoute('inventory', ['action' => 'index'], ['query' => ['type' => Package::PROCESS_TYPE_IN, 'teamId' => $product->teamId]]);
             } catch (Exception $e) {
                 $this->flashMessenger()->addErrorMessage($this->__('package.save.failed', ['message' => $e->getMessage()]));
                 $this->redirect()->refresh();
@@ -424,7 +436,7 @@ class InventoryController extends AbstractBaseController {
                 'brandId' => $data['brandId']
             ], $id);
             $this->flashMessenger()->addSuccessMessage($this->__('product.info.updated'));
-            $this->redirect()->refresh();
+            $this->redirect()->toRoute('inventory', ['action' => 'products'], ['query' => ['type' => Package::PROCESS_TYPE_IN, 'teamId' => $product->teamId]]);
             return;
         }
         return $this->renderView();
@@ -436,38 +448,42 @@ class InventoryController extends AbstractBaseController {
         }
         $id = $this->params()->fromRoute('id');
         if (empty($id)) {
-            $this->flashMessenger()->addErrorMessage($this->__('product.id.empty'));
+            $this->flashMessenger()->addErrorMessage($this->__('team.id.empty'));
             $this->toProductsPage();
             return;
         }
-        $product = $this->productTable->getRowById($id);
-        if (empty($product)) {
-            $this->flashMessenger()->addErrorMessage($this->__('product.id.invalid', ['id' => $id]));
-            $this->toProductsPage();
+        $team = $this->teamTable->getRowById($id);
+        if (empty($team)) {
+            $this->flashMessenger()->addErrorMessage($this->__('team.id.invalid', ['id' => $id]));
+            $this->redirect()->toRoute('team');
             return;
         }
+
+        $chargedTotal = $this->chargeTable->getChargedTotal($id);
+        $fees = $this->table->getTeamFee($id);
+        $amountDue = $fees->shippingFee + $fees->serviceFee + $fees->customs - $chargedTotal;
+        $this->addOutPut([
+            'team' => $team,
+            'amountDue' => $amountDue,
+        ]);
+
         if ($this->getRequest()->isPost()) {
             $amount = $this->getRequest()->getPost('amount');
-            if ($amount > $product->feesDue) {
+            if ($amount > $amountDue) {
                 $this->flashMessenger()->addErrorMessage($this->__('amount.greater.than.due.amount',
-                    ['amount' => round($amount, 2), 'due' => round($product->feesDue, 2)]));
+                    ['amount' => round($amount, 2), 'due' => round($amountDue, 2)]));
                 $this->redirect()->refresh();
                 return;
             }
-            $this->productTable->update([
-                'feesDue' => ($product->feesDue - $amount)
-            ], $id);
-            $this->getTableModel(ChargeTable::class)->add([
+            $this->chargeTable->add([
                 'amount' => $amount,
                 'productId' => $id,
-                'teamId' => $product->teamId,
+                'teamId' => $id,
                 'date' => date('Y-m-d H:i:s')
             ]);
             $this->flashMessenger()->addSuccessMessage($this->__('amount.is.charged', ['amount' => round($amount, 2)]));
             $this->redirect()->refresh();
         }
-        $this->addOutPut('product', $product);
-        $this->addOutPut('team', $this->teamTable->getRowById($product->teamId));
         return $this->renderView();
     }
 

@@ -3,7 +3,27 @@
 
 <?php if ($this->userObject->isManager()) { ?>
   <div class="date-nav">
-    <a href="<?php echo $this->url('inventory', ['action' => 'add'], ['query' => ['type' => 'in']]) ?>" class="btn btn-primary right" style="margin-right:10px;"><?php echo $this->t->translate('receive.new.package') ?></a>
+    <form id="search" class="left" method="get">
+      <input type="submit" style="display: none;" />
+      <button class="btn btn-primary dropdown-filter" type="submit"><?php echo $this->t->translate('submit') ?></button>
+      <div class="input-group dropdown-filter">
+        <div class="input-group-prepend">
+          <label class="input-group-text" for="select-team"><?php echo $this->t->translate('select.team') ?></label>
+        </div>
+        <select onselect="this.form.submit();" id="select-team" class="form-control" name="teamId">
+          <option value=""> - </option>
+            <?php foreach ($this->teams as $team) {?>
+              <option <?php echo $this->teamId == $team->id ? 'selected' : '' ?> value="<?php echo $team->id ?>"><?php echo $team->name ?></option>
+            <?php }?>
+        </select>
+      </div>
+      <div class="input-group dropdown-filter">
+        <div class="input-group-prepend">
+          <label class="input-group-text" for="itemName"><?php echo $this->t->translate('item.name') ?></label>
+        </div>
+        <input id="itemName" data-url="inventory/get-item-names" name="itemName" value="<?php echo $this->itemName ?>" type="text" class="form-control ui-autocomplete-input">
+      </div>
+    </form>
     <div class="clear"></div>
   </div>
 <?php }?>
@@ -21,7 +41,6 @@
     <th><?php echo $this->t->translate('shipping.fee') ?></th>
     <th><?php echo $this->t->translate('service.fee') ?></th>
     <th><?php echo $this->t->translate('customs') ?></th>
-    <th><?php echo $this->t->translate('fees.due') ?></th>
     <th><?php echo $this->t->translate('actions') ?></th>
   </tr>
   </thead>
@@ -35,19 +54,14 @@
         <td><?php echo $product->brand ?></td>
         <td><?php echo $product->qty ?></td>
         <?php if ($this->userObject->isManager()) {?>
-        <td><?php echo round($product->shippingCost, 2) ?></td>
+        <td><?php echo round($this->feeList[$product->id]->shippingCost, 2) ?></td>
         <?php }?>
-        <td><?php echo round($product->shippingFee, 2) ?></td>
-        <td><?php echo round($product->serviceFee, 2) ?></td>
-        <td><?php echo round($product->customs, 2) ?></td>
-        <td><?php echo round($product->feesDue, 2) ?></td>
+        <td><?php echo round($this->feeList[$product->id]->shippingFee, 2) ?></td>
+        <td><?php echo round($this->feeList[$product->id]->serviceFee, 2) ?></td>
+        <td><?php echo round($this->feeList[$product->id]->customs, 2) ?></td>
         <td class="actions">
           <?php if ($this->userObject->isManager()) {?>
-          <a href="<?php echo $this->url('inventory', ['action' => 'add', 'id' => $product->id], ['query' => ['type' => 'in']]) ?>" class="btn btn-success"><?php echo $this->t->translate('receive.new.package') ?></a>
-          <?php if ($product->feesDue > 0) {?>
-          <a href="<?php echo $this->url('inventory', ['action' => 'charge', 'id' => $product->id]) ?>" class="btn btn-info"><?php echo $this->t->translate('charge.fees') ?></a>
-          <?php }?>
-          <a href="<?php echo $this->url('inventory', ['action' => 'delete-product', 'id' => $product->id]) ?>" class="btn btn-danger delete"><?php echo $this->t->translate('delete') ?></a>
+          <a href="<?php echo $this->url('inventory', ['action' => 'add', 'id' => $product->id], ['query' => ['type' => 'in']]) ?>" class="btn btn-primary">+<?php echo $this->t->translate('receive.package') ?></a>
           <?php }
           if ($product->qty > 0) {?>
           <a href="<?php echo $this->url('inventory', ['action' => 'add', 'id' => $product->id], ['query' => ['type' => 'out']]) ?>" class="btn btn-success"><?php echo $this->t->translate('ship.package.request') ?></a>
@@ -71,7 +85,6 @@
     <th><?php echo $this->t->translate('shipping.fee') ?></th>
     <th><?php echo $this->t->translate('service.fee') ?></th>
     <th><?php echo $this->t->translate('customs') ?></th>
-    <th><?php echo $this->t->translate('fees.due') ?></th>
     <th><?php echo $this->t->translate('actions') ?></th>
   </tr>
   </tfoot>

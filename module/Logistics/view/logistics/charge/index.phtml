@@ -2,7 +2,6 @@
   <thead>
   <tr>
     <th>ID</th>
-    <th><?php echo $this->t->translate('item.name') ?></th>
     <th><?php echo $this->t->translate('team.name') ?></th>
     <th><?php echo $this->t->translate('amount') ?> (￥)</th>
     <th><?php echo $this->t->translate('date') ?></th>
@@ -13,7 +12,6 @@
       <?php foreach ($this->charges as $charge) { ?>
       <tr>
         <td><?php echo $charge->id ?></td>
-        <td><?php echo $charge->itemName ?></td>
         <td><?php echo $charge->team ?></td>
         <td><?php echo round($charge->amount, 2) ?></td>
         <td><?php echo $charge->date ?></td>
@@ -24,7 +22,6 @@
   <tfoot>
   <tr>
     <th>ID</th>
-    <th><?php echo $this->t->translate('item.name') ?></th>
     <th><?php echo $this->t->translate('team.name') ?></th>
     <th><?php echo $this->t->translate('amount') ?> (￥)</th>
     <th><?php echo $this->t->translate('date') ?></th>

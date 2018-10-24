@@ -11,13 +11,13 @@ namespace Logistics\Controller;
 
 use Application\Controller\AbstractBaseController;
 use Logistics\Model\ChargeTable;
-use Logistics\Model\ProductTable;
+use Logistics\Model\PackageTable;
 use Logistics\Model\TeamTable;
 use Zend\ServiceManager\ServiceLocatorInterface;
 
 /**
  * @property TeamTable table
- * @property ProductTable productTable
+ * @property PackageTable packageTable
  * @property ChargeTable chargeTable
  */
 class TeamController extends AbstractBaseController {
@@ -25,13 +25,10 @@ class TeamController extends AbstractBaseController {
     public function __construct(ServiceLocatorInterface $container) {
         parent::__construct($container);
         $this->table = $this->getTableModel(TeamTable::class);
-        $this->productTable = $this->getTableModel(ProductTable::class);
+        $this->packageTable = $this->getTableModel(PackageTable::class);
         $this->chargeTable = $this->getTableModel(ChargeTable::class);
     }
 
-    /**
-     * @return mixed|null|\Zend\View\Model\ViewModel
-     */
     public function indexAction() {
         if (($view = $this->onlyManagers()) != null) {
             return $view;
@@ -40,7 +37,7 @@ class TeamController extends AbstractBaseController {
         $this->nav = 'team';
         $this->addOutPut([
             'teams' => $this->table->getRows(),
-            'fees' => $this->productTable->getTeamFeesDueList(),
+            'fees' => $this->packageTable->getTeamFeeList(),
             'feesPaid' => $this->chargeTable->getTeamChargeList()
         ]);
         return $this->renderView();

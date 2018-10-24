@@ -8,16 +8,12 @@
     </div>
     <div class="clear"></div>
     <div class="input-group">
-      <h4><span class="badge badge-secondary"><?php echo $this->t->translate('item.name') ?></span> <?php echo $this->product->itemName ?></h4>
-    </div>
-    <div class="clear"></div>
-    <div class="input-group">
       <div class="input-group-prepend">
         <label class="input-group-text" for="amount"><?php echo $this->t->translate('amount') ?></label>
       </div>
       <input placeholder="Enter amount" name="amount" value="" type="number" class="form-control ui-autocomplete-input">
       <div class="input-group-prepend">
-        <label class="input-group-text" for="amount"><em>(<?php echo $this->t->translate('fees.due') ?>: ￥<?php echo $this->product->feesDue ?>)</label>
+        <label class="input-group-text" for="amount"><em>(<?php echo $this->t->translate('fees.due') ?>: ￥<?php echo $this->amountDue ?>)</label>
       </div>
     </div>
     <div class="input-group">

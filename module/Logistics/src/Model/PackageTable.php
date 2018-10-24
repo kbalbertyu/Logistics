@@ -33,7 +33,7 @@ class PackageTable extends BaseTable {
         }
         if (!empty($user) && !$user->isManager()) {
             $where->equalTo('pa.teamId', $user->teamId);
-        } elseif ($packageType == Package::PROCESS_TYPE_OUT && $user->isManager()) {
+        } elseif ($user->isManager()) {
             if (!empty($keywords['itemName'])) {
                 $where->equalTo('p.itemName', $keywords['itemName']);
             }
@@ -123,5 +123,64 @@ class PackageTable extends BaseTable {
         }
         $select->where($where);
         return $this->tableGateway->selectWith($select);
+    }
+
+    public function getTeamFee($teamId) {
+        $select = $this->selectTable('p')
+            ->join(['s' => BaseTable::SHIPPING_TABLE], 'p.id = s.packageId', [
+                'shippingCost' => new Expression('SUM(shippingCost)'),
+                'shippingFee' => new Expression('SUM(shippingFee)'),
+                'serviceFee' => new Expression('SUM(serviceFee)'),
+                'customs' => new Expression('SUM(customs)')
+            ])
+            ->columns(['id'])
+            ->where(['teamId' => $teamId]);
+        return $this->tableGateway->selectWith($select)->current();
+    }
+
+    public function getTeamFeeList() {
+        $select = $this->selectTable('p')
+            ->join(['s' => BaseTable::SHIPPING_TABLE], 'p.id = s.packageId', [
+                'shippingCost' => new Expression('SUM(shippingCost)'),
+                'shippingFee' => new Expression('SUM(shippingFee)'),
+                'serviceFee' => new Expression('SUM(serviceFee)'),
+                'customs' => new Expression('SUM(customs)')
+            ])
+            ->columns(['teamId'])
+            ->group('teamId');
+        $rows = $this->tableGateway->selectWith($select);
+        if ($rows->count() == 0) {
+            return [];
+        }
+        $data = [];
+        foreach ($rows as $row) {
+            $data[$row->teamId] = $row->shippingFee + $row->serviceFee + $row->customs;
+        }
+        return $data;
+    }
+
+    public function getProductFeeList($productIds) {
+        if (empty($productIds)) {
+            return [];
+        }
+        $select = $this->selectTable('p')
+            ->join(['s' => BaseTable::SHIPPING_TABLE], 'p.id = s.packageId', [
+                'shippingCost' => new Expression('SUM(shippingCost)'),
+                'shippingFee' => new Expression('SUM(shippingFee)'),
+                'serviceFee' => new Expression('SUM(serviceFee)'),
+                'customs' => new Expression('SUM(customs)')
+            ])
+            ->where(['productId' => $productIds])
+            ->columns(['productId'])
+            ->group('productId');
+        $rows = $this->tableGateway->selectWith($select);
+        if ($rows->count() == 0) {
+            return [];
+        }
+        $data = [];
+        foreach ($rows as $row) {
+            $data[$row->productId] = $row;
+        }
+        return $data;
     }
 }

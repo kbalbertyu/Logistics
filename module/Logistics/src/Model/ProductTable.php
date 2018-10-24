@@ -14,20 +14,26 @@ use Application\Model\Tools;
 use RuntimeException;
 use User\Model\User;
 use Zend\Db\Sql\Expression;
-use Zend\Db\Sql\Select;
 use Zend\Db\Sql\Where;
 
 class ProductTable extends BaseTable {
 
-    public function getProducts(User $user = null) {
-        $select = new Select();
-        $select->from(['p' => $this->getTable()])
+    public function getProducts(User $user, $teamId = null, $itemName = null) {
+        $where = new Where();
+        if (!empty($user->username) && !$user->isManager()) {
+            $where->equalTo('teamId', $user->teamId);
+        } elseif ($user->isManager() && !empty($teamId)) {
+            $where->equalTo('teamId', $teamId);
+        }
+        if (!empty($itemName)) {
+            $where->like('itemName', '%' . $itemName . '%');
+        }
+        $select = $this->selectTable('p')
             ->join(['t' => BaseTable::TEAM_TABLE], 'p.teamId = t.id', ['team' => 'name'])
             ->join(['b' => BaseTable::BRAND_TABLE], 'p.brandId = b.id', ['brand' => 'name'])
-            ->order('itemName');
-        if (!empty($user) && !$user->isManager()) {
-            $select->where(['teamId' => $user->teamId]);
-        }
+            ->order('itemName')
+            ->where($where);
+
         return $this->tableGateway->selectWith($select);
     }
 
@@ -89,8 +95,6 @@ class ProductTable extends BaseTable {
             foreach (['shippingCost', 'shippingFee', 'serviceFee', 'customs'] as $column) {
                 $set[$column] = new Expression(sprintf('%s + %.2f', $column, $data[$column]));
             }
-            $set['feesDue'] = new Expression(sprintf('feesDue + %.2f',
-                ($data['shippingFee'] + $data['serviceFee'] + $data['customs'])));
         } else {
             $sign = $package->type == Package::PROCESS_TYPE_IN ? 1 : -1;
             $set['qty'] =  $product->qty + $sign * ($data['qty'] - $package->qty);
@@ -104,23 +108,9 @@ class ProductTable extends BaseTable {
             foreach (['shippingCost', 'shippingFee', 'serviceFee', 'customs'] as $column) {
                 $set[$column] = $product->$column + ($data[$column] - $shipping->$column);
             }
-            $set['feesDue'] = $product->feesDue +
-                ($data['shippingFee'] + $data['serviceFee'] + $data['customs']) -
-                ($shipping->shippingFee + $shipping->serviceFee + $shipping->customs);
         }
 
         return $this->update($set, $data['productId']);
-    }
-
-    public function getTeamFeesDueList() {
-        $select = $this->selectTable()
-            ->columns(['teamId', 'feesDue' => new Expression('SUM(feesDue)')])
-            ->group('teamId');
-        $rows = $this->tableGateway->selectWith($select);
-        if (!$rows->count()) {
-            return [];
-        }
-        return array_column($rows->toArray(), 'feesDue', 'teamId');
     }
 
     /**

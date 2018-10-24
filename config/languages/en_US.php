@@ -49,6 +49,8 @@ return [
     'team.name.exists' => 'Team name ({name})already exists, please try another one.',
     'team.saved' => 'Team is saved: {name}',
     'team.name' => 'Team Name',
+    'team.id.empty' => 'Invalid parameter.',
+    'team.id.invalid' => 'Team ID: {id} not exists',
     'fees.due' => 'Fees Due',
     'fees.paid' => 'Fees Paid',
     'edit' => 'Edit',
