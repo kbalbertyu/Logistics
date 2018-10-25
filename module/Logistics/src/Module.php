@@ -93,6 +93,16 @@ class Module implements ConfigProviderInterface {
                     $resultSetPrototype->setArrayObjectPrototype(new Model\Address());
                     return new TableGateway(BaseTable::ADDRESS_TABLE, $dbAdapter, null, $resultSetPrototype);
                 },
+                Model\BoxTable::class => function ($container) {
+                    $tableGateway = $container->get(Model\BoxTableGateway::class);
+                    return new Model\BoxTable($tableGateway);
+                },
+                Model\BoxTableGateway::class => function ($container) {
+                    $dbAdapter = $container->get('Db\Adapter');
+                    $resultSetPrototype = new ResultSet();
+                    $resultSetPrototype->setArrayObjectPrototype(new Model\Box());
+                    return new TableGateway(BaseTable::BOX_TABLE, $dbAdapter, null, $resultSetPrototype);
+                },
             ]
         ];
     }

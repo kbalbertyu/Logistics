@@ -22,6 +22,7 @@ class BaseTable {
     public const CHARGE_TABLE = 'charges';
     public const SHIPPING_TABLE = 'shipping';
     public const ADDRESS_TABLE = 'address';
+    public const BOX_TABLE = 'boxes';
 
     /**
      *
