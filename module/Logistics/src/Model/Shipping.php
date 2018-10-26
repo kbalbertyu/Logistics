@@ -66,6 +66,9 @@ class Shipping extends Package {
 
     public static function calcServiceFee($data) {
         $total = 0;
+        if (isset($data['noOperation'])) {
+            return $total;
+        }
         foreach (self::REQUIREMENT_COLUMNS as $column => $label) {
             if (empty($data[$column])) {
                 continue;

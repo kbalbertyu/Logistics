@@ -15,6 +15,7 @@ use Application\Model\Tools;
 use Exception;
 use Logistics\Model\Address;
 use Logistics\Model\AddressTable;
+use Logistics\Model\BoxTable;
 use Logistics\Model\BrandTable;
 use Logistics\Model\ChargeTable;
 use Logistics\Model\Package;
@@ -34,6 +35,7 @@ use Zend\ServiceManager\ServiceLocatorInterface;
  * @property ShippingTable shippingTable
  * @property AddressTable addressTable
  * @property ChargeTable chargeTable
+ * @property BoxTable boxTable
  */
 class InventoryController extends AbstractBaseController {
 
@@ -46,6 +48,7 @@ class InventoryController extends AbstractBaseController {
         $this->shippingTable = $this->getTableModel(ShippingTable::class);
         $this->addressTable = $this->getTableModel(AddressTable::class);
         $this->chargeTable = $this->getTableModel(ChargeTable::class);
+        $this->boxTable = $this->getTableModel(BoxTable::class);
         $this->nav = 'inventory';
     }
 
@@ -174,6 +177,14 @@ class InventoryController extends AbstractBaseController {
             }
             $this->table->savePackage($data, $this->userObject->isManager(), $id);
 
+            // If qty changed, reset the boxes
+            $qtyNeeded = $data['qty'] - $package->qty;
+            if ($qtyNeeded != 0) {
+                $data['packageId'] = $id;
+                $data['qtyNeeded'] = $qtyNeeded;
+                $this->boxTable->shipOutBoxes($data);
+            }
+
             // Save to address
             if ($this->userObject->isManager() && Address::isValid($data)) {
                 try {
@@ -301,6 +312,13 @@ class InventoryController extends AbstractBaseController {
                 BaseModel::formatNumericColumns($data, Package::NUMERIC_COLUMNS);
                 $packageId = $this->table->savePackage($data, $this->userObject->isManager());
                 try {
+                    $data['packageId'] = $packageId;
+                    if ($type == Package::PROCESS_TYPE_IN) {
+                        $this->boxTable->saveReceivedBoxes($data);
+                    } else {
+                        $data['qtyNeeded'] = $data['qty'];
+                        $this->boxTable->shipOutBoxes($data);
+                    }
                     $this->productTable->updateQtyAndFees($data);
                     $message = $type == Package::PROCESS_TYPE_IN ?
                         $this->__('package.add.success') : $this->__('package.ship.request.success');
@@ -381,6 +399,8 @@ class InventoryController extends AbstractBaseController {
                 $data['productId'] = $this->productTable->getProductId($data);
                 BaseModel::formatNumericColumns($data, Package::NUMERIC_COLUMNS);
                 $this->table->savePackage($data, $this->userObject->isManager(), $id);
+                $data['packageId'] = $id;
+                $this->boxTable->saveReceivedBoxes($data);
 
                 $this->productTable->updateQtyAndFees($data, $package, $product);
                 $message = $package->type == Package::PROCESS_TYPE_IN ?

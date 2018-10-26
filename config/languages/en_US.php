@@ -37,6 +37,7 @@ return [
     'nav.fee.manage' => 'Fee Management',
     'nav.fee.charges' => 'Charge History',
     'nav.fee.summary' => 'Fee Summary',
+    'nav.fee.storage' => 'Storage Fees',
     'nav.shipping' => 'Package Shipping',
     'fee.charge.list' => 'Fee Charges History',
     'user.login' => 'User Login',
