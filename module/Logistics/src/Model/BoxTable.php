@@ -10,10 +10,67 @@ namespace Logistics\Model;
 
 
 use Application\Model\BaseTable;
+use Zend\Db\ResultSet\ResultSet;
 use Zend\Db\Sql\Expression;
+use Zend\Db\Sql\Select;
 use Zend\Db\Sql\Where;
 
 class BoxTable extends BaseTable {
+
+    public const DAYS_START_CHARGE = 10;
+
+    private const STORAGE_FEE_PER_VOLUME = 10;
+
+    public function getStorageFees($teamIds) {
+        if (empty($teamIds)) {
+            return new ResultSet(new Box());
+        }
+        $daysDiff = 'DATEDIFF(dateOut, dateIn) - ' . self::DAYS_START_CHARGE;
+        $daysDiffExp = new Expression($daysDiff);
+        $where = $this->where()
+            ->in('b.teamId', $teamIds)
+            ->greaterThan($daysDiffExp, 0)
+            ->in('p.status', Package::SHIPPED_STATUS);
+        $select = $this->selectTable('b')
+            ->join(['p' => BaseTable::PACKAGE_TABLE], 'b.outPackageId=p.id', [])
+            ->columns([
+                'teamId',
+                'fee' => new Expression('SUM(volume * (' . $daysDiff . ') * ' . self::STORAGE_FEE_PER_VOLUME . ')')
+            ])
+            ->where($where)
+            ->group('b.teamId');
+        return $this->tableGateway->selectWith($select);
+    }
+
+    public function getByShippedPackage($packageIds, $outDate = null) {
+        if (empty($packageIds)) {
+            return new ResultSet(new Box());
+        }
+        $daysDiff = new Expression('DATEDIFF(dateOut, dateIn) - ' . self::DAYS_START_CHARGE);
+        $where = $this->where()
+            ->in('outPackageId', $packageIds)
+            ->greaterThan($daysDiff, 0);
+        if (!empty($outDate)) {
+            $where->like('b.dateOut', $outDate . '%');
+        }
+        $select = $this->selectTable('b')
+            ->join(['p' => BaseTable::PRODUCT_TABLE], 'b.productId=p.id', ['itemName'], Select::JOIN_LEFT)
+            ->join(['t' => BaseTable::TEAM_TABLE], 'p.teamId=t.id', ['team' => 'name'], Select::JOIN_LEFT)
+            ->columns([
+                'qtyOut' => new Expression('SUM(qtyOut)'),
+                'volume' => new Expression('SUM(volume)'),
+                'weight' => new Expression('SUM(weight)'),
+                'count' => new Expression('COUNT(*)'),
+                'days' => $daysDiff,
+                'dateIn',
+                'dateOut',
+                'outPackageId'
+            ])
+            ->where($where)
+            ->group(new Expression('CONCAT(outPackageId,dateIn,dateOut)'))
+            ->order('dateOut DESC');
+        return $this->tableGateway->selectWith($select);
+    }
 
     public function saveReceivedBoxes($data) {
         $data['caseQty'] = (int) trim($data['caseQty']);
@@ -53,6 +110,7 @@ class BoxTable extends BaseTable {
         // More than existing boxes, add the extra ones
         for ($i = 0; $i < $diff; $i++) {
             $this->add([
+                'teamId' => $data['teamId'],
                 'productId' => $data['productId'],
                 'inPackageId' => $data['packageId'],
                 'qty' => $qtyUnit,

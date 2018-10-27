@@ -59,6 +59,7 @@
           <ul class="dropdown-menu">
             <li><a class="nav-link <?php echo $this->subNav == 'charge' ? 'active' : ''; ?>" href="<?php echo $this->url('charge') ?>"><?php echo $this->t->translate('nav.fee.charges') ?></a></li>
             <li><a class="<?php echo $this->subNav == 'fees' ? 'active' : ''; ?>" href="<?php echo $this->url('charge', ['action' => 'fees']) ?>"><?php echo $this->t->translate('nav.fee.summary') ?></a></li>
+            <li><a class="<?php echo $this->subNav == 'storage' ? 'active' : ''; ?>" href="<?php echo $this->url('charge', ['action' => 'storage']) ?>"><?php echo $this->t->translate('nav.fee.storage') ?></a></li>
           </ul>
         </li>
         <li class="nav-item">

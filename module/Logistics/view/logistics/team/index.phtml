@@ -16,7 +16,7 @@
   <tbody>
   <?php if ($this->teams->count()) { ?>
       <?php foreach ($this->teams as $team) {
-        $feesDue = $this->fees[$team->id] - $this->feesPaid[$team->id]; ?>
+        $feesDue = $team->storageFee + $this->fees[$team->id] - $this->feesPaid[$team->id]; ?>
       <tr>
         <td><?php echo $team->id ?></td>
         <td><?php echo $team->name ?></td>

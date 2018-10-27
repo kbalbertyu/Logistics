@@ -23,4 +23,25 @@ class TeamTable extends BaseTable {
             ->order('name');
         return $this->tableGateway->selectWith($select);
     }
+
+    public function getNeedUpdateFeeTeamIds() {
+        $where = $this->where()
+            ->notEqualTo('feeUpdateDate', date('Y-m-d'))
+            ->or
+            ->isNull('feeUpdateDate');
+        $select = $this->selectTable()
+            ->where($where);
+        $rows = $this->tableGateway->selectWith($select);
+        return !$rows->count() ? [] :
+            array_column($rows->toArray(), 'id');
+    }
+
+    public function updateStorageFees($storageFees) {
+        foreach ($storageFees as $fee) {
+            $this->update([
+                'storageFee' => $fee['fee'],
+                'feeUpdateDate' => date('Y-m-d')
+            ], $fee['teamId']);
+        }
+    }
 }

@@ -10,6 +10,7 @@ namespace Logistics\Controller;
 
 
 use Application\Controller\AbstractBaseController;
+use Logistics\Model\BoxTable;
 use Logistics\Model\ChargeTable;
 use Logistics\Model\PackageTable;
 use Logistics\Model\TeamTable;
@@ -19,6 +20,7 @@ use Zend\ServiceManager\ServiceLocatorInterface;
  * @property TeamTable table
  * @property PackageTable packageTable
  * @property ChargeTable chargeTable
+ * @property BoxTable boxTable
  */
 class TeamController extends AbstractBaseController {
 
@@ -27,6 +29,7 @@ class TeamController extends AbstractBaseController {
         $this->table = $this->getTableModel(TeamTable::class);
         $this->packageTable = $this->getTableModel(PackageTable::class);
         $this->chargeTable = $this->getTableModel(ChargeTable::class);
+        $this->boxTable = $this->getTableModel(BoxTable::class);
     }
 
     public function indexAction() {
@@ -35,6 +38,12 @@ class TeamController extends AbstractBaseController {
         }
         $this->title = $this->__('nav.teams');
         $this->nav = 'team';
+
+        // Update storage fees to team
+        $needUpdateTeamIds = $this->table->getNeedUpdateFeeTeamIds();
+        $storageFees = $this->boxTable->getStorageFees($needUpdateTeamIds);
+        $this->table->updateStorageFees($storageFees->toArray());
+
         $this->addOutPut([
             'teams' => $this->table->getRows(),
             'fees' => $this->packageTable->getTeamFeeList(),

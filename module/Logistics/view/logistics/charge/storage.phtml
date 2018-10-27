@@ -1,0 +1,75 @@
+<div class="date-nav">
+  <form id="search" method="get">
+    <button class="btn btn-primary dropdown-filter" type="submit"><?php echo $this->t->translate('submit') ?></button>
+
+    <div class="input-group dropdown-filter">
+      <div class="input-group-prepend">
+        <label class="input-group-text" for="date"><?php echo $this->t->translate('date.out') ?></label>
+      </div>
+      <input id="date" name="date" class="form-control" type="month" value="<?php echo $this->date; ?>" />
+    </div>
+    <div class="input-group dropdown-filter">
+      <div class="input-group-prepend">
+        <label class="input-group-text" for="select-team"><?php echo $this->t->translate('select.team') ?></label>
+      </div>
+      <select onselect="this.form.submit();" id="select-team" class="form-control" name="teamId">
+        <option value=""> - </option>
+        <?php foreach ($this->teams as $team) {?>
+          <option <?php echo $this->teamId == $team->id ? 'selected' : '' ?> value="<?php echo $team->id ?>"><?php echo $team->name ?></option>
+        <?php }?>
+      </select>
+    </div>
+  </form>
+  <div class="clear"></div>
+</div>
+<table id="fees-table" class="table display" cellspacing="0" width="100%">
+  <thead>
+  <tr>
+    <th><?php echo $this->t->translate('out.package.id') ?></th>
+    <th><?php echo $this->t->translate('team.name') ?></th>
+    <th><?php echo $this->t->translate('item.name') ?></th>
+    <th><?php echo $this->t->translate('case.qty') ?></th>
+    <th><?php echo $this->t->translate('qty.total') ?></th>
+    <th><?php echo $this->t->translate('volume.total') ?></th>
+    <th><?php echo $this->t->translate('weight') ?></th>
+    <th><?php echo $this->t->translate('days') ?></th>
+    <th><?php echo $this->t->translate('fee.total') ?></th>
+    <th><?php echo $this->t->translate('date.in') ?></th>
+    <th><?php echo $this->t->translate('date.out') ?></th>
+  </tr>
+  </thead>
+  <tbody>
+  <?php if ($this->boxes->count()) { ?>
+      <?php foreach ($this->boxes as $box) { ?>
+      <tr>
+        <td><a target="_blank" href="<?php echo $this->url('inventory', ['action' => 'view', 'id' => $box->outPackageId]) ?>"><?php echo $box->outPackageId ?></a></td>
+        <td><?php echo $box->team ?></td>
+        <td><?php echo $box->itemName ?></td>
+        <td><?php echo $box->count ?></td>
+        <td><?php echo $box->qtyOut ?></td>
+        <td><?php echo round($box->volume, 2) ?></td>
+        <td><?php echo round($box->weight, 2) ?></td>
+        <td><?php echo $box->days ?></td>
+        <td><?php echo $box->getStorageFee() ?></td>
+        <td><?php echo $box->dateIn ?></td>
+        <td><?php echo $box->dateOut ?></td>
+      </tr>
+      <?php } ?>
+  <?php } ?>
+  </tbody>
+  <tfoot>
+  <tr>
+    <th><?php echo $this->t->translate('out.package.id') ?></th>
+    <th><?php echo $this->t->translate('team.name') ?></th>
+    <th><?php echo $this->t->translate('item.name') ?></th>
+    <th><?php echo $this->t->translate('case.qty') ?></th>
+    <th><?php echo $this->t->translate('qty.total') ?></th>
+    <th><?php echo $this->t->translate('volume.total') ?></th>
+    <th><?php echo $this->t->translate('weight') ?></th>
+    <th><?php echo $this->t->translate('days') ?></th>
+    <th><?php echo $this->t->translate('fee.total') ?></th>
+    <th><?php echo $this->t->translate('date.in') ?></th>
+    <th><?php echo $this->t->translate('date.out') ?></th>
+  </tr>
+  </tfoot>
+</table>

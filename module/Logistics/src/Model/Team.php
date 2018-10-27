@@ -14,6 +14,8 @@ use Application\Model\BaseModel;
 /**
  * @property int id
  * @property string name
+ * @property float storageFee
+ * @property string feeUpdateDate
  */
 class Team extends BaseModel {
 

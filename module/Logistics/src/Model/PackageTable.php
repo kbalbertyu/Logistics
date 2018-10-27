@@ -183,4 +183,16 @@ class PackageTable extends BaseTable {
         }
         return $data;
     }
+
+    public function getShippedPackages($teamId = null) {
+        $where = $this->where()
+            ->in('status', Package::SHIPPED_STATUS)
+            ->equalTo('type', Package::PROCESS_TYPE_OUT);
+        if (!empty($teamId)) {
+            $where->equalTo('teamId', $teamId);
+        }
+        $select = $this->selectTable()
+            ->where($where);
+        return $this->tableGateway->selectWith($select);
+    }
 }

@@ -13,6 +13,7 @@ use Application\Model\BaseModel;
 
 /**
  * @property int id
+ * @property int teamId
  * @property int productId
  * @property int inPackageId
  * @property int outPackageId
@@ -27,5 +28,9 @@ class Box extends BaseModel {
 
     public function shipped() {
         return !empty($this->outPackageId) && !empty($this->dateOut);
+    }
+
+    public function getStorageFee() {
+        return round($this->days * 10 * $this->volume, 2);
     }
 }

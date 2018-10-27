@@ -57,6 +57,8 @@ class Package extends BaseModel {
         ]
     ];
 
+    public const SHIPPED_STATUS = ['shipped', 'completed'];
+
     private const REQUIRED_COLUMNS = ['itemName', 'brand', 'teamId', 'qty', 'type'];
 
     /**

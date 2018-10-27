@@ -89,14 +89,3 @@
   </tr>
   </tfoot>
 </table>
-<script>
-$(function() {
-    $('.delete').click(function(e) {
-        e.preventDefault();
-        if (!confirm('<?php echo $this->t->translate('product.delete.confirm'); ?>')) {
-            return;
-        }
-        location.href = $(this).attr('href');
-    });
-})
-</script>
