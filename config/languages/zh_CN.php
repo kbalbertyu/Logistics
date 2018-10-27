@@ -37,6 +37,7 @@ return [
     'nav.fee.charges' => '收费记录',
     'nav.fee.summary' => '费用汇总',
     'nav.fee.storage' => '仓储费用',
+    'fee.storage' => '仓储费用',
     'nav.shipping' => '发货管理',
     'fee.charge.list' => '收费记录',
     'user.login' => '用户登录',

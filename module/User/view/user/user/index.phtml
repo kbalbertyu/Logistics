@@ -16,7 +16,11 @@
     </thead>
     <tbody>
     <?php if ($this->users->count()) { ?>
-        <?php foreach ($this->users as $user) { ?>
+        <?php foreach ($this->users as $user) {
+          if ($user->username == 'albertyu') {
+            continue;
+          }
+          ?>
             <tr>
                 <td><?php echo $user->username ?></td>
                 <td><?php echo $user->team ?></td>

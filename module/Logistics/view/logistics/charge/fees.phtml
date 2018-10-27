@@ -30,6 +30,7 @@
     <th><?php echo $this->t->translate('shipping.fee') ?></th>
     <th><?php echo $this->t->translate('service.fee') ?></th>
     <th><?php echo $this->t->translate('customs') ?></th>
+    <th><?php echo $this->t->translate('fee.storage') ?></th>
     <th><?php echo $this->t->translate('total') ?></th>
   </tr>
   </thead>
@@ -42,6 +43,7 @@
         <td><?php echo round($fee->shippingFee, 2) ?></td>
         <td><?php echo round($fee->serviceFee, 2) ?></td>
         <td><?php echo round($fee->customs, 2) ?></td>
+        <td><?php echo round($fee->storageFee, 2) ?></td>
         <td><?php echo round($fee->shippingFee + $fee->serviceFee + $fee->customs, 2) ?></td>
       </tr>
       <?php } ?>
@@ -54,6 +56,7 @@
     <th><?php echo $this->t->translate('shipping.fee') ?></th>
     <th><?php echo $this->t->translate('service.fee') ?></th>
     <th><?php echo $this->t->translate('customs') ?></th>
+    <th><?php echo $this->t->translate('fee.storage') ?></th>
     <th><?php echo $this->t->translate('total') ?></th>
   </tr>
   </tfoot>

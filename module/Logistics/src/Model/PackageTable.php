@@ -106,7 +106,7 @@ class PackageTable extends BaseTable {
 
     public function getFees($params) {
         $select = $this->selectTable('p')
-            ->join(['t' => BaseTable::TEAM_TABLE], 'p.teamId = t.id', ['team' => 'name'], Select::JOIN_LEFT)
+            ->join(['t' => BaseTable::TEAM_TABLE], 'p.teamId = t.id', ['team' => 'name', 'storageFee'], Select::JOIN_LEFT)
             ->join(['s' => BaseTable::SHIPPING_TABLE], 'p.id = s.packageId', [
                 'shippingCost' => new Expression('SUM(shippingCost)'),
                 'shippingFee' => new Expression('SUM(shippingFee)'),
