@@ -239,5 +239,9 @@ class BaseTable {
     protected function getModel() {
         return $this->tableGateway->getResultSetPrototype()->getArrayObjectPrototype();
     }
+
+    protected function where() {
+        return new Where();
+    }
 }
 
