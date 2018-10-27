@@ -159,7 +159,7 @@
       <div class="input-group-prepend">
         <label class="input-group-text" for="<?php echo $field ?>"><?php echo $this->t->translate($label) ?></label>
       </div>
-      <input id="<?php echo $field ?>" <?php echo $this->userObject->isManager() ? 'name="' . $field . '"' : 'disabled ' ?> value="<?php echo $this->address->$field ?>" type="text" class="form-control">
+      <input required id="<?php echo $field ?>" <?php echo $this->userObject->isManager() ? 'name="' . $field . '"' : 'disabled ' ?> value="<?php echo $this->address->$field ?>" type="text" class="form-control">
     </div>
     <?php }?>
     <div class="clear"></div>
@@ -167,7 +167,7 @@
       <div class="input-group-prepend">
         <label class="input-group-text" for="address"><?php echo $this->t->translate('address') ?></label>
       </div>
-      <textarea style="width:800px;height: 150px;" id="address" <?php echo $this->userObject->isManager() ? 'name="address"' : 'disabled ' ?> class="form-control"><?php echo $this->address->address ?></textarea>
+      <textarea required style="width:800px;height: 150px;" id="address" <?php echo $this->userObject->isManager() ? 'name="address"' : 'disabled ' ?> class="form-control"><?php echo $this->address->address ?></textarea>
     </div>
     <div class="clear"></div>
     <div class="input-group">
